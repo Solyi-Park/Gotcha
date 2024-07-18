@@ -1,3 +1,5 @@
-import {movieType} from './movieType'
+import {movie} from './movie'
+import {review} from './review'
+import {user} from './user'
 
-export const schemaTypes = [movieType]
+export const schemaTypes = [movie, review, user]
