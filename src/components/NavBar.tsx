@@ -15,22 +15,11 @@ const navLeftMenu = [
   },
 ];
 
-const authMenu = [
-  {
-    href: "/signin",
-    title: "로그인",
-  },
-  {
-    href: "/signup",
-    title: "회원가입",
-  },
-];
 export default function NavBar() {
-  const res = useSession();
-  console.log("res:", res);
-  const { data: session } = res;
-  const user = session?.user;
+  const { data: session } = useSession();
 
+  const user = session?.user;
+  console.log("user", user);
   return (
     <div className="flex bg-red-300">
       <Link href="/">
@@ -50,7 +39,7 @@ export default function NavBar() {
             <>
               <li>알림</li>
               <li>
-                <Link href="/">
+                <Link href={`/user/${user.id}`}>
                   <Avatar image={user.image} />
                 </Link>
               </li>
@@ -62,12 +51,12 @@ export default function NavBar() {
           {!session && (
             <>
               <li>
-                <Link href="/signin">
+                <Link href="/auth/signin">
                   <AuthButton text="로그인" />
                 </Link>
               </li>
               <li>
-                <Link href="/signup">회원가입</Link>
+                <Link href="/auth/signup">회원가입</Link>
               </li>
             </>
           )}

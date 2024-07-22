@@ -22,8 +22,8 @@ export const user = defineType({
       type: 'string',
     }),
     defineField({
-      title: 'avatar',
-      name: 'Avatar',
+      title: 'image',
+      name: 'Image',
       type: 'string',
     }),
     defineField({

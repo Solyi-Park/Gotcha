@@ -3,5 +3,9 @@ type Props = {
   image?: string | null;
 };
 export default function Avatar({ image }: Props) {
-  return <Image src={image ?? ""} width={30} height={30} alt="user avatar" />;
+  return (
+    <div className="relative w-6 h-6 rounded-full overflow-hidden">
+      <Image src={image ?? ""} fill alt="user avatar" />
+    </div>
+  );
 }
