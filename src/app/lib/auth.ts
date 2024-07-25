@@ -3,40 +3,47 @@ import GoogleProvider from "next-auth/providers/google";
 import KakaoProvider from "next-auth/providers/kakao";
 import NaverProvider from "next-auth/providers/naver";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { addUser } from "@/services/user";
+import { addUser, findUserByEmail } from "@/services/user";
+import bcrypt from "bcrypt";
+
+async function verifyPassword(plainPassword: string, hashedPassword: string) {
+  const isValid = await bcrypt.compare(plainPassword, hashedPassword);
+  return isValid;
+}
+export async function hashPassword(plainPassword: string) {
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
+  return hashedPassword;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    // CredentialsProvider({
-    //   name: "Credentials",
-    //   credentials: {
-    //     username: { label: "Username", type: "text" },
-    //     email: {
-    //       label: "Email",
-    //       type: "email",
-    //     },
-    //     password: { label: "Password", type: "password" },
-    //   },
-    //   async authorize(credentials) {
-    //     console.log("credentials", credentials);
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = credentials!;
 
-    //     const user = await findUserByEmail(credentials.email); // 데이터베이스에서 사용자 찾기, 이후에 정의
-    //     if (
-    //       user &&
-    //       (await verifyPassword(credentials.password, user.password))
-    //     ) {
-    //       return {
-    //         id: user.id,
-    //         email: user.email,
-    //         name: user.name,
-    //         image: "",
-    //         username: user.email.split("@")[0],
-    //       };
-    //     } else {
-    //       return null;
-    //     }
-    //   },
-    // }),
+        const user = await findUserByEmail(email);
+        if (!user) return null;
+
+        const verifyPw = await verifyPassword(password, user.password);
+        if (!verifyPw) return null;
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: null,
+          username: user.email.split("@")[0],
+        };
+      },
+    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
@@ -76,7 +83,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ user: { id, name, email, image } }) {
-      console.log("id", id);
       if (!id) {
         return false;
       }
@@ -89,6 +95,9 @@ export const authOptions: NextAuthOptions = {
       };
       addUser(userData);
       return true;
+    },
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
     },
   },
   pages: {

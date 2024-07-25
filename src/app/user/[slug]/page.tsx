@@ -3,6 +3,6 @@ type Props = {
 };
 
 export default function UserPage({ params: { slug } }: Props) {
-  console.log("slug", slug);
+  // console.log("slug", slug);
   return <div>UserPage</div>;
 }

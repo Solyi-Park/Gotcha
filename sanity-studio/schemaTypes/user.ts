@@ -20,10 +20,16 @@ export const user = defineType({
       title: 'Email',
       name: 'email',
       type: 'string',
+      validation: (Rule) => Rule.email(),
     }),
     defineField({
-      title: 'image',
-      name: 'Image',
+      title: 'Password',
+      name: 'password',
+      type: 'string',
+    }),
+    defineField({
+      title: 'Image',
+      name: 'image',
       type: 'string',
     }),
     defineField({

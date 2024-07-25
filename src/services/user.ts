@@ -1,10 +1,5 @@
 import { client } from "./sanity";
-
-// uses GROQ to query content: https://www.sanity.io/docs/groq
-export async function getPosts() {
-  const posts = await client.fetch('*[_type == "post"]');
-  return posts;
-}
+import { v4 as uuidv4 } from "uuid";
 
 export async function addUser({ id, email, name, username, image }: User) {
   const userData = {
@@ -17,8 +12,44 @@ export async function addUser({ id, email, name, username, image }: User) {
     reviews: [],
     following: [],
     followers: [],
-    collections: [],
+    collection: [],
   };
 
   return client.createIfNotExists(userData);
+}
+
+export async function addCredentialUser(
+  name: string,
+  email: string,
+  password: string
+) {
+  const userData = {
+    _id: uuidv4(),
+    _type: "user",
+    name,
+    username: "",
+    password,
+    image: "",
+    email,
+    reviews: [],
+    following: [],
+    followers: [],
+    collection: [],
+  };
+  return client.createIfNotExists(userData);
+}
+
+export async function findUserByEmail(email: string) {
+  return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
+      "id": _id,
+      username,
+      name,
+      email,
+      image,
+      password,
+      reviews[]->{"id":_id},
+      following[]->{username,name, "id":_id},
+      followers[]->{username,name,"id":_id},
+      collection[]->{"id":_id},
+      }`);
 }

@@ -19,7 +19,6 @@ export default function NavBar() {
   const { data: session } = useSession();
 
   const user = session?.user;
-  console.log("user", user);
   return (
     <div className="flex bg-red-300">
       <Link href="/">

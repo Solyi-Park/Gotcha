@@ -27,16 +27,20 @@ function getProviderIcon(providerName: string) {
   const provider = providersIconImages.find(
     (item) => item.name === providerName
   );
-  return provider!.image;
+  return provider?.image!;
 }
 
-export default function Signin({ providers }: Props) {
+export default function OAuthSignin({ providers }: Props) {
   return (
     <div className="flex gap-2">
       {Object.values(providers).map(({ name, id }) => (
         <button key={name} onClick={() => signIn(id)}>
           <div className="relative w-10 h-10">
-            <Image src={getProviderIcon(name)} fill alt={`${name} logo`} />
+            <img
+              src={getProviderIcon(name)}
+              className="object-cover"
+              alt={`${name} logo`}
+            />
           </div>
         </button>
       ))}
