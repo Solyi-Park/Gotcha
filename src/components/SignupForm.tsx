@@ -3,7 +3,7 @@ import { useErrorMessage } from "@/hooks/errorMessage";
 import { validate } from "@/utils/validate";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, MouseEventHandler, useState } from "react";
 
 type Props = {
   csrfToken: string;
@@ -14,11 +14,17 @@ export default function SignupForm({ csrfToken }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
 
   const router = useRouter();
 
-  const { nameError, emailError, passwordError, confirmPasswordError } =
-    useErrorMessage({ name, email, password, confirmPassword });
+  const {
+    nameError,
+    emailError,
+    passwordError,
+    confirmPasswordError,
+    setEmailError,
+  } = useErrorMessage({ name, email, password, confirmPassword });
 
   const isButtonDisabled =
     nameError !== null ||
@@ -26,9 +32,25 @@ export default function SignupForm({ csrfToken }: Props) {
     passwordError !== null ||
     confirmPasswordError !== null;
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleEmailCheck = async () => {
+    if (emailError || email == "") return;
 
+    await fetch("/api/check-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(email),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        res
+          ? setEmailError("이미 존재하는 이메일입니다.")
+          : setEmailError("사용가능한 이메일입니다.");
+      });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     const formData = new FormData();
     formData.append("name", name ?? "");
     formData.append("email", email ?? "");
@@ -59,8 +81,7 @@ export default function SignupForm({ csrfToken }: Props) {
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-        <p>{name}</p>
-        <p>{nameError}</p>
+        {nameError && <p>{nameError}</p>}
       </div>
       <div>
         <label>
@@ -73,7 +94,11 @@ export default function SignupForm({ csrfToken }: Props) {
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
-        <p>{emailError}</p>
+        <button className="border" onClick={handleEmailCheck} type="button">
+          중복검사
+        </button>
+        {emailError && <p>{emailError}</p>}
+        {emailAvailable && <p>사용 가능한 이메일입니다.</p>}
       </div>
       <div>
         <label>
@@ -85,7 +110,7 @@ export default function SignupForm({ csrfToken }: Props) {
             className="border"
             onChange={(e) => setPassword(e.target.value)}
           />
-          {passwordError}
+          {passwordError && <p>{passwordError}</p>}
         </label>
         <p></p>
       </div>
@@ -100,7 +125,7 @@ export default function SignupForm({ csrfToken }: Props) {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </label>
-        <p>{confirmPasswordError}</p>
+        {confirmPasswordError && <p>{confirmPasswordError}</p>}
       </div>
       <button
         className={`border  ${isButtonDisabled && "bg-gray-200 text-white"}`}

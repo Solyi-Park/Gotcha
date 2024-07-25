@@ -53,3 +53,13 @@ export async function findUserByEmail(email: string) {
       collection[]->{"id":_id},
       }`);
 }
+
+export async function checkEmail(email: string) {
+  return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
+      "id": _id,
+      username,
+      name,
+      email,
+      image,
+      }`);
+}

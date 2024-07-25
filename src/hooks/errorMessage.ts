@@ -41,5 +41,6 @@ export function useErrorMessage({
     emailError,
     passwordError,
     confirmPasswordError,
+    setEmailError,
   };
 }
