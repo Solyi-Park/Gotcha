@@ -22,18 +22,14 @@ export function useErrorMessage({
   >(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setNameError(name ? validate.name(name) : null);
-      setEmailError(email ? validate.email(email) : null);
-      setPasswordError(password ? validate.password(password) : null);
-      setConfirmPasswordError(
-        confirmPassword
-          ? validate.confirmPassword(password, confirmPassword)
-          : null
-      );
-    }, 500);
-
-    return () => clearTimeout(timer);
+    setNameError(name ? validate.name(name) : null);
+    setEmailError(email ? validate.email(email) : null);
+    setPasswordError(password ? validate.password(password) : null);
+    setConfirmPasswordError(
+      confirmPassword
+        ? validate.confirmPassword(password, confirmPassword)
+        : null
+    );
   }, [name, email, password, confirmPassword]);
 
   return {

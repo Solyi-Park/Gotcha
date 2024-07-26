@@ -1,7 +1,5 @@
 "use client";
 import { useErrorMessage } from "@/hooks/errorMessage";
-import { validate } from "@/utils/validate";
-
 import { useRouter } from "next/navigation";
 import { FormEvent, MouseEventHandler, useState } from "react";
 
@@ -14,7 +12,7 @@ export default function SignupForm({ csrfToken }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+  const [emailAvailable, setEmailAvailable] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -30,7 +28,8 @@ export default function SignupForm({ csrfToken }: Props) {
     nameError !== null ||
     emailError !== null ||
     passwordError !== null ||
-    confirmPasswordError !== null;
+    confirmPasswordError !== null ||
+    emailAvailable == false;
 
   const handleEmailCheck = async () => {
     if (emailError || email == "") return;
@@ -44,13 +43,20 @@ export default function SignupForm({ csrfToken }: Props) {
     })
       .then((res) => res.json())
       .then((res) => {
-        res
-          ? setEmailError("이미 존재하는 이메일입니다.")
-          : setEmailError("사용가능한 이메일입니다.");
+        if (res) {
+          setEmailError("이미 사용중인 이메일 입니다.");
+          setEmailAvailable(false);
+        }
+        if (!res) {
+          setEmailError(null);
+          setEmailAvailable(true);
+        }
       });
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async () => {
+    if (!emailAvailable) return;
+
     const formData = new FormData();
     formData.append("name", name ?? "");
     formData.append("email", email ?? "");
@@ -81,7 +87,7 @@ export default function SignupForm({ csrfToken }: Props) {
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-        {nameError && <p>{nameError}</p>}
+        {nameError && <span>{nameError}</span>}
       </div>
       <div>
         <label>
@@ -91,14 +97,18 @@ export default function SignupForm({ csrfToken }: Props) {
             value={email}
             type="email"
             className="border"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmailAvailable(false);
+              setEmailError(null);
+              setEmail(e.target.value);
+            }}
           />
         </label>
         <button className="border" onClick={handleEmailCheck} type="button">
           중복검사
         </button>
-        {emailError && <p>{emailError}</p>}
-        {emailAvailable && <p>사용 가능한 이메일입니다.</p>}
+        {emailError && <span>{emailError}</span>}
+        {emailAvailable && <span>사용 가능한 이메일입니다.</span>}
       </div>
       <div>
         <label>
@@ -110,9 +120,8 @@ export default function SignupForm({ csrfToken }: Props) {
             className="border"
             onChange={(e) => setPassword(e.target.value)}
           />
-          {passwordError && <p>{passwordError}</p>}
+          {passwordError && <span>{passwordError}</span>}
         </label>
-        <p></p>
       </div>
       <div>
         <label>
@@ -125,7 +134,7 @@ export default function SignupForm({ csrfToken }: Props) {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </label>
-        {confirmPasswordError && <p>{confirmPasswordError}</p>}
+        {confirmPasswordError && <span>{confirmPasswordError}</span>}
       </div>
       <button
         className={`border  ${isButtonDisabled && "bg-gray-200 text-white"}`}
