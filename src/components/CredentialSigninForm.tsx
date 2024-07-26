@@ -10,16 +10,17 @@ type Props = {
 export default function CredentialSigninForm({ csrfToken }: Props) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     const email = emailRef.current?.value;
     const password = passRef.current?.value;
 
     if (!email || !password) {
-      setError("Email and password are required");
+      setErrorMessage("Email and password are required");
       return;
     }
 
@@ -28,11 +29,15 @@ export default function CredentialSigninForm({ csrfToken }: Props) {
       email,
       password,
     });
-
+    console.log("result", result);
     if (result?.error) {
-      setError(result.error);
+      if (result.status === 401) {
+        setErrorMessage("잘못된 이메일 또는 비밀번호입니다.");
+      } else {
+        setErrorMessage("인증 중 오류가 발생했습니다. 다시 시도해 주세요.");
+      }
     } else {
-      setError(null);
+      setErrorMessage(null);
       router.push("/");
     }
   };
@@ -60,10 +65,10 @@ export default function CredentialSigninForm({ csrfToken }: Props) {
           required
         />
       </label>
+      <span>{errorMessage}</span>
       <button className="border" type="submit">
         로그인
       </button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
     </form>
   );
 }
