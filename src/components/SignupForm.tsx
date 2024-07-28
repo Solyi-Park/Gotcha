@@ -74,70 +74,96 @@ export default function SignupForm({ csrfToken }: Props) {
   };
 
   return (
-    <form method="post" className="flex flex-col" onSubmit={handleSubmit}>
+    <form
+      method="post"
+      className="flex flex-col gap-5 w-full border rounded-lg p-6 "
+      onSubmit={handleSubmit}
+    >
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
       <div>
-        <label>
+        <label className="flex flex-col gap-2">
           이름
           <input
             name="name"
             value={name}
             type="text"
-            className="border"
+            className="border rounded-md px-2 py-1 outline-none"
             onChange={(e) => setName(e.target.value)}
           />
         </label>
-        {nameError && <span>{nameError}</span>}
+        {nameError && (
+          <span className="ml-1 text-xs text-rose-400">{nameError}</span>
+        )}
       </div>
       <div>
-        <label>
+        <label className="flex flex-col">
           이메일
-          <input
-            name="email"
-            value={email}
-            type="email"
-            className="border"
-            onChange={(e) => {
-              setEmailAvailable(false);
-              setEmailError(null);
-              setEmail(e.target.value);
-            }}
-          />
+          <div className="flex gap-2 items-center">
+            <input
+              name="email"
+              value={email}
+              type="email"
+              className="w-full border rounded-md px-2 py-1 outline-none"
+              onChange={(e) => {
+                setEmailAvailable(false);
+                setEmailError(null);
+                setEmail(e.target.value);
+              }}
+            />
+            <button
+              className="bg-black opacity-70 hover:opacity-100 text-white w-20 h-8 text-xs rounded-md"
+              onClick={handleEmailCheck}
+              type="button"
+            >
+              중복확인
+            </button>
+          </div>
         </label>
-        <button className="border" onClick={handleEmailCheck} type="button">
-          중복검사
-        </button>
-        {emailError && <span>{emailError}</span>}
-        {emailAvailable && <span>사용 가능한 이메일입니다.</span>}
+        {emailError && (
+          <span className="ml-1 text-xs text-rose-400">{emailError}</span>
+        )}
+        {emailAvailable && (
+          <span className="ml-1 text-xs text-blue-500">
+            사용 가능한 이메일입니다.
+          </span>
+        )}
       </div>
       <div>
-        <label>
+        <label className="flex flex-col gap-2">
           비밀번호
           <input
             name="password"
             value={password}
             type="password"
-            className="border"
+            className="border rounded-md px-2 py-1 outline-none"
             onChange={(e) => setPassword(e.target.value)}
           />
-          {passwordError && <span>{passwordError}</span>}
+          {passwordError && (
+            <span className="ml-1 text-xs text-rose-400">{passwordError}</span>
+          )}
         </label>
       </div>
       <div>
-        <label>
+        <label className="flex flex-col gap-2">
           비밀번호 확인
           <input
             name="passwordCheck"
             value={confirmPassword}
             type="password"
-            className="border"
+            className="border rounded-md px-2 py-1 outline-none"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </label>
-        {confirmPasswordError && <span>{confirmPasswordError}</span>}
+        {confirmPasswordError && (
+          <span className="ml-1 text-xs text-rose-400">
+            {confirmPasswordError}
+          </span>
+        )}
       </div>
       <button
-        className={`border  ${isButtonDisabled && "bg-gray-200 text-white"}`}
+        className={`border  ${
+          isButtonDisabled && "bg-gray-200 text-white"
+        } p-2 rounded-lg bg-black text-white`}
         type="submit"
         disabled={isButtonDisabled}
       >

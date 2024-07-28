@@ -10,7 +10,7 @@ import OAuthSignin from "@/components/OAuthSignin";
 import CredentialSigninForm from "@/components/CredentialSigninForm";
 import Link from "next/link";
 
-type Providers = Record<string, ClientSafeProvider>;
+export type Providers = Record<string, ClientSafeProvider>;
 
 export default async function SignInPage() {
   const session = await getServerSession(authOptions);
@@ -29,17 +29,18 @@ export default async function SignInPage() {
   const csrfToken = (await getCsrfToken()) ?? "";
 
   return (
-    <section>
+    <section className="flex flex-col items-center gap-6">
       <CredentialSigninForm csrfToken={csrfToken} />
       <div>
         <p>
           계정이 없으신가요?
-          <span className="ml-1 text-blue-900 text-sm font-semibold">
+          <span className="ml-1 text-blue-900 text-sm">
             <Link href="/auth/signup">회원가입</Link>
           </span>
         </p>
       </div>
-      <OAuthSignin providers={filteredProviders} />
+
+      <OAuthSignin providers={filteredProviders} type="signin" />
     </section>
   );
 }

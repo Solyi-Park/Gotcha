@@ -1,33 +1,41 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
-import { FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 
 type Props = {
   csrfToken: string;
 };
 
 export default function CredentialSigninForm({ csrfToken }: Props) {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passRef = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setErrorMessage("");
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const email = emailRef.current?.value;
-    const password = passRef.current?.value;
-
-    if (!email || !password) {
+    if (!formData.email || !formData.password) {
       setErrorMessage("Email and password are required");
       return;
     }
 
     const result = await signIn("credentials", {
       redirect: false,
-      email,
-      password,
+      email: formData.email,
+      password: formData.password,
     });
     console.log("result", result);
     if (result?.error) {
@@ -43,30 +51,40 @@ export default function CredentialSigninForm({ csrfToken }: Props) {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit}>
+    <form
+      className="flex flex-col gap-4 w-[312px] p-6 border rounded-lg"
+      onSubmit={handleSubmit}
+    >
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-      <label>
+      <label className="flex flex-col w-[272px]">
         이메일
         <input
           name="email"
-          ref={emailRef}
+          value={formData.email}
+          onChange={handleOnChange}
           type="email"
-          className="border"
+          className="border rounded-md px-2 py-1 mt-2 outline-none"
           required
         />
       </label>
-      <label>
+      <label className="flex flex-col w-[272px]">
         비밀번호
         <input
           name="password"
-          ref={passRef}
+          value={formData.password}
+          onChange={handleOnChange}
           type="password"
-          className="border"
+          className="border rounded-md px-2 py-1 mt-2 outline-none"
           required
         />
       </label>
-      <span>{errorMessage}</span>
-      <button className="border" type="submit">
+      <span className="flex justify-center text-xs text-red-500">
+        {errorMessage}
+      </span>
+      <button
+        className="bg-black text-white rounded-md px-2 py-2 w-[272px]"
+        type="submit"
+      >
         로그인
       </button>
     </form>

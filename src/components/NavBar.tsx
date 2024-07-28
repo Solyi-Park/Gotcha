@@ -14,7 +14,7 @@ export default function NavBar() {
       <Link href="/">
         <h1 className="mr-2 text-3xl sm:text-5xl font-bold">Gotcha</h1>
       </Link>
-      <nav className="flex sm:w-full w-auto justify-between">
+      <nav className="flex w-full justify-end sm:justify-between">
         <NavMenu />
         <div className="hidden sm:flex items-center ">
           <SearchBar />

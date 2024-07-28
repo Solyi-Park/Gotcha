@@ -13,7 +13,7 @@ export default function BottomNavBar() {
   const user = session?.user;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 border-t text-gray-400 flex justify-around items-center py-2 z-50 sm:hidden">
+    <div className="fixed inset-x-0 bottom-0 border-t bg-white text-gray-400 flex justify-around items-center py-2 z-50 sm:hidden">
       <Link href="/">
         <button
           onClick={() => setActiveTab("home")}

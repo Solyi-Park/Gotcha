@@ -19,12 +19,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={sans.className}>
-      <body className="flex flex-col ">
+      <body className="flex flex-col">
         <AuthContext>
           <header>
             <NavBar />
           </header>
-          <main className="px-9 ">{children}</main>
+          <main className="flex justify-center items-center px-9 w-full h-full">
+            {children}
+          </main>
           <BottomNavBar />
           <footer></footer>
         </AuthContext>
