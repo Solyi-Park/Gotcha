@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/lib/auth";
 import SignupForm from "@/components/SignupForm";
 import { getServerSession } from "next-auth";
-import { getCsrfToken, getProviders } from "next-auth/react";
+import { getCsrfToken } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 export default async function SignupPage() {

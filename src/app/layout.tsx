@@ -3,6 +3,7 @@ import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import NavBar from "../components/NavBar";
 import AuthContext from "@/context/AuthContext";
+import BottomNavBar from "@/components/BottomNavBar";
 
 const sans = Open_Sans({ subsets: ["latin"] });
 
@@ -18,12 +19,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={sans.className}>
-      <body>
+      <body className="flex flex-col ">
         <AuthContext>
           <header>
             <NavBar />
           </header>
-          <main>{children}</main>
+          <main className="px-9 ">{children}</main>
+          <BottomNavBar />
           <footer></footer>
         </AuthContext>
       </body>

@@ -8,11 +8,15 @@ import { authOptions } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 import OAuthSignin from "@/components/OAuthSignin";
 import CredentialSigninForm from "@/components/CredentialSigninForm";
+import Link from "next/link";
 
 type Providers = Record<string, ClientSafeProvider>;
 
 export default async function SignInPage() {
   const session = await getServerSession(authOptions);
+  if (session) {
+    redirect("/");
+  }
 
   const allProviders = ((await getProviders()) as Providers) ?? {};
   const filteredProviders = Object.keys(allProviders).reduce((acc, key) => {
@@ -24,13 +28,17 @@ export default async function SignInPage() {
 
   const csrfToken = (await getCsrfToken()) ?? "";
 
-  if (session) {
-    redirect("/");
-  }
-
   return (
     <section>
       <CredentialSigninForm csrfToken={csrfToken} />
+      <div>
+        <p>
+          계정이 없으신가요?
+          <span className="ml-1 text-blue-900 text-sm font-semibold">
+            <Link href="/auth/signup">회원가입</Link>
+          </span>
+        </p>
+      </div>
       <OAuthSignin providers={filteredProviders} />
     </section>
   );
