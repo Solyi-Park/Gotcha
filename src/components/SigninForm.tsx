@@ -7,7 +7,7 @@ type Props = {
   csrfToken: string;
 };
 
-export default function CredentialSigninForm({ csrfToken }: Props) {
+export default function SigninForm({ csrfToken }: Props) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -63,7 +63,7 @@ export default function CredentialSigninForm({ csrfToken }: Props) {
           value={formData.email}
           onChange={handleOnChange}
           type="email"
-          className="border rounded-md px-2 py-1 mt-2 outline-none"
+          className="border rounded-md px-2 py-1 outline-none"
           required
         />
       </label>
@@ -74,7 +74,7 @@ export default function CredentialSigninForm({ csrfToken }: Props) {
           value={formData.password}
           onChange={handleOnChange}
           type="password"
-          className="border rounded-md px-2 py-1 mt-2 outline-none"
+          className="border rounded-md px-2 py-1 outline-none"
           required
         />
       </label>

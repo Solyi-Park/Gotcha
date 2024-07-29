@@ -81,7 +81,7 @@ export default function SignupForm({ csrfToken }: Props) {
     >
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
       <div>
-        <label className="flex flex-col gap-2">
+        <label className="flex flex-col">
           이름
           <input
             name="name"
@@ -129,7 +129,7 @@ export default function SignupForm({ csrfToken }: Props) {
         )}
       </div>
       <div>
-        <label className="flex flex-col gap-2">
+        <label className="flex flex-col">
           비밀번호
           <input
             name="password"
@@ -144,7 +144,7 @@ export default function SignupForm({ csrfToken }: Props) {
         </label>
       </div>
       <div>
-        <label className="flex flex-col gap-2">
+        <label className="flex flex-col">
           비밀번호 확인
           <input
             name="passwordCheck"

@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 import OAuthSignin from "@/components/OAuthSignin";
-import CredentialSigninForm from "@/components/CredentialSigninForm";
+import SigninForm from "@/components/SigninForm";
 import Link from "next/link";
 
 export type Providers = Record<string, ClientSafeProvider>;
@@ -30,7 +30,7 @@ export default async function SignInPage() {
 
   return (
     <section className="flex flex-col items-center gap-6">
-      <CredentialSigninForm csrfToken={csrfToken} />
+      <SigninForm csrfToken={csrfToken} />
       <div>
         <p>
           계정이 없으신가요?
