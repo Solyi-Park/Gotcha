@@ -1,7 +1,7 @@
 "use client";
 import { useErrorMessage } from "@/hooks/errorMessage";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 type Props = {
   csrfToken: string;
@@ -34,27 +34,31 @@ export default function SignupForm({ csrfToken }: Props) {
   const handleEmailCheck = async () => {
     if (emailError || email == "") return;
 
-    await fetch("/api/check-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(email),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res) {
-          setEmailError("이미 사용중인 이메일 입니다.");
-          setEmailAvailable(false);
-        }
-        if (!res) {
-          setEmailError(null);
-          setEmailAvailable(true);
-        }
+    try {
+      const res = await fetch("/api/check-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(email),
       });
+
+      const data = await res.json();
+
+      if (data) {
+        setEmailError("이미 사용중인 이메일 입니다.");
+        setEmailAvailable(false);
+      } else {
+        setEmailError(null);
+        setEmailAvailable(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!emailAvailable) return;
 
     const formData = new FormData();
@@ -62,15 +66,20 @@ export default function SignupForm({ csrfToken }: Props) {
     formData.append("email", email ?? "");
     formData.append("password", password ?? "");
 
-    fetch("/api/auth/signup", {
-      method: "POST",
-      body: formData,
-    }).then((res) => {
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        body: formData,
+      });
+
       if (!res.ok) {
-        return console.log(`${res.status}${res.statusText}`);
+        console.log(`Error: ${res.status} ${res.statusText}`);
+        return;
       }
       router.push("/auth/signin");
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

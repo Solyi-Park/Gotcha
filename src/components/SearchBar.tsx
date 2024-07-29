@@ -8,7 +8,7 @@ export default function SearchBar() {
       </button>
       <input
         type="text"
-        className="outline-none w-full hidden md:block md:ml-2 transition-all duration-500"
+        className="outline-none w-full hidden md:block md:ml-2"
       />
     </div>
   );
