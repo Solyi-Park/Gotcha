@@ -1,16 +1,17 @@
-import AuthIcon from "./icons/\bAuthIcon";
+import LoginIcon from "./icons/LoginIcon";
+import LogoutIcon from "./icons/LogoutIcon";
 
 type Props = {
   text: string;
-  onClick?: () => void;
+  onClick: () => void;
 };
 
 export default function AuthButton({ text, onClick }: Props) {
   return (
     <button className="flex items-center justify-center" onClick={onClick}>
-      <span className="hidden sm:inline">{text}</span>
-      <span className=" sm:hidden text-2xl mr-2 sm:mr-0">
-        <AuthIcon text={text === "로그인" ? "로그인" : "로그아웃"} />
+      <span className="hidden sm:inline text-xs">{text}</span>
+      <span className=" sm:hidden ">
+        {text === "LOGIN" ? <LoginIcon /> : <LogoutIcon />}
       </span>
     </button>
   );

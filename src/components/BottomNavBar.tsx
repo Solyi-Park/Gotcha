@@ -1,57 +1,59 @@
 "use client";
-import { RiHomeFill } from "@react-icons/all-files/ri/RiHomeFill";
-import { RiSearchLine } from "@react-icons/all-files/ri/RiSearchLine";
-import { RiUserLine } from "@react-icons/all-files/ri/RiUserLine";
-import { RiNotificationLine } from "@react-icons/all-files/ri/RiNotificationLine";
 import { useState } from "react";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
+import HomeIcon from "./icons/HomeIcon";
+import SearchIcon from "./icons/SearchIcon";
+import UserIcon from "./icons/UserIcon";
+import HeartIcon from "./icons/HeartIcon";
+import CategoryIcon from "./icons/CategoryIcon";
 
 export default function BottomNavBar() {
   const [activeTab, setActiveTab] = useState("home");
   const { data: session } = useSession();
   const user = session?.user;
 
+  const navItems = [
+    {
+      title: "HOME",
+      href: "/",
+      icon: <HomeIcon />,
+    },
+    {
+      title: "CATEGORY",
+      href: "/category",
+      icon: <CategoryIcon size="medium" />,
+    },
+    {
+      title: "SEARCH",
+      href: "/search",
+      icon: <SearchIcon />,
+    },
+    {
+      title: "LIKE",
+      href: "/like",
+      icon: <HeartIcon />,
+    },
+    {
+      title: "MY",
+      href: `/mypage/${user?.id}`,
+      icon: <UserIcon />,
+    },
+  ];
+
   return (
     <div className="fixed inset-x-0 bottom-0 border-t bg-white text-gray-400 flex justify-around items-center py-2 z-50 sm:hidden">
-      <Link href="/">
-        <button
-          onClick={() => setActiveTab("home")}
-          className={activeTab === "home" ? "text-black" : ""}
-        >
-          <RiHomeFill className="h-6 w-6" />
-          <span className="text-xs">홈</span>
-        </button>
-      </Link>
-      <Link href="/search">
-        <button
-          onClick={() => setActiveTab("search")}
-          className={activeTab === "search" ? "text-black" : ""}
-        >
-          <RiSearchLine className="h-6 w-6" />
-          <span className="text-xs">검색</span>
-        </button>
-      </Link>
-      <Link href="/notification">
-        <button
-          onClick={() => setActiveTab("notification")}
-          className={activeTab === "notification" ? "text-black" : ""}
-        >
-          <RiNotificationLine className="h-6 w-6" />
-          <span className="text-xs">알림</span>
-        </button>
-      </Link>
-      <Link href={`/user/${user?.id}`}>
-        <button
-          onClick={() => setActiveTab("profile")}
-          className={`${
-            activeTab === "profile" ? "text-black" : ""
-          } flex flex-col items-center`}
-        >
-          <RiUserLine className="h-6 w-6" />
-          <span className="text-xs">마이</span>
-        </button>
-      </Link>
+      {navItems.map((item) => (
+        <Link href={item.href} key={item.title}>
+          <button
+            onClick={() => setActiveTab(`${item.title}`)}
+            className={`${activeTab} === ${item.title} ? "text-black" : "" flex flex-col items-center gap-[3px]`}
+          >
+            {item.icon}
+            <span className="text-xs ">{item.title}</span>
+          </button>
+        </Link>
+      ))}
     </div>
   );
 }

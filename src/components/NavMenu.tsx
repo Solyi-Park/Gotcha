@@ -2,18 +2,26 @@ import Link from "next/link";
 
 const navItems = [
   {
-    href: "/movie",
-    title: "영화",
+    title: "WOMEN",
+    href: "/women",
   },
   {
-    href: "/tv",
-    title: "시리즈",
+    title: "MEN",
+    href: "/men",
+  },
+  {
+    title: "BEAUTY",
+    href: "/beauty",
+  },
+  {
+    title: "INTERIOR",
+    href: "/interior",
   },
 ];
 
 export default function NavMenu() {
   return (
-    <ul className="flex gap-4 items-center w-28 mx-3">
+    <ul className="hidden sm:flex gap-5 items-center w-28 mx-3">
       {navItems.map((item) => (
         <li className="w-full text-center text-neutral-600 " key={item.href}>
           <Link href={item.href}>{item.title}</Link>
