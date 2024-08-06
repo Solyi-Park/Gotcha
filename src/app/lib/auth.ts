@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import KakaoProvider from "next-auth/providers/kakao";
 import NaverProvider from "next-auth/providers/naver";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { addUser, findUserByEmail } from "@/services/user";
+import { addUser, findUser } from "@/services/user";
 import bcrypt from "bcrypt";
 
 async function verifyPassword(plainPassword: string, hashedPassword: string) {
@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const { email, password } = credentials!;
 
-        const user = await findUserByEmail(email);
+        const user = await findUser(email);
         if (!user) return null;
 
         const verifyPw = await verifyPassword(password, user.password);
@@ -40,7 +40,6 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           image: null,
-          username: user.email.split("@")[0],
         };
       },
     }),
@@ -58,12 +57,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token = {
           ...token,
           id: user.id,
-          username: `user_${user.id.slice(0, 8)}`,
+          provider: account?.provider,
         };
       }
       return token;
@@ -74,26 +73,38 @@ export const authOptions: NextAuthOptions = {
         session.user = {
           ...user,
           email: user.email || "",
-          username: user.email
-            ? user.email.split("@")[0] || ""
-            : (token.username as string),
           id: token.id as string,
+          provider: token.provider as string,
         };
       }
       return session;
     },
-    async signIn({ user: { id, name, email, image } }) {
-      if (!id) {
+    async signIn({ user, account }) {
+      if (!user.id) {
         return false;
       }
-      const userData = {
-        id,
-        email: email || "",
-        username: email ? email.split("@")[0] || "" : `user_${id.slice(0, 8)}`,
-        name: name || "",
-        image: image || "",
-      };
-      addUser(userData);
+      const existingUser = await findUser(
+        user.email,
+        account?.providerAccountId
+      );
+
+      if (!existingUser) {
+        console.log("읍서");
+
+        const userData = {
+          email: user.email || null,
+          name: user.name || "",
+          image: user.image || null,
+          provider: account?.provider as string,
+          providerId: account?.providerAccountId as string,
+        };
+        const newUser = await addUser(userData);
+        console.log("newUser", newUser);
+        user.id = newUser.id;
+      }
+      console.log("있어");
+      console.log("user===>>>", user);
+      console.log("account===>>>", account);
       return true;
     },
     async redirect({ url, baseUrl }) {

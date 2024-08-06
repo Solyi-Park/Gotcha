@@ -28,12 +28,12 @@ export default function UserMenu({ user }: Props) {
     <div className="hidden sm:flex gap-5">
       <ul className="flex gap-5">
         {menuItems.map((item) => (
-          <Link href={item.href}>
-            <li className="flex items-center gap-[3px]" key={item.title}>
+          <li className="flex items-center gap-[3px]" key={item.title}>
+            <Link href={item.href}>
               <span>{item.icon}</span>
               <span className="text-xs">{item.title}</span>
-            </li>
-          </Link>
+            </Link>
+          </li>
         ))}
       </ul>
       <div className="flex items-center">

@@ -1,21 +1,16 @@
+import { supabase } from "@/app/lib/supabaseClient";
 import { client } from "./sanity";
 import { v4 as uuidv4 } from "uuid";
+import { FullUser, SimpleUser } from "@/model/user";
 
-export async function addUser({ id, email, name, username, image }: User) {
-  const userData = {
-    _id: id,
-    _type: "user",
-    name,
-    username,
-    image,
-    email,
-    reviews: [],
-    following: [],
-    followers: [],
-    collection: [],
-  };
+// export async function addUser(user: SimpleUser) {
+//   const { data } = await supabase.from("users").insert(user).select().single();
+//   return data;
+// }
 
-  return client.createIfNotExists(userData);
+export async function addUser(user: SimpleUser) {
+  const { data } = await supabase.from("users").insert(user).select().single();
+  return data;
 }
 
 export async function addCredentialUser(
@@ -39,27 +34,61 @@ export async function addCredentialUser(
   return client.createIfNotExists(userData);
 }
 
-export async function findUserByEmail(email: string) {
-  return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
-      "id": _id,
-      username,
-      name,
-      email,
-      image,
-      password,
-      reviews[]->{"id":_id},
-      following[]->{username,name, "id":_id},
-      followers[]->{username,name,"id":_id},
-      collection[]->{"id":_id},
-      }`);
+// export async function findUserByEmail(email: string) {
+//   return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
+//       "id": _id,
+//       username,
+//       name,
+//       email,
+//       image,
+//       password,
+//       reviews[]->{"id":_id},
+//       following[]->{username,name, "id":_id},
+//       followers[]->{username,name,"id":_id},
+//       collection[]->{"id":_id},
+//       }`);
+// }
+
+export async function findUser(
+  email?: string | undefined | null,
+  providerId?: string
+) {
+  console.log("email 있나요?", email);
+  console.log("providerId 있나요?", providerId);
+  let query = supabase.from("users").select("*");
+
+  if (email) {
+    query = query.eq("email", email);
+  } else if (providerId) {
+    query = query.eq("providerId", providerId);
+  }
+  const { data, error } = await query.single();
+  if (data) {
+    console.log("여까지 오나", data);
+  }
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+  return data;
 }
 
+// export async function checkEmail(email: string) {
+//   return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
+//       "id": _id,
+//       username,
+//       name,
+//       email,
+//       image,
+//       }`);
+// }
+
 export async function checkEmail(email: string) {
-  return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
-      "id": _id,
-      username,
-      name,
-      email,
-      image,
-      }`);
+  const { data, error } = await supabase
+    .from("users")
+    .select()
+    .eq("email", `${email}`);
+
+  return data;
 }

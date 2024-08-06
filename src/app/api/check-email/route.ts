@@ -9,7 +9,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
   if (!email) {
     return new Response("Bad Request", { status: 400 });
   }
-  console.log("email??", email);
 
   return checkEmail(email)
     .then((res) => NextResponse.json(res))

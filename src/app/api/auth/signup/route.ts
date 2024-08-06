@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { addCredentialUser } from "@/services/user";
+import { addCredentialUser, addUser } from "@/services/user";
 import { hashPassword } from "@/app/lib/auth";
 
 export async function POST(req: NextRequest) {
@@ -17,8 +17,11 @@ export async function POST(req: NextRequest) {
   }
 
   const hashedPassword = await hashPassword(password);
+  const userData = {
+    name,
+    email,
+    password: hashedPassword,
+  };
 
-  return addCredentialUser(name, email, hashedPassword).then((res) =>
-    NextResponse.json(res)
-  );
+  return addUser(userData).then((res) => NextResponse.json(res));
 }

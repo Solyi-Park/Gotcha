@@ -1,7 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 type Props = {
   csrfToken: string;
@@ -37,7 +37,7 @@ export default function SigninForm({ csrfToken }: Props) {
       email: formData.email,
       password: formData.password,
     });
-    console.log("result", result);
+
     if (result?.error) {
       if (result.status === 401) {
         setErrorMessage("잘못된 이메일 또는 비밀번호입니다.");

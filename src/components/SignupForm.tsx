@@ -1,4 +1,5 @@
 "use client";
+import useDebounce from "@/hooks/debounce";
 import { useErrorMessage } from "@/hooks/errorMessage";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -15,6 +16,7 @@ export default function SignupForm({ csrfToken }: Props) {
   const [emailAvailable, setEmailAvailable] = useState<boolean>(false);
 
   const router = useRouter();
+  const debouncedKeyword = useDebounce(email, 300);
 
   const {
     nameError,
@@ -22,7 +24,12 @@ export default function SignupForm({ csrfToken }: Props) {
     passwordError,
     confirmPasswordError,
     setEmailError,
-  } = useErrorMessage({ name, email, password, confirmPassword });
+  } = useErrorMessage({
+    name,
+    email: debouncedKeyword,
+    password,
+    confirmPassword,
+  });
 
   const isButtonDisabled =
     nameError !== null ||
@@ -44,8 +51,7 @@ export default function SignupForm({ csrfToken }: Props) {
       });
 
       const data = await res.json();
-
-      if (data) {
+      if (data.length > 0) {
         setEmailError("이미 사용중인 이메일 입니다.");
         setEmailAvailable(false);
       } else {
