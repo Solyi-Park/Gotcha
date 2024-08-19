@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { addCredentialUser, addUser } from "@/services/user";
+import { addUser } from "@/services/user";
 import { hashPassword } from "@/app/lib/auth";
 
 export async function POST(req: NextRequest) {

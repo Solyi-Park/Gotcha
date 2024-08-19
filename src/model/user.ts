@@ -16,6 +16,7 @@ export type FullUser = {
   providerId: string | null;
   signupDate: string;
   signout: string;
+  role?: string;
 };
 
 // 이거 타입  체크..

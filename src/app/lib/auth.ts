@@ -5,6 +5,7 @@ import NaverProvider from "next-auth/providers/naver";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { addUser, findUser } from "@/services/user";
 import bcrypt from "bcrypt";
+import { FullUser } from "@/model/user";
 
 async function verifyPassword(plainPassword: string, hashedPassword: string) {
   const isValid = await bcrypt.compare(plainPassword, hashedPassword);
@@ -31,8 +32,11 @@ export const authOptions: NextAuthOptions = {
         const { email, password } = credentials!;
 
         const user = await findUser(email);
-        if (!user) return null;
 
+        console.log("authorize-findUser", user);
+        if (!user || !user.password) return null;
+        if (!user !== null) {
+        }
         const verifyPw = await verifyPassword(password, user.password);
         if (!verifyPw) return null;
         return {
@@ -89,8 +93,6 @@ export const authOptions: NextAuthOptions = {
       );
 
       if (!existingUser) {
-        console.log("읍서");
-
         const userData = {
           email: user.email || null,
           name: user.name || "",
@@ -100,11 +102,10 @@ export const authOptions: NextAuthOptions = {
         };
         const newUser = await addUser(userData);
         console.log("newUser", newUser);
-        user.id = newUser.id;
+        if (newUser) {
+          user.id = newUser.id;
+        }
       }
-      console.log("있어");
-      console.log("user===>>>", user);
-      console.log("account===>>>", account);
       return true;
     },
     async redirect({ url, baseUrl }) {

@@ -31,12 +31,12 @@ export default function BottomNavBar() {
     },
     {
       title: "LIKE",
-      href: "/like",
+      href: "/mypage/like",
       icon: <HeartIcon />,
     },
     {
       title: "MY",
-      href: `/mypage/${user?.id}`,
+      href: `/mypage`,
       icon: <UserIcon />,
     },
   ];

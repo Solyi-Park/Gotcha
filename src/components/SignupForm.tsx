@@ -82,6 +82,7 @@ export default function SignupForm({ csrfToken }: Props) {
         console.log(`Error: ${res.status} ${res.statusText}`);
         return;
       }
+
       router.push("/auth/signin");
     } catch (error) {
       console.error(error);
