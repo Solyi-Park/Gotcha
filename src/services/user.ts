@@ -1,6 +1,4 @@
 import { supabase } from "@/app/lib/supabaseClient";
-import { client } from "./sanity";
-import { v4 as uuidv4 } from "uuid";
 import { FullUser, SimpleUser } from "@/model/user";
 
 // export async function addUser(user: SimpleUser) {
@@ -11,11 +9,11 @@ import { FullUser, SimpleUser } from "@/model/user";
 export async function addUser(user: SimpleUser): Promise<FullUser | null> {
   const { data, error } = await supabase.from("users").upsert(user).select();
   if (error) {
-    console.error("회원가입 에러", error);
+    console.error("Failed to add user", error);
     return null;
   }
   if (data && data.length > 0) {
-    console.log("회원가입결과", data[0]);
+    console.log("New user data:", data[0]);
     return data[0];
   }
   return null;

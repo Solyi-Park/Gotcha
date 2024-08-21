@@ -29,5 +29,5 @@
     "src/app/api/auth/[...nextauth].js",
     "src/app/api/auth/[...nextauth]"
   ],
-  "exclude": ["node_modules", "sanity-studio"]
+  "exclude": ["node_modules"]
 }
