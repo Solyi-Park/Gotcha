@@ -1,4 +1,4 @@
-export const categories: Categories = {
+export const categoryOptions: Categories = {
   women: {
     의류: ["상의", "바지", "원피스", "치마", "셋업", "액티브웨어"],
     가방: [
