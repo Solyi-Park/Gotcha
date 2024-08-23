@@ -17,6 +17,7 @@ export default function SelectField({
   onChange,
   disabled,
   options,
+  ...props
 }: Props) {
   return (
     <label className="text-gray-500" htmlFor={id}>
@@ -27,6 +28,7 @@ export default function SelectField({
         value={value}
         onChange={onChange}
         disabled={disabled}
+        {...props}
       >
         <option value="">{label}선택</option>
         {options.map((option: string) => (
