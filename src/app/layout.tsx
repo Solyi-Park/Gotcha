@@ -24,9 +24,7 @@ export default function RootLayout({
           <header>
             <NavBar />
           </header>
-          <main className="flex justify-center items-center px-9 w-full h-full">
-            {children}
-          </main>
+          <main className="px-9 w-full h-full">{children}</main>
           <BottomNavBar />
           <footer></footer>
         </AuthContext>

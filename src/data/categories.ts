@@ -45,7 +45,7 @@ export const categories = [
         ],
       },
       {
-        name: "악세서리",
+        name: "액세서리",
         code: "14000",
         type: "medium",
         subcategories: [
@@ -101,7 +101,7 @@ export const categories = [
         ],
       },
       {
-        name: "악세서리",
+        name: "액세서리",
         code: "24000",
         type: "medium",
         subcategories: [
@@ -297,7 +297,7 @@ export const categories = [
 //     parentCode: "13000",
 //   },
 //   {
-//     name: "악세서리",
+//     name: "액세서리",
 //     code: "14000",
 //     type: "medium",
 //     parentCode: "10000",
@@ -472,7 +472,7 @@ export const categories = [
 //     parentCode: "23000",
 //   },
 //   {
-//     name: "악세서리",
+//     name: "액세서리",
 //     code: "24000",
 //     type: "medium",
 //     parentCode: "20000",

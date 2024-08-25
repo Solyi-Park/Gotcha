@@ -1,7 +1,6 @@
 "use client";
 import { categories } from "@/data/categories";
 import { useState } from "react";
-import CategoryDropdown from "./CategoryDropdown";
 
 export default function CategoryMenu() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
