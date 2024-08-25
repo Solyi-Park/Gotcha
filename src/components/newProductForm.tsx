@@ -181,7 +181,7 @@ export default function NewProductForm() {
           id="productImages"
           setState={setProductImageFiles}
         />
-        <button className="flex flex-col border" type="submit">
+        <button className="flex flex-col border " type="submit">
           등록
         </button>
       </form>

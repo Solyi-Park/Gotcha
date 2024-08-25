@@ -12,8 +12,8 @@ export default function NavBar() {
 
   const user = session?.user;
   return (
-    <nav className="flex flex-col border-b">
-      <section className="bg-red-200 flex items-center justify-between p-8 h-20 w-full sm:h-28 mx-auto">
+    <nav className="flex flex-col">
+      <section className="flex items-center justify-between p-8 h-20 w-full sm:h-28 mx-auto">
         <Link href="/">
           <h1 className="mr-2 text-3xl sm:text-5xl font-bold">Gotcha</h1>
         </Link>{" "}
