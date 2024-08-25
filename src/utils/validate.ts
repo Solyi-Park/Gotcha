@@ -32,4 +32,8 @@ export const validate = {
 
     return null;
   },
+  file: (fileName: string) => {
+    const regex = /^[a-zA-Z0-9._\-\(\)\,\!\&\+\= ]+$/;
+    return regex.test(fileName);
+  },
 };

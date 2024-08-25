@@ -1,5 +1,6 @@
 "use client";
 import { supabase } from "@/app/lib/supabaseClient";
+import { validate } from "@/utils/validate";
 import { useEffect, useState } from "react";
 
 export default function useImageUpload(files: File[]) {
@@ -8,7 +9,13 @@ export default function useImageUpload(files: File[]) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    files.forEach((file) => uploadFile(file));
+    files.forEach((file) => {
+      const isValidateFile = validate.file(file.name);
+      if (!isValidateFile) {
+        return;
+      }
+      uploadFile(file);
+    });
   }, [files]);
 
   async function uploadFile(file: File) {
@@ -28,6 +35,7 @@ export default function useImageUpload(files: File[]) {
             data: { publicUrl },
           } = supabase.storage.from("gotcha").getPublicUrl(imagePath);
           if (publicUrl) {
+            //TODO: imageUrls 배열안에 있는 이미지들 미리보기 제공
             setImageUrls((prev) => [...prev, publicUrl]);
             setIsUploading(false);
           }

@@ -22,12 +22,15 @@ export default function NewProductForm() {
   const [productImagefiles, setProductImageFiles] = useState<File[]>([]);
   const [thumbnailFiles, setThumbnailFiles] = useState<File[]>([]);
 
-  const { imageUrls, isUploading, error } = useImageUpload(productImagefiles);
   const {
     imageUrls: thumbnailUrls,
     isUploading: istThumbnailUploading,
     error: thumbnailError,
   } = useImageUpload(thumbnailFiles);
+
+  //TODO: db에서 상품정보가 없어지면 storage에 저장된 이미지 어떻게 처리할지 생각해보기
+  const { imageUrls, isUploading, error } = useImageUpload(productImagefiles);
+  console.log("imageUrls", imageUrls);
 
   const categoryCode = useCategoryCode(
     largeCategory,
@@ -36,15 +39,23 @@ export default function NewProductForm() {
   );
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    if (!productImagefiles) return;
+    // TODO: submit 버튼 쓰로틀링 처리하기
+
+    if (isUploading || istThumbnailUploading) {
+      alert("이미지를 업로드 중입니다.");
+      return;
+    }
+    if (imageUrls.length === 0 || thumbnailUrls.length === 0) {
+      alert("상품 이미지를 업로드 해주세요.");
+      return;
+    }
 
     const newProduct = {
       name,
       description,
-      price,
+      price: 39000,
       discountRate,
-      stockQuantity,
+      stockQuantity: 10,
       categoryCode,
       imageUrls,
       thumbnailUrls,
@@ -54,14 +65,16 @@ export default function NewProductForm() {
       const res = await fetch("/api/products", {
         method: "POST",
         body: JSON.stringify(newProduct),
-      }).then((res) => res.json());
-      // if (!res.ok) {
-      //   console.log(`Error: ${res.status} ${res.statusText}`);
-      //   return;
-      // }
+      });
+      if (!res.ok) {
+        console.log(`Error: ${res.status} ${res.statusText}`);
+        // TODO: storage 이미지 삭제하는 로직
+        return;
+      }
+
       alert("상품 등록이 완료 되었습니다.");
-      // window.location.reload();
     } catch (error) {
+      // TODO: storage 이미지 삭제하는 로직
       console.error("Failed to add new product", error);
     }
   };
@@ -157,6 +170,7 @@ export default function NewProductForm() {
             mediumCategory ? categoryOptions[largeCategory][mediumCategory] : []
           }
         />
+        {/* TODO: 파일이름이 유효하지 않은 경우 메세지 표시하기 */}
         <FileInputField
           label="썸네일 이미지"
           id="thumbnailImages"
