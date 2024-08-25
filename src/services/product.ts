@@ -20,3 +20,32 @@ export async function addProduct(newProduct: newProduct) {
   }
   return null;
 }
+
+export async function getProducts() {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("createdAt", { ascending: false })
+    .limit(10);
+  if (error) {
+    console.error("Failed to get products data", error);
+    return [];
+  }
+
+  return data;
+}
+
+export async function getProductsByCategory(categoryCode: number) {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .like("categoryCode", `${categoryCode}%`)
+    .order("createdAt", { ascending: false })
+    .limit(3);
+  if (error) {
+    console.error("Failed to get products data by category", error);
+    return [];
+  }
+
+  return data;
+}

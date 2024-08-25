@@ -24,7 +24,7 @@ export default function RootLayout({
           <header>
             <NavBar />
           </header>
-          <main className="px-9 w-full h-full">{children}</main>
+          <main className="px-9 m-5 w-full h-full">{children}</main>
           <BottomNavBar />
           <footer></footer>
         </AuthContext>
