@@ -4,7 +4,7 @@ import HeartIcon from "./icons/HeartIcon";
 type Props = {
   product: FullProduct;
 };
-export default function ProductCard({ product }: Props) {
+export default function HomeProductCard({ product }: Props) {
   return (
     <div className="flex gap-2 my-2">
       <div className="relative w-40 aspect-square">
@@ -20,7 +20,7 @@ export default function ProductCard({ product }: Props) {
           <p className="font-semibold">{product.name}</p>
           <p>{product.description}</p>
           <p className="font-bold">
-            {product.discoutRate && <span>{product.discoutRate}</span>}
+            {product.discountRate && <span>{product.discountRate}</span>}
             {product.price.toLocaleString()}
           </p>
         </div>

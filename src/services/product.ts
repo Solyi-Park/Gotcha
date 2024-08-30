@@ -1,4 +1,5 @@
 import { supabase } from "@/app/lib/supabaseClient";
+import { categories } from "@/data/categories";
 
 export async function addProduct(newProduct: newProduct) {
   const newFullProduct = {
@@ -48,4 +49,35 @@ export async function getProductsByCategory(categoryCode: number) {
   }
 
   return data;
+}
+
+export type SaleProductsResponse = {
+  name: string;
+  products: SimpleProduct[];
+};
+
+export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
+  const largeCategories = categories
+    .filter((item) => item.type === "large")
+    .map((item) => ({ name: item.name, code: item.code }));
+
+  const results = await Promise.all(
+    largeCategories.map(async (category): Promise<SaleProductsResponse> => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("createdAt, name, price, thumbnailUrls, likes ,discountRate")
+        .like("categoryCode", `${category.code.split("")[0]}%`)
+        .gt("discountRate", 0)
+        .order("createdAt", { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error("Error fetching products:", error);
+        return { name: category.name, products: [] };
+      }
+
+      return { name: category.name, products: data as SimpleProduct[] };
+    })
+  );
+  return results;
 }

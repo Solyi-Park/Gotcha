@@ -21,7 +21,10 @@ export default function CategoryMenu() {
                 <ul className=" grid grid-cols-5 absolute left-0 w-full p-5 pb-10 mt-1 px-14 border-t bg-white z-10">
                   {largeCategory.subcategories.map((mediumCategory) => (
                     //TODO: 중분류 카테고리 호버상태에서 벗어날때 원래 폰트굵기 원래대로 돌아가기
-                    <li className="text-sm font-semibold hover:font-extrabold">
+                    <li
+                      className="text-sm font-semibold hover:font-extrabold"
+                      key={mediumCategory.name}
+                    >
                       {mediumCategory.name}
                       {" >"}
                       <ul>

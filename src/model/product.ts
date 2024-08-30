@@ -4,7 +4,7 @@ type FullProduct = {
   createdAt: string;
   deleted: string;
   description: string;
-  discoutRate: number;
+  discountRate: number;
   id: string;
   imageUrls: string[] | null;
   name: string;
@@ -12,14 +12,20 @@ type FullProduct = {
   stockQuantity: number;
   thumbnailUrls: string[] | null;
   updatedAt: string;
+  likes: number;
 };
+
+type SimpleProduct = Pick<
+  FullProduct,
+  "name" | "price" | "thumbnailUrls" | "likes" | "createdAt" | "discountRate"
+>;
 
 type newProduct = Pick<
   FullProduct,
   | "name"
   | "description"
   | "price"
-  | "discoutRate"
+  | "discountRate"
   | "stockQuantity"
   | "categoryCode"
   | "imageUrls"

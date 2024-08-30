@@ -4,7 +4,7 @@ import HeartIcon from "./icons/HeartIcon";
 type Props = {
   product: FullProduct;
 };
-export default function SimpleProductCard({ product }: Props) {
+export default function HomeSimpleProductCard({ product }: Props) {
   return (
     <div className="relative h-60 w-full">
       <Image
@@ -13,7 +13,7 @@ export default function SimpleProductCard({ product }: Props) {
         fill
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 text-white">
+      <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-end p-4 text-white">
         <p className="font-semibold text-xl">{product.name}</p>
         <p className="text-sm">{product.description}</p>
         <p className="font-bold text-lg">

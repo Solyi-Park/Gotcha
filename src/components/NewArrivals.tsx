@@ -1,26 +1,19 @@
-import { getProductsByCategory } from "@/services/product";
+import { getProducts } from "@/services/product";
 import { cache } from "react";
-import ProductCard from "./ProductCard";
-import Image from "next/image";
-import SimpleProductCard from "./SimpleProductCard";
+import HomeProductList from "./HomeProductList";
 
 const fetchNewArrivalProducts = cache(async () => {
-  return await getProductsByCategory(1);
+  return await getProducts();
 });
+
 export default async function NewArrivals() {
-  const res = await fetchNewArrivalProducts();
-  console.log("res2==>", res);
+  //TODO: 카테고리별로 받기
+  const products = await fetchNewArrivalProducts();
   return (
-    <ul className="flex flex-col">
-      {res.map((product, index) => (
-        <li key={product.name} className="last:border-0 border-b">
-          {index === 0 ? (
-            <SimpleProductCard product={product} />
-          ) : (
-            <ProductCard product={product} />
-          )}
-        </li>
-      ))}
-    </ul>
+    <section>
+      <h2 className="font-semibold text-lg italic mb-3">New Arrivals</h2>
+      {/* 궅이 HomeProductList로 해야할지 생각해보기*/}
+      <HomeProductList products={products} />;
+    </section>
   );
 }
