@@ -29,7 +29,7 @@ export default async function SignInPage() {
   const csrfToken = (await getCsrfToken()) ?? "";
 
   return (
-    <section className="flex flex-col items-center gap-6">
+    <section className="flex flex-col items-center gap-6 h-full justify-center">
       <SigninForm csrfToken={csrfToken} />
       <div>
         <p>
@@ -39,8 +39,9 @@ export default async function SignInPage() {
           </span>
         </p>
       </div>
-
-      <OAuthSignin providers={filteredProviders} type="signin" />
+      <div className="w-80">
+        <OAuthSignin providers={filteredProviders} type="signin" />
+      </div>
     </section>
   );
 }

@@ -14,7 +14,7 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       screens: {
-        custom: { max: "950px" }, // 950px 이하를 나타내는 커스텀 브레이크포인트
+        custom: { max: "950px" },
       },
     },
   },

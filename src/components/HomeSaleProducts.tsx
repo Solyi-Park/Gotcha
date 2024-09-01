@@ -2,7 +2,7 @@
 import { categories } from "@/data/categories";
 import { SaleProductsResponse } from "@/services/product";
 
-import { useEffect, useState } from "react";
+import { cache, useEffect, useState } from "react";
 import SaleProductCard from "./SaleProductCard";
 
 export default function HomeSaleProducts() {
@@ -23,7 +23,10 @@ export default function HomeSaleProducts() {
       console.log("data?", data);
       setProductsLists(data);
     }
-    fetchSaleProducts();
+    const fetchNewArrivalProducts = cache(async () => {
+      return await fetchSaleProducts();
+    });
+    fetchNewArrivalProducts();
   }, []);
 
   const selectedList = productLists.filter((list) =>
@@ -35,9 +38,11 @@ export default function HomeSaleProducts() {
 
   return (
     <section>
-      <h2 className="font-semibold text-lg italic mb-1">Sale</h2>
+      <h2 className="font-semibold text-2xl text-center italic mt-2 mb-4">
+        Sale
+      </h2>
       {/* TODO: nav bar 중복 */}
-      <ul className="flex justify-around mb-2">
+      <ul className="flex justify-around sm:mb-2">
         <li
           className={`${
             activeTab === "all" && "font-bold"
@@ -60,7 +65,7 @@ export default function HomeSaleProducts() {
             </li>
           ))}
       </ul>
-      <ul className="grid  ">
+      <ul className="grid grid-cols-2 lg:grid-cols-3 sm:gap-y-2">
         {selectedList.length === 1
           ? selectedList[0]?.products.map((product) => (
               <li key={product.name}>

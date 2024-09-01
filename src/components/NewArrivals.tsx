@@ -10,10 +10,13 @@ export default async function NewArrivals() {
   //TODO: 카테고리별로 받기
   const products = await fetchNewArrivalProducts();
   return (
-    <section>
-      <h2 className="font-semibold text-lg italic mb-3">New Arrivals</h2>
+    <section className="relative">
+      {/* md:absolute 이거 첫번쨰들어가게하기 */}
+      <h2 className="md:absolute font-semibold text-2xl text-center italic my-2">
+        New Arrivals
+      </h2>
       {/* 궅이 HomeProductList로 해야할지 생각해보기*/}
-      <HomeProductList products={products} />;
+      <HomeProductList products={products} />
     </section>
   );
 }

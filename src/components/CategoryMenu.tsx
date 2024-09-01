@@ -12,7 +12,7 @@ export default function CategoryMenu() {
           .map((largeCategory) => (
             <li
               className="font-bold hover:border-black hover:border-b-4 hover:cursor-pointer"
-              key={largeCategory.name}
+              key={largeCategory.code}
               onMouseEnter={() => setHoveredCategory(largeCategory.name)}
               onMouseLeave={() => setHoveredCategory(null)}
             >
@@ -23,13 +23,16 @@ export default function CategoryMenu() {
                     //TODO: 중분류 카테고리 호버상태에서 벗어날때 원래 폰트굵기 원래대로 돌아가기
                     <li
                       className="text-sm font-semibold hover:font-extrabold"
-                      key={mediumCategory.name}
+                      key={mediumCategory.code}
                     >
                       {mediumCategory.name}
                       {" >"}
                       <ul>
                         {mediumCategory.subcategories.map((smallCategory) => (
-                          <li className="font-normal text-sm mt-[5px] hover:font-bold">
+                          <li
+                            className="font-normal text-sm mt-[5px] hover:font-bold"
+                            key={smallCategory.code}
+                          >
                             {smallCategory.name}
                           </li>
                         ))}

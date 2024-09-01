@@ -92,7 +92,7 @@ export default function SignupForm({ csrfToken }: Props) {
   return (
     <form
       method="post"
-      className="flex flex-col gap-5 w-full border rounded-lg p-6 "
+      className="flex flex-col gap-5 w-[320px] border rounded-lg p-6 "
       onSubmit={handleSubmit}
     >
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />

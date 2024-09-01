@@ -16,15 +16,15 @@ export default function HomeProductCard({ product }: Props) {
         />
       </div>
       <div className="flex w-full">
-        <div className="flex flex-col justify-center w-full">
+        <div className="flex flex-col justify-center w-full text-sm">
           <p className="font-semibold">{product.name}</p>
           <p>{product.description}</p>
-          <p className="font-bold">
+          <p className="font-semibold">
             {product.discountRate && <span>{product.discountRate}</span>}
-            {product.price.toLocaleString()}
+            {product.price.toLocaleString()}원
           </p>
         </div>
-        <div className="flex flex-col justify-center p-5 gap-1">
+        <div className="sm:hidden md:flex flex-col justify-center p-5 gap-1">
           <button>
             <HeartIcon />
           </button>

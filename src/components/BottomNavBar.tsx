@@ -42,7 +42,7 @@ export default function BottomNavBar() {
   ];
 
   return (
-    <div className="fixed inset-x-0 bottom-0 border-t bg-white text-gray-400 flex justify-around items-center py-2 z-50 sm:hidden">
+    <div className=" sm:hidden fixed inset-x-0 bottom-0 border-t bg-white text-gray-400 flex justify-around items-center py-2 z-50">
       {navItems.map((item) => (
         <Link href={item.href} key={item.title}>
           <button

@@ -8,7 +8,7 @@ type Props = {
 export default function SaleProductCard({ product }: Props) {
   return (
     <div className="flex flex-col my-2">
-      <div className="relative w-48 aspect-square">
+      <div className="relative aspect-square">
         <Image
           src={product.thumbnailUrls![0]}
           alt={product.name}
@@ -19,14 +19,12 @@ export default function SaleProductCard({ product }: Props) {
           <HeartIcon />
         </button>
       </div>
-      <div className="flex w-full">
+      <div className="flex w-full px-2">
         <div className="flex flex-col justify-center w-full">
-          <p className="font-semibold">{product.name}</p>
-          <p className="flex items-center text-sm font-semibold">
-            <span className="mr-2 text-orange-600">
-              {product.discountRate}%
-            </span>
-            <span className="text-xs text-gray-400 font-normal line-through mr-2">
+          <p className="font-semibold text-sm">{product.name}</p>
+          <p className="flex items-center font-semibold text-xs sm:text-sm">
+            <span className="mr-2 text-red-500">{product.discountRate}%</span>
+            <span className=" text-gray-400  text-[10px] sm:text-xs font-normal line-through mr-2">
               {product.price.toLocaleString()}원
             </span>
             <span>
