@@ -1,9 +1,6 @@
 import { getIconSize } from "@/utils/icon";
 import { FiMenu } from "@react-icons/all-files/fi/FiMenu";
 
-type Props = {
-  size: "small" | "medium";
-};
-export default function CategoryIcon({ size }: Props) {
+export default function CategoryIcon({ size = "large" }: IconSize) {
   return <FiMenu size={getIconSize(size)} />;
 }

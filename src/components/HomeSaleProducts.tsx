@@ -60,7 +60,7 @@ export default function HomeSaleProducts() {
             </li>
           ))}
       </ul>
-      <ul>
+      <ul className="grid  ">
         {selectedList.length === 1
           ? selectedList[0]?.products.map((product) => (
               <li key={product.name}>

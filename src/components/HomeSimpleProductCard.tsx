@@ -5,6 +5,8 @@ type Props = {
   product: FullProduct;
 };
 export default function HomeSimpleProductCard({ product }: Props) {
+  // 컴포넌트명 변경하기 - 카드 유형에 따라
+
   return (
     <div className="relative h-60 w-full">
       <Image
@@ -17,7 +19,7 @@ export default function HomeSimpleProductCard({ product }: Props) {
         <p className="font-semibold text-xl">{product.name}</p>
         <p className="text-sm">{product.description}</p>
         <p className="font-bold text-lg">
-          {product.discoutRate && <span>{product.discoutRate}% </span>}
+          {product.discountRate && <span>{product.discountRate}% </span>}
           {product.price.toLocaleString()}
         </p>
       </div>

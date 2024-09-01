@@ -22,7 +22,7 @@ export default function UserMenu({ user }: Props) {
     {
       title: "SHOPPING BAG",
       href: "/cart",
-      icon: <ShoppingBagIcon size="small" />,
+      icon: <ShoppingBagIcon />,
     },
   ];
   return (

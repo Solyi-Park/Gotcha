@@ -1,5 +1,6 @@
 import Image from "next/image";
 import HeartIcon from "./icons/HeartIcon";
+import { getDiscountedPrice } from "@/utils/calculate";
 
 type Props = {
   product: SimpleProduct;
@@ -12,23 +13,28 @@ export default function SaleProductCard({ product }: Props) {
           src={product.thumbnailUrls![0]}
           alt={product.name}
           fill
-          className="object-cover"
+          className="object-cover relative"
         />
+        <button className="absolute right-2 bottom-2 text-white">
+          <HeartIcon />
+        </button>
       </div>
       <div className="flex w-full">
         <div className="flex flex-col justify-center w-full">
           <p className="font-semibold">{product.name}</p>
-          <p className="text-sm font-semibold">
+          <p className="flex items-center text-sm font-semibold">
             <span className="mr-2 text-orange-600">
               {product.discountRate}%
             </span>
-            <span>{product.price.toLocaleString()}원</span>
+            <span className="text-xs text-gray-400 font-normal line-through mr-2">
+              {product.price.toLocaleString()}원
+            </span>
+            <span>
+              {getDiscountedPrice(product.price, product.discountRate)}원
+            </span>
           </p>
         </div>
       </div>
-      <button>
-        <HeartIcon />
-      </button>
     </div>
   );
 }

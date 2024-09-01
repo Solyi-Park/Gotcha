@@ -22,22 +22,22 @@ export default function BottomNavBar() {
     {
       title: "CATEGORY",
       href: "/category",
-      icon: <CategoryIcon size="medium" />,
+      icon: <CategoryIcon />,
     },
     {
       title: "SEARCH",
       href: "/search",
-      icon: <SearchIcon />,
+      icon: <SearchIcon size="large" />,
     },
     {
       title: "LIKE",
       href: "/mypage/like",
-      icon: <HeartIcon />,
+      icon: <HeartIcon size="large" />,
     },
     {
       title: "MY",
       href: `/mypage`,
-      icon: <UserIcon />,
+      icon: <UserIcon size="large" />,
     },
   ];
 

@@ -3,6 +3,8 @@ export function getIconSize(size: string) {
     case "small":
       return 16;
     case "medium":
+      return 21;
+    case "large":
       return 25;
   }
 }
