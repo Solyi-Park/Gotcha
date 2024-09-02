@@ -5,12 +5,12 @@ import ReactQueryProvider from "@/provider/ReactQueryProvider";
 export default function HomePage() {
   // TODO:비율 수정하기
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex flex-col sm:grid grid-cols-5 grid-rows-2 gap-10 h-full mt-2">
-        <div className="col-span-2 ">
+    <div className=" flex flex-col bg-green-200">
+      <div className="flex flex-col sm:grid sm:grid-cols-5 sm:gap-10 pt-2 ">
+        <div className="col-span-2  bg-yellow-200">
           <NewArrivals />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-3 bg-orange-200">
           <HomeSaleProducts />
         </div>
       </div>
