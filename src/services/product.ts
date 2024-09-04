@@ -65,7 +65,9 @@ export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
     largeCategories.map(async (category): Promise<SaleProductsResponse> => {
       const { data, error } = await supabase
         .from("products")
-        .select("createdAt, name, price, thumbnailUrls, likes ,discountRate")
+        .select(
+          "createdAt, name, price, thumbnailUrls, likes ,discountRate, id"
+        )
         .like("categoryCode", `${category.code.split("")[0]}%`)
         .gt("discountRate", 0)
         .order("createdAt", { ascending: false })
@@ -80,4 +82,22 @@ export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
     })
   );
   return results;
+}
+
+export async function getProductById(id: string): Promise<FullProduct> {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  // if (error) {
+  //   return new Error("Error fetching product by ID");
+  // }
+
+  if (!data) {
+    console.log('"Product not found');
+    // throw new Error("Product not found");
+  }
+  return data as FullProduct;
 }

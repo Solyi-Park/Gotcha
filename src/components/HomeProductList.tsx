@@ -9,18 +9,18 @@ export default function HomeProductList({ products }: Props) {
   return (
     <ul className="flex flex-col gap-1">
       {products.map((product, index) => (
-        <Link href={`/products/${product.id}`}>
-          <li
-            key={product.name}
-            className="border-b last:border-0 first:border-r"
-          >
+        <li
+          key={product.name}
+          className="border-b last:border-0 first:border-r"
+        >
+          <Link href={`/products/${product.id}`}>
             {index % 3 === 0 ? (
               <SimpleProductCard product={product} />
             ) : (
               <HomeProductCard product={product} />
             )}
-          </li>
-        </Link>
+          </Link>
+        </li>
       ))}
     </ul>
   );

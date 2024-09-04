@@ -4,6 +4,7 @@ import { SaleProductsResponse } from "@/services/product";
 
 import { cache, useEffect, useState } from "react";
 import SaleProductCard from "./SaleProductCard";
+import Link from "next/link";
 
 export default function HomeSaleProducts() {
   const [productLists, setProductsLists] = useState<SaleProductsResponse[]>([]);
@@ -44,6 +45,7 @@ export default function HomeSaleProducts() {
       {/* TODO: nav bar 중복 */}
       <ul className="flex justify-around sm:mb-2">
         <li
+          key="category-all-products"
           className={`${
             activeTab === "all" && "font-bold"
           } hover:cursor-pointer text-sm`}
@@ -69,13 +71,17 @@ export default function HomeSaleProducts() {
         {selectedList.length === 1
           ? selectedList[0]?.products.map((product) => (
               <li key={product.name}>
-                <SaleProductCard product={product} />
+                <Link href={`/products/${product.id}`}>
+                  <SaleProductCard product={product} />
+                </Link>
               </li>
             ))
           : selectedList.map((list) =>
               list.products.map((product) => (
-                <li key={product.name}>
-                  <SaleProductCard product={product} />
+                <li key={`all-${product.name}`}>
+                  <Link href={`/products/${product.id}`}>
+                    <SaleProductCard product={product} />
+                  </Link>
                 </li>
               ))
             )}

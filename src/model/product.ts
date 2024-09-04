@@ -1,5 +1,5 @@
 type FullProduct = {
-  categoryCode: string;
+  categoryCode: number;
   coupon: string | null;
   createdAt: string;
   deleted: string;
@@ -17,7 +17,13 @@ type FullProduct = {
 
 type SimpleProduct = Pick<
   FullProduct,
-  "name" | "price" | "thumbnailUrls" | "likes" | "createdAt" | "discountRate"
+  | "name"
+  | "price"
+  | "thumbnailUrls"
+  | "likes"
+  | "createdAt"
+  | "discountRate"
+  | "id"
 >;
 
 type newProduct = Pick<
