@@ -7,6 +7,7 @@ import { categoryOptions } from "@/constants/categoryOptions.ts";
 import InputField from "./InputField";
 import SelectField from "./SelectField";
 import FileInputField from "./FileInputField";
+import AddNewOptions from "./AddNewOptions";
 
 export default function NewProductForm() {
   const [largeCategory, setLargeCategory] = useState<string>("");
@@ -181,6 +182,7 @@ export default function NewProductForm() {
           id="productImages"
           setState={setProductImageFiles}
         />
+        <AddNewOptions />
         <button className="flex flex-col border " type="submit">
           등록
         </button>
