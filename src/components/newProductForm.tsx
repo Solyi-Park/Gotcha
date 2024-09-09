@@ -1,5 +1,4 @@
 "use client";
-
 import { FormEventHandler, useState } from "react";
 import useImageUpload from "@/hooks/images";
 import useCategoryCode from "@/hooks/categories";
@@ -8,6 +7,12 @@ import InputField from "./InputField";
 import SelectField from "./SelectField";
 import FileInputField from "./FileInputField";
 import AddNewOptions from "./AddNewOptions";
+
+export type Option = {
+  name: string;
+  items: OptionItem[];
+};
+export type OptionItem = { groupName: string; value: string };
 
 export default function NewProductForm() {
   const [largeCategory, setLargeCategory] = useState<string>("");
@@ -22,6 +27,10 @@ export default function NewProductForm() {
 
   const [productImagefiles, setProductImageFiles] = useState<File[]>([]);
   const [thumbnailFiles, setThumbnailFiles] = useState<File[]>([]);
+
+  const [optionGroup, setOptionGroup] = useState("");
+  const [optionItems, setOptionItems] = useState("");
+  const [options, setOptions] = useState<Option[]>([]);
 
   const {
     imageUrls: thumbnailUrls,
@@ -60,6 +69,7 @@ export default function NewProductForm() {
       categoryCode,
       imageUrls,
       thumbnailUrls,
+      options,
     };
 
     try {
@@ -182,7 +192,15 @@ export default function NewProductForm() {
           id="productImages"
           setState={setProductImageFiles}
         />
-        <AddNewOptions />
+        <AddNewOptions
+          optionGroup={optionGroup}
+          setOptionGroup={setOptionGroup}
+          optionItems={optionItems}
+          setOptionItems={setOptionItems}
+          options={options}
+          setOptions={setOptions}
+          optionButtonDisabled={!optionGroup}
+        />
         <button className="flex flex-col border " type="submit">
           등록
         </button>
