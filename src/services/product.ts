@@ -5,7 +5,6 @@ import { FullProduct, newProduct, SimpleProduct } from "@/model/product";
 export async function addProduct(newProduct: newProduct) {
   const newFullProduct = {
     ...newProduct,
-    coupon: null,
     updatedAt: null,
   };
   const { data, error } = await supabase

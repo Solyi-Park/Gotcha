@@ -78,11 +78,12 @@ export default function ProductHeader({ product }: Props) {
           </div>
         </div>
         <ul>
-          {/* TODO:옵션 상태관리 */}
+          {/* TODO:옵션 상태관리 "value" */}
           {options.map((option) => (
             <li key={option.name}>
-              <select>
-                <option>{option.name}</option>
+              <label htmlFor="option">{option.name}</label>
+              <select className="text-gray-500" id="option">
+                <option value="">{option.name}</option>
                 {option.items.map((item) => (
                   <option>{item.value}</option>
                 ))}
