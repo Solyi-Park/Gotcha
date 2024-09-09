@@ -14,7 +14,7 @@ export type FullProduct = {
   stockQuantity: number;
   thumbnailUrls: string[] | null;
   updatedAt: string;
-  likes: number;
+  likes: string[];
   options: Option[];
 };
 
