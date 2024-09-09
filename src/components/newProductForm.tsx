@@ -31,6 +31,7 @@ export default function NewProductForm() {
   const [optionGroup, setOptionGroup] = useState("");
   const [optionItems, setOptionItems] = useState("");
   const [options, setOptions] = useState<Option[]>([]);
+  console.log("options", options);
 
   const {
     imageUrls: thumbnailUrls,
@@ -50,6 +51,7 @@ export default function NewProductForm() {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     // TODO: submit 버튼 쓰로틀링 처리하기
+    e.preventDefault();
 
     if (isUploading || istThumbnailUploading) {
       alert("이미지를 업로드 중입니다.");
@@ -59,7 +61,7 @@ export default function NewProductForm() {
       alert("상품 이미지를 업로드 해주세요.");
       return;
     }
-
+    if (!options) return;
     const newProduct = {
       name,
       description,
@@ -75,6 +77,7 @@ export default function NewProductForm() {
     try {
       const res = await fetch("/api/products", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProduct),
       });
       if (!res.ok) {

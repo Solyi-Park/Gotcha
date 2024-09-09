@@ -1,4 +1,6 @@
-type FullProduct = {
+import { Option } from "@/components/newProductForm";
+
+export type FullProduct = {
   categoryCode: number;
   coupon: string | null;
   createdAt: string;
@@ -13,9 +15,10 @@ type FullProduct = {
   thumbnailUrls: string[] | null;
   updatedAt: string;
   likes: number;
+  options: Option[];
 };
 
-type SimpleProduct = Pick<
+export type SimpleProduct = Pick<
   FullProduct,
   | "name"
   | "price"
@@ -26,7 +29,7 @@ type SimpleProduct = Pick<
   | "id"
 >;
 
-type newProduct = Pick<
+export type newProduct = Pick<
   FullProduct,
   | "name"
   | "description"

@@ -4,6 +4,7 @@ import { findFullCategoryNames } from "@/utils/categories";
 import Image from "next/image";
 import HeartIcon from "./icons/HeartIcon";
 import { getDiscountedPrice } from "@/utils/calculate";
+import { FullProduct } from "@/model/product";
 
 type Props = {
   product: FullProduct;
@@ -18,6 +19,7 @@ export default function ProductHeader({ product }: Props) {
     price,
     stockQuantity,
     likes,
+    options,
   } = product;
 
   const categoryNames = findFullCategoryNames(categoryCode);
@@ -75,7 +77,19 @@ export default function ProductHeader({ product }: Props) {
             <button>쿠폰받기</button>
           </div>
         </div>
-        <div>구매옵션</div>
+        <ul>
+          {/* TODO:옵션 상태관리 */}
+          {options.map((option) => (
+            <li key={option.name}>
+              <select>
+                <option>{option.name}</option>
+                {option.items.map((item) => (
+                  <option>{item.value}</option>
+                ))}
+              </select>
+            </li>
+          ))}
+        </ul>
         <div className="flex gap-1">
           <button className="border px-10 py-3 bg-white">장바구니 담기</button>
           <button className="border px-10 py-3 bg-black text-white">

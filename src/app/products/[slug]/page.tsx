@@ -7,7 +7,9 @@ import ProductHeader from "@/components/ProductHeader";
 import ProductInfo from "@/components/ProductInfo";
 import ProductQnA from "@/components/ProductQnA";
 import ProductReviews from "@/components/ProductReviews";
+import { FullProduct } from "@/model/product";
 import { getProductById } from "@/services/product";
+import { redirect } from "next/navigation";
 
 export default async function ProductDetailPage({
   params,
@@ -18,6 +20,9 @@ export default async function ProductDetailPage({
   const productId = params.slug;
   // console.log("productId", productId);
   const product: FullProduct = await getProductById(productId);
+  if (!product) {
+    redirect("/");
+  }
   // console.log("상품정보", product);
   return (
     <>

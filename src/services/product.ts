@@ -1,5 +1,6 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { categories } from "@/data/categories";
+import { FullProduct, newProduct, SimpleProduct } from "@/model/product";
 
 export async function addProduct(newProduct: newProduct) {
   const newFullProduct = {

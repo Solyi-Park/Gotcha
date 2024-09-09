@@ -1,5 +1,5 @@
 "use client";
-import { MouseEvent, useState } from "react";
+import { MouseEvent } from "react";
 import { Option } from "./newProductForm";
 
 type Props = {
@@ -21,8 +21,6 @@ export default function AddNewOptions({
   setOptions,
   optionButtonDisabled,
 }: Props) {
-  console.log("optios", options);
-
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const items = optionItems.split(",").map((item) => ({
@@ -58,6 +56,7 @@ export default function AddNewOptions({
 
   return (
     <div>
+      {/* TODO: 옵션추가후 마우스 포커스 가게 하기 */}
       <label htmlFor="optionGroup">
         옵션명
         <input
