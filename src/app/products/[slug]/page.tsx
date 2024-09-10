@@ -1,8 +1,3 @@
-//상품썸네일(멀티캐러셀), 상품정보
-//상품설명(+이미지))
-//리뷰
-//QNA
-
 import { authOptions } from "@/app/lib/auth";
 import ProductHeader from "@/components/ProductHeader";
 import ProductInfo from "@/components/ProductInfo";
@@ -20,7 +15,7 @@ export default async function ProductDetailPage({
 }) {
   if (!params.slug) return;
   const productId = params.slug;
-  // console.log("productId", productId);
+
   const product: FullProduct = await getProductById(productId);
   if (!product) {
     redirect("/");
@@ -31,7 +26,6 @@ export default async function ProductDetailPage({
   if (!session) return;
   const { user } = session;
 
-  // console.log("상품정보", product);
   return (
     <>
       <ProductHeader product={product} user={user} />

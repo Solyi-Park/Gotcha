@@ -1,11 +1,12 @@
 import Link from "next/link";
-import HomeProductCard from "./HomeProductCard";
+import HorizontalProductCard from "./HorizontalProductCard";
 import SimpleProductCard from "./HomeSimpleProductCard";
+import { FullProduct } from "@/model/product";
 type Props = {
   products: FullProduct[];
 };
 
-export default function HomeProductList({ products }: Props) {
+export default function NewProductList({ products }: Props) {
   return (
     <ul className="flex flex-col gap-1">
       {products.map((product, index) => (
@@ -17,7 +18,7 @@ export default function HomeProductList({ products }: Props) {
             {index % 3 === 0 ? (
               <SimpleProductCard product={product} />
             ) : (
-              <HomeProductCard product={product} />
+              <HorizontalProductCard product={product} />
             )}
           </Link>
         </li>

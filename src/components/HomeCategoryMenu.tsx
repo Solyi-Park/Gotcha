@@ -2,7 +2,7 @@
 import { categories } from "@/data/categories";
 import { useState } from "react";
 
-export default function CategoryMenu() {
+export default function HomeCategoryMenu() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   return (
     <nav className="hidden sm:flex ">

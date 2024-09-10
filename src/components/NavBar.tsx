@@ -2,10 +2,9 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import SearchBar from "./SearchBar";
-
 import ShoppingBagIcon from "./icons/ShoppingBagIcon";
 import UserMenu from "../../UserMenu";
-import CategoryMenu from "./CategoryMenu";
+import HomeCategoryMenu from "./HomeCategoryMenu";
 
 export default function NavBar() {
   const { data: session } = useSession();
@@ -26,7 +25,7 @@ export default function NavBar() {
           </Link>
         </div>
       </section>
-      <CategoryMenu />
+      <HomeCategoryMenu />
     </nav>
   );
 }

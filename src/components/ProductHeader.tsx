@@ -1,5 +1,3 @@
-import { categoryOptions } from "@/constants/categoryOptions.ts";
-import { categories } from "@/data/categories";
 import { findFullCategoryNames } from "@/utils/categories";
 import Image from "next/image";
 import HeartIcon from "./icons/HeartIcon";
@@ -12,7 +10,7 @@ type Props = {
   product: FullProduct;
   user: SimpleUser & { id: string };
 };
-export default function ProductHeader({ product, user }: Props) {
+export default function ProductDetailHeader({ product, user }: Props) {
   const {
     categoryCode,
     thumbnailUrls,
@@ -30,11 +28,14 @@ export default function ProductHeader({ product, user }: Props) {
   return (
     <section className="flex flex-col sm:flex-row">
       <div className="relative w-96 h-96 object-cover">
-        <Image
-          src={thumbnailUrls ? thumbnailUrls[0] : ""}
-          alt="product thumbnail"
-          fill
-        />
+        {thumbnailUrls && thumbnailUrls !== null && (
+          <Image
+            src={thumbnailUrls[0] || ""}
+            fill
+            alt="product thumbnail"
+            className="w-96 h-96 object-fill"
+          />
+        )}
       </div>
       <div>
         <div>

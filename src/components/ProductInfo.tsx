@@ -3,7 +3,7 @@ import Image from "next/image";
 type Props = {
   imageUrls: string[] | null;
 };
-export default function ProductInfo({ imageUrls }: Props) {
+export default function ProductDetailInfo({ imageUrls }: Props) {
   return (
     <section className="my-10 py-5 border-t">
       {imageUrls &&

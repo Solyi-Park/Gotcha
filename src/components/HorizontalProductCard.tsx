@@ -1,10 +1,11 @@
 import Image from "next/image";
 import HeartIcon from "./icons/HeartIcon";
+import { FullProduct } from "@/model/product";
 
 type Props = {
   product: FullProduct;
 };
-export default function HomeProductCard({ product }: Props) {
+export default function HorizontalProductCard({ product }: Props) {
   return (
     <div className="flex gap-2 my-2">
       <div className="relative w-40 aspect-square">

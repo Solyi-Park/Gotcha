@@ -1,11 +1,12 @@
 import Image from "next/image";
 import HeartIcon from "./icons/HeartIcon";
 import { getDiscountedPrice } from "@/utils/calculate";
+import { SimpleProduct } from "@/model/product";
 
 type Props = {
   product: SimpleProduct;
 };
-export default function SaleProductCard({ product }: Props) {
+export default function VerticalProductCard({ product }: Props) {
   return (
     <div className="flex flex-col my-2">
       <div className="relative aspect-square">
