@@ -1,13 +1,19 @@
 "use client";
 import { categories } from "@/data/categories";
-import { useCategory } from "@/provider/categoryProvider";
-import { useState } from "react";
+import { useCategory } from "@/provider/CategoryProviderForSaleProducts";
 
-export default function CategoryBar() {
+type Props = {
+  layout: "vertical" | "horizontal";
+};
+export default function CategoryBar({ layout }: Props) {
   const { activeTab, setActiveTab } = useCategory();
 
   return (
-    <ul className="flex justify-around sm:mb-2">
+    <ul
+      className={`flex justify-around sm:mb-2 ${
+        layout === "vertical" && "flex-col"
+      }`}
+    >
       <li
         key="category-all-products"
         className={`${
@@ -17,9 +23,8 @@ export default function CategoryBar() {
       >
         all
       </li>
-      {categories
-        .filter((category) => category.type === "large")
-        .map((largeCategory) => (
+      {layout === "horizontal" &&
+        categories.map((largeCategory) => (
           <li
             className={`${
               activeTab === largeCategory.name && "font-bold"

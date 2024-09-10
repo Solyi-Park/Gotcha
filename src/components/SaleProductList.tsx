@@ -2,7 +2,7 @@
 import { SaleProductsResponse } from "@/services/product";
 import Link from "next/link";
 import VerticalProductCard from "./VerticalProductCard";
-import { useCategory } from "@/provider/categoryProvider";
+import { useCategory } from "@/provider/CategoryProviderForSaleProducts";
 
 type Props = {
   saleProducts: SaleProductsResponse[];

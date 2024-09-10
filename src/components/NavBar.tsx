@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import ShoppingBagIcon from "./icons/ShoppingBagIcon";
 import UserMenu from "../../UserMenu";
 import HomeCategoryMenu from "./HomeCategoryMenu";
+import { MainCategoryProvider } from "@/provider/MainCategoryProvider";
 
 export default function NavBar() {
   const { data: session } = useSession();
@@ -25,7 +26,9 @@ export default function NavBar() {
           </Link>
         </div>
       </section>
-      <HomeCategoryMenu />
+      <MainCategoryProvider>
+        <HomeCategoryMenu />
+      </MainCategoryProvider>
     </nav>
   );
 }

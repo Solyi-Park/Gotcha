@@ -1,9 +1,13 @@
 "use client";
 import { categories } from "@/data/categories";
+import { useMainCategory } from "@/provider/MainCategoryProvider";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function HomeCategoryMenu() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+  const { activeTab, setActiveTab } = useMainCategory();
+
   return (
     <nav className="hidden sm:flex ">
       <ul className="flex justify-around sm:w-[500px] lg:w-[600px] px-5">
@@ -33,7 +37,11 @@ export default function HomeCategoryMenu() {
                             className="font-normal text-sm mt-[5px] hover:font-bold"
                             key={smallCategory.code}
                           >
-                            {smallCategory.name}
+                            <Link
+                              href={`/category/list?categoryLargeCode=${largeCategory.code}&categoryMediumCode=${mediumCategory.code}&categorySmallCode=${smallCategory.code}`}
+                            >
+                              {smallCategory.name}
+                            </Link>
                           </li>
                         ))}
                       </ul>

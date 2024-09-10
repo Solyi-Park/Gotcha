@@ -16,7 +16,11 @@ export function useCategory() {
   return context;
 }
 
-export function CategoryProvider({ children }: { children: ReactNode }) {
+export function CategoryProviderForSaleProducts({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [activeTab, setActiveTab] = useState<string>("all");
 
   return (
