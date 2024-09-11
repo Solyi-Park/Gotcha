@@ -72,6 +72,8 @@ const findCategory = (
   return null;
 };
 
+// TODO:code string으로 변경
+
 export const findFullCategoryNames = (code: number) => {
   const largeCategory = findCategory(code, "large");
   const mediumCategory = findCategory(code, "medium");
@@ -85,68 +87,35 @@ export const findFullCategoryNames = (code: number) => {
   return categoryNames;
 };
 
-// const findLargeCategory = (code: number) => {
-//   const codeAsString = String(code);
-//   const largeCategoryCode = codeAsString.substring(0, 1) + "0000";
-//   const largeCategory = categories.find(
-//     (category) => category.code === largeCategoryCode
-//   );
+export function findParentCategories(code: string) {
+  let result = {
+    largeCategory: null as string | null,
+    mediumCategory: null as string | null,
+    smallCategory: null as string | null,
+  };
 
-//   if (largeCategory) {
-//     const categoryData = {
-//       name: largeCategory.name,
-//       subcategories: largeCategory.subcategories,
-//     };
-//     return categoryData;
-//   }
-// };
+  for (const largeCategory of categories) {
+    if (largeCategory.code === code) {
+      result.largeCategory = largeCategory.code;
+      return result;
+    }
 
-// const findMediumCategory = (code: number) => {
-//   const codeAsString = String(code);
-//   const mediumCategoryCode = codeAsString.substring(1, 2);
+    for (const mediumCategory of largeCategory.subcategories) {
+      if (mediumCategory.code === code) {
+        result.largeCategory = largeCategory.code;
+        result.mediumCategory = mediumCategory.code;
+        return result;
+      }
+      for (const smallCategory of mediumCategory.subcategories) {
+        if (smallCategory.code === code) {
+          result.largeCategory = largeCategory.code;
+          result.mediumCategory = mediumCategory.code;
+          result.smallCategory = smallCategory.code;
+          return result;
+        }
+      }
+    }
+  }
 
-//   const largeCategory = findLargeCategory(code);
-//   if (!largeCategory) return null;
-
-//   const mediumCategory = largeCategory.subcategories.find(
-//     (medium) => medium.code.substring(1, 2) === mediumCategoryCode
-//   );
-
-//   if (mediumCategory) {
-//     const categoryData = {
-//       name: mediumCategory.name,
-//       subcategories: mediumCategory.subcategories,
-//     };
-//     return categoryData;
-//   } else {
-//     return null;
-//   }
-// };
-
-// const findSmallCategoryName = (code: number) => {
-//   const codeAsString = String(code);
-//   const smallCategoryCode = codeAsString.substring(2, 3);
-
-//   const mediumCategory = findMediumCategory(code);
-
-//   if (!mediumCategory) return null;
-
-//   const smallCategory = mediumCategory.subcategories.find(
-//     (small) => small.code.substring(2, 3) === smallCategoryCode
-//   );
-//   if (smallCategory) return smallCategory.name;
-//   return null;
-// };
-
-// export const findFullCategoryNames = (code: number) => {
-//   const largeCategory = findLargeCategory(code);
-//   const mediumCategory = findMediumCategory(code);
-//   const smallCategoryName = findSmallCategoryName(code);
-
-//   const categoryNames = {
-//     large: largeCategory?.name || null,
-//     medium: mediumCategory?.name || null,
-//     small: smallCategoryName,
-//   };
-//   return categoryNames;
-// };
+  return result;
+}

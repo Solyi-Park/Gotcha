@@ -2,41 +2,54 @@
 import { useMainCategoryStore } from "@/store/category";
 import CategoryBar from "./CategoryBar";
 import { categories } from "@/data/categories";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { findParentCategories } from "@/utils/categories";
 
 export default function CategorySideBar() {
-  const activeTab = useMainCategoryStore((state) => state.activeTab);
-  const setActiveTab = useMainCategoryStore((state) => state.setActiveTab);
-  const subCategories = categories
-    .find((largeCategory) => largeCategory.name === activeTab.large)
-    ?.subcategories.find(
-      (mediumCategory) => mediumCategory.name === activeTab.medium
-    )?.subcategories;
+  const router = useRouter();
+  const params = useSearchParams();
+  const largeCode = params.get("categoryLargeCode");
+  const mediumCode = params.get("categoryMediumCode");
+  const smallCode = params.get("categorySmallCode");
+  // const activeTab = useMainCategoryStore((state) => state.activeTab);
+  // const setActiveTab = useMainCategoryStore((state) => state.setActiveTab);
 
-  const onClickSmallCategory = (category: string) => {
-    const newActiveTab = {
-      ...activeTab,
-      small: category,
-    };
-    setActiveTab(newActiveTab);
+  const largeCategory = categories.find(
+    (category) => category.code === largeCode
+  );
+  const mediumCategory = largeCategory?.subcategories.find(
+    (subCategory) => subCategory.code === mediumCode
+  );
+  const smallCategory = mediumCategory?.subcategories.find(
+    (subCategory) => subCategory.code === smallCode
+  );
+  const onClickItem = (smallCategoryCode: string) => {
+    const parentCode = findParentCategories(smallCategoryCode);
+    router.push(
+      `/category/list?categoryLargeCode=${parentCode.largeCategory}&categoryMediumCode=${parentCode.mediumCategory}&categorySmallCode=${smallCategoryCode}`
+    );
+    // const newActiveTab = {
+    //   ...activeTab,
+    //   small: category,
+    // };
+    // setActiveTab(newActiveTab);
   };
-  console.log("subCategories:", subCategories);
-  console.log("activeCategory:", activeTab);
+
   return (
     <div className="w-48 bg-red-200">
-      <h2
-        className={`${activeTab.large && "font-bold border-b-4 border-black"}`}
-      >
-        {activeTab.large === "women" && <span>여성</span>}
-        {activeTab.large === "men" && <span>남성</span>}
-        {activeTab.medium}
+      <h2 className={`${largeCode && "font-bold border-b-4 border-black"}`}>
+        {largeCategory?.name === "women" && <span>여성</span>}
+        {largeCategory?.name === "men" && <span>남성</span>}
+        {mediumCategory?.name}
       </h2>
       <ul>
-        {subCategories?.map((small) => (
+        {mediumCategory?.subcategories?.map((small) => (
           <li
             key={small.name}
-            onClick={() => onClickSmallCategory(small.name)}
+            onClick={() => onClickItem(small.code)}
             className={`${
-              activeTab.small === small.name && "font-bold"
+              small.code === smallCode && "font-bold"
             } hover:cursor-pointer`}
           >
             {small.name}
