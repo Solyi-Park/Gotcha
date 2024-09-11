@@ -1,13 +1,13 @@
 "use client";
 import { categories } from "@/data/categories";
-import { useCategory } from "@/provider/CategoryProviderForSaleProducts";
+import { useSaleCategory } from "@/provider/CategoryProviderForSaleProducts";
 
 type Props = {
   layout: "vertical" | "horizontal";
+  categories: string[];
 };
-export default function CategoryBar({ layout }: Props) {
-  const { activeTab, setActiveTab } = useCategory();
-
+export default function CategoryBar({ layout, categories }: Props) {
+  const { activeTab, setActiveTab } = useSaleCategory();
   return (
     <ul
       className={`flex justify-around sm:mb-2 ${
@@ -24,15 +24,15 @@ export default function CategoryBar({ layout }: Props) {
         all
       </li>
       {layout === "horizontal" &&
-        categories.map((largeCategory) => (
+        categories.map((category) => (
           <li
             className={`${
-              activeTab === largeCategory.name && "font-bold"
+              activeTab === category && "font-bold"
             } text-sm hover:cursor-pointer`}
-            key={largeCategory.name}
-            onClick={(e) => setActiveTab(largeCategory.name)}
+            key={category}
+            onClick={(e) => setActiveTab(category)}
           >
-            {largeCategory.name}
+            {category}
           </li>
         ))}
     </ul>

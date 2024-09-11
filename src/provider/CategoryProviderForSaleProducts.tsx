@@ -8,7 +8,7 @@ type CategoryContextType = {
 
 const CategoryContext = createContext<CategoryContextType | "">("");
 
-export function useCategory() {
+export function useSaleCategory() {
   const context = useContext(CategoryContext);
   if (!context) {
     throw new Error("useCategory must be used within a CategoryProvider");

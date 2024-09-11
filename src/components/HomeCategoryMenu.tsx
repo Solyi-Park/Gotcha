@@ -1,12 +1,28 @@
 "use client";
 import { categories } from "@/data/categories";
-import { useMainCategory } from "@/provider/MainCategoryProvider";
+import { useMainCategoryStore } from "@/store/category";
+
 import Link from "next/link";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 
 export default function HomeCategoryMenu() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-  const { activeTab, setActiveTab } = useMainCategory();
+  const activeCategory = useMainCategoryStore((state) => state.activeTab);
+  const setActiveCategory = useMainCategoryStore((state) => state.setActiveTab);
+
+  const onClickCategory = (
+    e: MouseEvent<HTMLLIElement>,
+    large: string,
+    medium: string,
+    small: string | null
+  ) => {
+    e.stopPropagation();
+    setActiveCategory({
+      large,
+      medium,
+      small,
+    });
+  };
 
   return (
     <nav className="hidden sm:flex ">
@@ -15,7 +31,10 @@ export default function HomeCategoryMenu() {
           .filter((category) => category.type === "large")
           .map((largeCategory) => (
             <li
-              className="font-bold hover:border-black hover:border-b-4 hover:cursor-pointer"
+              className={`${
+                activeCategory.large === largeCategory.name &&
+                "border-b-4 border-black"
+              } font-bold hover:border-black hover:border-b-4 hover:cursor-pointer`}
               key={largeCategory.code}
               onMouseEnter={() => setHoveredCategory(largeCategory.name)}
               onMouseLeave={() => setHoveredCategory(null)}
@@ -28,14 +47,34 @@ export default function HomeCategoryMenu() {
                     <li
                       className="text-sm font-semibold hover:font-extrabold"
                       key={mediumCategory.code}
+                      onClick={(e) =>
+                        onClickCategory(
+                          e,
+                          largeCategory.name,
+                          mediumCategory.name,
+                          null
+                        )
+                      }
                     >
-                      {mediumCategory.name}
+                      <Link
+                        href={`/category/list?categoryLargeCode=${largeCategory.code}&categoryMediumCode=${mediumCategory.code}&categorySmallCode=`}
+                      >
+                        {mediumCategory.name}
+                      </Link>
                       {" >"}
                       <ul>
                         {mediumCategory.subcategories.map((smallCategory) => (
                           <li
                             className="font-normal text-sm mt-[5px] hover:font-bold"
                             key={smallCategory.code}
+                            onClick={(e) =>
+                              onClickCategory(
+                                e,
+                                largeCategory.name,
+                                mediumCategory.name,
+                                smallCategory.name
+                              )
+                            }
                           >
                             <Link
                               href={`/category/list?categoryLargeCode=${largeCategory.code}&categoryMediumCode=${mediumCategory.code}&categorySmallCode=${smallCategory.code}`}

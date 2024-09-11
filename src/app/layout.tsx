@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "../components/NavBar";
 import AuthContext from "@/context/AuthContext";
 import BottomNavBar from "@/components/BottomNavBar";
+import ReactQueryProvider from "@/provider/ReactQueryProvider";
 
 const sans = Open_Sans({ subsets: ["latin"] });
 
@@ -24,7 +25,9 @@ export default function RootLayout({
           <header>
             <NavBar />
           </header>
-          <main className="flex-grow px-9 w-full ">{children}</main>
+          <main className="flex-grow px-9 w-full ">
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </main>
           <BottomNavBar />
           <footer>footer</footer>
         </AuthContext>

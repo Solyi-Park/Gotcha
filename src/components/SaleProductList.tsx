@@ -2,7 +2,7 @@
 import { SaleProductsResponse } from "@/services/product";
 import Link from "next/link";
 import VerticalProductCard from "./VerticalProductCard";
-import { useCategory } from "@/provider/CategoryProviderForSaleProducts";
+import { useSaleCategory } from "@/provider/CategoryProviderForSaleProducts";
 
 type Props = {
   saleProducts: SaleProductsResponse[];
@@ -10,7 +10,7 @@ type Props = {
 
 export default function SaleProductList({ saleProducts }: Props) {
   // const [productLists, setProductsLists] = useState<SaleProductsResponse[]>([]);
-  const { activeTab } = useCategory();
+  const { activeTab: activeTab } = useSaleCategory();
 
   // useEffect(() => {
   //   async function fetchSaleProducts() {
@@ -35,9 +35,6 @@ export default function SaleProductList({ saleProducts }: Props) {
   const selectedList = saleProducts.filter((list) =>
     activeTab === "all" ? list : list.name === activeTab
   );
-  if (selectedList) {
-    console.log("selectedList", selectedList);
-  }
 
   return (
     <ul className="grid grid-cols-2 lg:grid-cols-3 sm:gap-y-2">
