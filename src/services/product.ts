@@ -101,3 +101,33 @@ export async function getProductById(id: string): Promise<FullProduct> {
   }
   return data as FullProduct;
 }
+
+//상품가져오기 갯수, 페이지네이션
+//large로 가져와서 하위카테고리 클릭시 가져온 상품리스트에서 필터링해야하나
+export async function getProductsByCode(
+  mediumCode: string | null,
+  smallCode: string | null
+) {
+  console.log("mediumCode", mediumCode);
+  console.log("smallCode", smallCode);
+  let query = supabase.from("products").select("*");
+
+  if (smallCode) {
+    query = query.eq("categoryCode", smallCode);
+  }
+  if (!smallCode && mediumCode) {
+    const code = mediumCode.substring(0, 2);
+    query = query.like("categoryCode", `${code}%`);
+  }
+  try {
+    const { data } = await query;
+    if (data) {
+      console.log("data==>", data);
+    }
+    return data as FullProduct[];
+  } catch (error) {
+    console.error(error);
+  }
+
+  return [];
+}

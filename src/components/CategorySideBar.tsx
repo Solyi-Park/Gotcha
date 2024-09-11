@@ -1,17 +1,22 @@
 "use client";
-import { useMainCategoryStore } from "@/store/category";
-import CategoryBar from "./CategoryBar";
 import { categories } from "@/data/categories";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 import { findParentCategories } from "@/utils/categories";
 
-export default function CategorySideBar() {
+type Props = {
+  largeCode: string | null;
+  mediumCode: string | null;
+  smallCode: string | null;
+};
+
+export default function CategorySideBar({
+  largeCode,
+  mediumCode,
+  smallCode,
+}: Props) {
+  //////////////////// 상위 컴포넌트로 이동해서 프롭스로 받기? 그러면 productLis을 위해서도도 사용?
   const router = useRouter();
-  const params = useSearchParams();
-  const largeCode = params.get("categoryLargeCode");
-  const mediumCode = params.get("categoryMediumCode");
-  const smallCode = params.get("categorySmallCode");
+
   // const activeTab = useMainCategoryStore((state) => state.activeTab);
   // const setActiveTab = useMainCategoryStore((state) => state.setActiveTab);
 
@@ -21,9 +26,7 @@ export default function CategorySideBar() {
   const mediumCategory = largeCategory?.subcategories.find(
     (subCategory) => subCategory.code === mediumCode
   );
-  const smallCategory = mediumCategory?.subcategories.find(
-    (subCategory) => subCategory.code === smallCode
-  );
+
   const onClickItem = (smallCategoryCode: string) => {
     const parentCode = findParentCategories(smallCategoryCode);
     router.push(

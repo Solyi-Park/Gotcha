@@ -22,6 +22,7 @@ export default function HomeCategoryMenu() {
       medium,
       small,
     });
+    setHoveredCategory(null);
   };
 
   return (
