@@ -24,10 +24,15 @@ export default function VerticalProductCard({ product }: Props) {
         <div className="flex flex-col justify-center w-full">
           <p className="font-semibold text-sm">{product.name}</p>
           <p className="flex items-center font-semibold text-xs sm:text-sm">
-            <span className="mr-2 text-red-500">{product.discountRate}%</span>
-            <span className=" text-gray-400  text-[10px] sm:text-xs font-normal line-through mr-2">
-              {product.price.toLocaleString()}원
-            </span>
+            {product.discountRate && (
+              <span className="mr-2 text-red-500">{product.discountRate}%</span>
+            )}
+            {product.discountRate && (
+              <span className=" text-gray-400  text-[10px] sm:text-xs font-normal line-through mr-2">
+                {product.price.toLocaleString()}원
+              </span>
+            )}
+
             <span>
               {getDiscountedPrice(product.price, product.discountRate)}원
             </span>

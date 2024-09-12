@@ -131,3 +131,36 @@ export async function getProductsByCode(
 
   return [];
 }
+
+export type SearchResults = {
+  products: FullProduct[];
+  totalCount: number;
+};
+
+export async function getProductsBySearchKeyword(
+  keyword: string
+): Promise<SearchResults> {
+  const { data, error } = await supabase.rpc("search_products_by_keyword", {
+    keyword,
+  });
+
+  if (error) {
+    console.error(error);
+    return { products: [], totalCount: 0 };
+  }
+
+  if (data) {
+    const { total_count, products } = data[0];
+
+    return { products, totalCount: total_count } as SearchResults;
+  }
+
+  return { products: [], totalCount: 0 };
+}
+
+// const { data, error } = await supabase
+//   .from("products")
+//   .select("*")
+//   .or(
+//     `name.ilike.%${keyword}%,description.ilike.%${keyword}%,tags.cs.{${keyword}}`
+//   );

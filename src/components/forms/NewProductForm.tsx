@@ -89,8 +89,9 @@ export default function NewProductForm() {
         // TODO: storage 이미지 삭제하는 로직
         return;
       }
-
-      alert("상품 등록이 완료 되었습니다.");
+      if (res.ok) {
+        alert("상품 등록이 완료 되었습니다.");
+      }
     } catch (error) {
       // TODO: storage 이미지 삭제하는 로직
       console.error("Failed to add new product", error);
