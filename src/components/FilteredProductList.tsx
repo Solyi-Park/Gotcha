@@ -1,5 +1,5 @@
+"use client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import VerticalProductCard from "./VerticalProductCard";
 import { FullProduct } from "@/model/product";
 import Link from "next/link";
@@ -15,7 +15,6 @@ export default function FilteredProductList({
   mediumCode,
   smallCode,
 }: Props) {
-  //데이터 관리 생각해보기. 캐시, staleTime
   const { data: products } = useQuery({
     queryKey: [`products`, { largeCode, mediumCode, smallCode }],
     queryFn: async () => {
@@ -24,7 +23,9 @@ export default function FilteredProductList({
       ).then((res) => res.json());
       return data;
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
   console.log("products data???", products);
   return (

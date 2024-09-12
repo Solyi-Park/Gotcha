@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { redirect } from "next/navigation";
 import OAuthSignin from "@/components/OAuthSignin";
-import SigninForm from "@/components/SigninForm";
+import SigninForm from "@/components/forms/SigninForm";
 import Link from "next/link";
 
 export type Providers = Record<string, ClientSafeProvider>;

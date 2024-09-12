@@ -1,4 +1,4 @@
-import { Option } from "@/components/newProductForm";
+import { Option } from "@/components/NewProductForm";
 
 export type FullProduct = {
   categoryCode: number;
@@ -16,6 +16,7 @@ export type FullProduct = {
   updatedAt: string;
   likes: string[];
   options: Option[];
+  tags: string[];
 };
 
 export type SimpleProduct = Pick<

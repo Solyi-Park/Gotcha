@@ -41,6 +41,7 @@ export default function HomeCategoryMenu() {
               onMouseLeave={() => setHoveredCategory(null)}
             >
               {largeCategory.name.toUpperCase()}
+              {/* TODO: 스크롤시 드롭다운메뉴 위치 수정 */}
               {hoveredCategory === largeCategory.name && (
                 <ul className=" grid grid-cols-5 absolute left-0 w-full p-5 pb-10 mt-1 px-14 border-t bg-white z-10">
                   {largeCategory.subcategories.map((mediumCategory) => (

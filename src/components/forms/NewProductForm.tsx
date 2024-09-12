@@ -6,7 +6,8 @@ import { categoryOptions } from "@/constants/categoryOptions.ts";
 import InputField from "./InputField";
 import SelectField from "./SelectField";
 import FileInputField from "./FileInputField";
-import AddNewOptions from "./AddNewOptions";
+import NewOptionsInputField from "../NewOptionsInputField";
+import TagInputField from "./TagInputField";
 
 export type Option = {
   name: string;
@@ -15,6 +16,7 @@ export type Option = {
 export type OptionItem = { groupName: string; value: string };
 
 export default function NewProductForm() {
+  //TODO: zustand로 상태관리
   const [largeCategory, setLargeCategory] = useState<string>("");
   const [mediumCategory, setMediumCategory] = useState<string>("");
   const [smallCategory, setSmallCategory] = useState<string>("");
@@ -31,7 +33,8 @@ export default function NewProductForm() {
   const [optionGroup, setOptionGroup] = useState("");
   const [optionItems, setOptionItems] = useState("");
   const [options, setOptions] = useState<Option[]>([]);
-  console.log("options", options);
+
+  const [tags, setTags] = useState<string[]>([]);
 
   const {
     imageUrls: thumbnailUrls,
@@ -72,6 +75,7 @@ export default function NewProductForm() {
       imageUrls,
       thumbnailUrls,
       options,
+      tags,
     };
 
     try {
@@ -85,8 +89,9 @@ export default function NewProductForm() {
         // TODO: storage 이미지 삭제하는 로직
         return;
       }
-
-      alert("상품 등록이 완료 되었습니다.");
+      if (res.ok) {
+        alert("상품 등록이 완료 되었습니다.");
+      }
     } catch (error) {
       // TODO: storage 이미지 삭제하는 로직
       console.error("Failed to add new product", error);
@@ -195,7 +200,7 @@ export default function NewProductForm() {
           id="productImages"
           setState={setProductImageFiles}
         />
-        <AddNewOptions
+        <NewOptionsInputField
           optionGroup={optionGroup}
           setOptionGroup={setOptionGroup}
           optionItems={optionItems}
@@ -204,6 +209,7 @@ export default function NewProductForm() {
           setOptions={setOptions}
           optionButtonDisabled={!optionGroup}
         />
+        <TagInputField tags={tags} setTags={setTags} />
         <button className="flex flex-col border " type="submit">
           등록
         </button>

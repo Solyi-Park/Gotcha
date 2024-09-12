@@ -1,6 +1,6 @@
 "use client";
 import { MouseEvent } from "react";
-import { Option } from "./newProductForm";
+import { Option } from "./forms/NewProductForm";
 
 type Props = {
   optionGroup: string;
@@ -12,7 +12,7 @@ type Props = {
   optionButtonDisabled: boolean;
 };
 
-export default function AddNewOptions({
+export default function NewOptionsInputField({
   optionGroup,
   setOptionGroup,
   optionItems,
@@ -73,14 +73,15 @@ export default function AddNewOptions({
           value={optionItems}
           onChange={(e) => setOptionItems(e.target.value)}
           type="text"
-          className="border"
+          className="border placeholder:text-sm pl-1"
           id="optionItems"
+          placeholder="쉼표(,)로 구분하여 입력 가능"
         />
       </label>
       <button
         onClick={onClick}
         className={`bg-black text-white ${
-          optionButtonDisabled && "bg-white text-slate-300 border"
+          optionButtonDisabled && "bg-slate-300 border"
         }`}
         disabled={optionButtonDisabled}
       >
