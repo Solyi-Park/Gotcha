@@ -1,6 +1,6 @@
 "use client";
 import { MouseEvent } from "react";
-import { Option } from "./newProductForm";
+import { Option } from "./forms/NewProductForm";
 
 type Props = {
   optionGroup: string;

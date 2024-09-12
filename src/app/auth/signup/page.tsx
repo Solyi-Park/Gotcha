@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/lib/auth";
 import OAuthSignin from "@/components/OAuthSignin";
-import SignupForm from "@/components/SignupForm";
+import SignupForm from "@/components/forms/SignupForm";
 import { getServerSession } from "next-auth";
 import { getCsrfToken, getProviders } from "next-auth/react";
 import { redirect } from "next/navigation";

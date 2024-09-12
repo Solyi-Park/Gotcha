@@ -1,4 +1,4 @@
-import NewProductForm from "@/components/newProductForm";
+import NewProductForm from "@/components/forms/NewProductForm";
 
 export default async function NewProductsTestPage() {
   return (

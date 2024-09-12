@@ -6,7 +6,7 @@ import { categoryOptions } from "@/constants/categoryOptions.ts";
 import InputField from "./InputField";
 import SelectField from "./SelectField";
 import FileInputField from "./FileInputField";
-import NewOptionsInputField from "./NewOptionsInputField";
+import NewOptionsInputField from "../NewOptionsInputField";
 import TagInputField from "./TagInputField";
 
 export type Option = {

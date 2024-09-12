@@ -1,4 +1,4 @@
-import { Option } from "@/components/newProductForm";
+import { Option } from "@/components/NewProductForm";
 
 export type FullProduct = {
   categoryCode: number;
