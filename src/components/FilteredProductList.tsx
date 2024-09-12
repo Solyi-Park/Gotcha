@@ -24,7 +24,9 @@ export default function FilteredProductList({
       ).then((res) => res.json());
       return data;
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
   console.log("products data???", products);
   return (

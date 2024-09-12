@@ -16,6 +16,7 @@ export type FullProduct = {
   updatedAt: string;
   likes: string[];
   options: Option[];
+  tags: string[];
 };
 
 export type SimpleProduct = Pick<

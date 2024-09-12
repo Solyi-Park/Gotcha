@@ -14,7 +14,6 @@ export default function CategorySideBar({
   mediumCode,
   smallCode,
 }: Props) {
-  //////////////////// 상위 컴포넌트로 이동해서 프롭스로 받기? 그러면 productLis을 위해서도도 사용?
   const router = useRouter();
 
   // const activeTab = useMainCategoryStore((state) => state.activeTab);
