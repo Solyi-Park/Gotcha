@@ -21,7 +21,7 @@ export default function BottomNavBar() {
     },
     {
       title: "CATEGORY",
-      href: "/category",
+      href: "/list",
       icon: <CategoryIcon />,
     },
     {
