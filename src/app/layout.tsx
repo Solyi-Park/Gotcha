@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import NavBar from "../components/NavBar";
+import AuthContext from "@/context/AuthContext";
+import BottomNavBar from "@/components/BottomNavBar";
+import ReactQueryProvider from "@/provider/ReactQueryProvider";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const sans = Open_Sans({ subsets: ["latin"] });
 
@@ -16,7 +21,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={sans.className}>
-      <body>{children}</body>
+      <body className="flex flex-col">
+        <AuthContext>
+          <header>
+            <NavBar />
+          </header>
+          <main className="flex-grow px-9 w-full ">
+            <ReactQueryProvider>
+              {children}
+              <ReactQueryDevtools initialIsOpen={false} />
+            </ReactQueryProvider>
+          </main>
+          <BottomNavBar />
+          <footer>footer</footer>
+        </AuthContext>
+      </body>
     </html>
   );
 }
