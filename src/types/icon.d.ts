@@ -1,3 +1,3 @@
 type IconSize = {
-  size?: "small" | "medium" | "large";
+  size: "small" | "medium" | "large";
 };

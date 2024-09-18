@@ -1,4 +1,4 @@
-import { Option } from "@/components/NewProductForm";
+import { Option } from "@/components/forms/NewProductForm";
 
 export type FullProduct = {
   categoryCode: number;
@@ -8,15 +8,16 @@ export type FullProduct = {
   description: string;
   discountRate: number;
   id: string;
-  imageUrls: string[] | null;
+  imageUrls: string[];
   name: string;
   price: number;
   stockQuantity: number;
-  thumbnailUrls: string[] | null;
+  thumbnailUrls: string[];
   updatedAt: string;
   likes: string[];
   options: Option[];
   tags: string[];
+  likeCount?: number;
 };
 
 export type SimpleProduct = Pick<
@@ -28,6 +29,8 @@ export type SimpleProduct = Pick<
   | "createdAt"
   | "discountRate"
   | "id"
+  | "likeCount"
+  | "description"
 >;
 
 export type newProduct = Pick<

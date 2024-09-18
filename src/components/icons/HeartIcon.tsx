@@ -1,6 +1,8 @@
 import { getIconSize } from "@/utils/icon";
 import { IoMdHeartEmpty } from "@react-icons/all-files/io/IoMdHeartEmpty";
 
-export default function HeartIcon({ size = "medium" }: IconSize) {
-  return <IoMdHeartEmpty size={getIconSize(size)} />;
+type Props = { size?: string; color?: string };
+
+export default function HeartIcon({ size = "medium", color }: Props) {
+  return <IoMdHeartEmpty size={getIconSize(size)} color={color} />;
 }

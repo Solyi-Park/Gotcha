@@ -1,4 +1,8 @@
-import { addProduct, getProductsByCode } from "@/services/product";
+import {
+  addProduct,
+  getNewProducts,
+  getProductsByCode,
+} from "@/services/product";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -26,7 +30,9 @@ export async function GET(req: NextRequest) {
   const smallCode = searchParams.get("categorySmallCode");
 
   if (!mediumCode && !smallCode) {
-    return new Response("Bad Request", { status: 400 });
+    return getNewProducts()
+      .then((res) => NextResponse.json(res))
+      .catch((error) => new Response(error.message, { status: 500 }));
   }
 
   return getProductsByCode(mediumCode, smallCode)

@@ -1,4 +1,4 @@
-export type SimpleUser = Pick<FullUser, "email" | "name"> & {
+export type SimpleUser = Pick<FullUser, "email" | "name" | "id"> & {
   image?: string | null;
   provider?: string | null;
   providerId?: string | null;

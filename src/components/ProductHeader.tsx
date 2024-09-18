@@ -5,12 +5,12 @@ import { getDiscountedPrice } from "@/utils/calculate";
 import { FullProduct } from "@/model/product";
 import { SimpleUser } from "@/model/user";
 import HeartFillIcon from "./icons/HeartFillIcon";
+import LikeButton from "./LikeButton";
 
 type Props = {
   product: FullProduct;
-  user: SimpleUser & { id: string };
 };
-export default function ProductDetailHeader({ product, user }: Props) {
+export default function ProductDetailHeader({ product }: Props) {
   const {
     categoryCode,
     thumbnailUrls,
@@ -24,7 +24,7 @@ export default function ProductDetailHeader({ product, user }: Props) {
 
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
-
+  //콘솔 likes 확인해보기
   return (
     <section className="flex flex-col sm:flex-row">
       <div className="relative w-96 h-96 object-cover">
@@ -40,6 +40,7 @@ export default function ProductDetailHeader({ product, user }: Props) {
       <div>
         <div>
           <div className="flex justify-between">
+            {/* TODO: 상품 카테고리정보 컴포넌트분리하기 */}
             <p>
               {large && <span>{large}</span>}
               {medium && (
@@ -55,13 +56,7 @@ export default function ProductDetailHeader({ product, user }: Props) {
                 </span>
               )}
             </p>
-            <button>
-              {likes && likes.includes(user.id) ? (
-                <HeartFillIcon />
-              ) : (
-                <HeartIcon size="large" />
-              )}
-            </button>
+            <LikeButton product={product} isForDetail />
           </div>
           <h2 className="text-lg font-semibold">{name}</h2>
         </div>
@@ -92,7 +87,7 @@ export default function ProductDetailHeader({ product, user }: Props) {
                 <select className="text-gray-500" id="option">
                   <option value="">{option.name}</option>
                   {option.items.map((item) => (
-                    <option>{item.value}</option>
+                    <option key={item.value}>{item.value}</option>
                   ))}
                 </select>
               </li>

@@ -1,11 +1,12 @@
 import Image from "next/image";
-import HeartIcon from "./icons/HeartIcon";
 import { getDiscountedPrice } from "@/utils/calculate";
-import { SimpleProduct } from "@/model/product";
+import { FullProduct, SimpleProduct } from "@/model/product";
+import LikeButton from "./LikeButton";
 
 type Props = {
   product: SimpleProduct;
 };
+
 export default function VerticalProductCard({ product }: Props) {
   return (
     <div className="flex flex-col my-2">
@@ -16,9 +17,9 @@ export default function VerticalProductCard({ product }: Props) {
           fill
           className="object-cover relative"
         />
-        <button className="absolute right-2 bottom-2 text-white">
-          <HeartIcon />
-        </button>
+        <div className="absolute right-2 bottom-2 text-white">
+          <LikeButton product={product} />
+        </div>
       </div>
       <div className="flex w-full px-2">
         <div className="flex flex-col justify-center w-full">

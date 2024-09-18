@@ -2,7 +2,9 @@ import { supabase } from "@/app/lib/supabaseClient";
 import { categories } from "@/data/categories";
 import { FullProduct, newProduct, SimpleProduct } from "@/model/product";
 
-export async function addProduct(newProduct: newProduct) {
+export async function addProduct(
+  newProduct: newProduct
+): Promise<FullProduct[] | null> {
   const newFullProduct = {
     ...newProduct,
     updatedAt: null,
@@ -21,8 +23,8 @@ export async function addProduct(newProduct: newProduct) {
   }
   return null;
 }
-
-export async function getProducts() {
+// New
+export async function getNewProducts(): Promise<FullProduct[]> {
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -77,7 +79,6 @@ export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
         console.error("Error fetching products:", error);
         return { name: category.name, products: [] };
       }
-
       return { name: category.name, products: data as SimpleProduct[] };
     })
   );
@@ -99,7 +100,7 @@ export async function getProductById(id: string): Promise<FullProduct> {
     console.log('"Product not found');
     // throw new Error("Product not found");
   }
-  return data as FullProduct;
+  return data;
 }
 
 //상품가져오기 갯수, 페이지네이션
@@ -107,7 +108,7 @@ export async function getProductById(id: string): Promise<FullProduct> {
 export async function getProductsByCode(
   mediumCode: string | null,
   smallCode: string | null
-) {
+): Promise<FullProduct[]> {
   console.log("mediumCode", mediumCode);
   console.log("smallCode", smallCode);
   let query = supabase.from("products").select("*");
@@ -119,17 +120,17 @@ export async function getProductsByCode(
     const code = mediumCode.substring(0, 2);
     query = query.like("categoryCode", `${code}%`);
   }
-  try {
-    const { data } = await query;
-    if (data) {
-      console.log("data==>", data);
-    }
-    return data as FullProduct[];
-  } catch (error) {
-    console.error(error);
-  }
 
-  return [];
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error fetching products by code:", error);
+    return [];
+  }
+  if (data) {
+    console.log("data==>", data);
+  }
+  return data;
 }
 
 export type SearchResults = {
@@ -164,3 +165,39 @@ export async function getProductsBySearchKeyword(
 //   .or(
 //     `name.ilike.%${keyword}%,description.ilike.%${keyword}%,tags.cs.{${keyword}}`
 //   );
+
+export async function updateLikes(
+  productId: string,
+  userId: string
+): Promise<FullProduct | null> {
+  const { data: productData, error: productError } = await supabase
+    .from("products")
+    .select("likes")
+    .eq("id", productId);
+  if (productError) {
+    console.error("Error fetching product data:", productError);
+  }
+
+  if (!productData) return null;
+
+  const likes = productData[0].likes;
+  const updatedLikes = likes?.includes(userId)
+    ? likes.filter((uid: string) => uid !== userId)
+    : [...likes, userId];
+
+  const { data: updateData, error: updateError } = await supabase
+    .from("products")
+    .update({ likes: updatedLikes })
+    .eq("id", productId)
+    .select("likes");
+
+  if (updateError) {
+    console.error("Error fetching update data:", updateError);
+  }
+
+  if (updateData) {
+    console.log("update했엉", updateData);
+    return updateData[0] as FullProduct;
+  }
+  return null;
+}
