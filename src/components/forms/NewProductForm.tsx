@@ -13,7 +13,8 @@ export type Option = {
   name: string;
   items: OptionItem[];
 };
-export type OptionItem = { groupName: string; value: string };
+// export type OptionItem = { groupName: string; value: string };
+export type OptionItem = { value: string };
 
 export default function NewProductForm() {
   //TODO: zustand로 상태관리

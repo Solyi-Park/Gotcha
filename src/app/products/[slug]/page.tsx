@@ -37,11 +37,12 @@ import ProductHeader from "@/components/ProductHeader";
 import ProductInfo from "@/components/ProductInfo";
 import ProductQnA from "@/components/ProductQnA";
 import ProductReviews from "@/components/ProductReviews";
+import { FullProduct } from "@/model/product";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
-async function FetchProductById(productId: string) {
+async function FetchProductById(productId: string): Promise<FullProduct> {
   return await fetch(`/api/products/${productId}`, {
     method: "GET",
   }).then((res) => res.json());
@@ -65,9 +66,11 @@ export default function ProductDetailPage({
     staleTime: 1000 * 60 * 15,
   });
 
-  if (!product) {
-    // redirect("/");
+  if (isLoading) {
     return <p>로딩중..</p>;
+  }
+  if (!product) {
+    redirect("/");
   }
   const { imageUrls } = product;
 

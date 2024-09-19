@@ -24,11 +24,11 @@ async function updateLike(productId: string, userId: string) {
 }
 
 export default function LikeButton({ product, isForDetail }: Props) {
+  // TODO: 코드 복잡함
   const { id: productId, likes } = product;
   const { data: session } = useSession();
   const userId: string = session?.user.id;
 
-  console.log("likes", likes);
   const liked = userId ? likes?.includes(userId) : false;
 
   const router = useRouter();

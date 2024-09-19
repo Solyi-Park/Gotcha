@@ -127,9 +127,6 @@ export async function getProductsByCode(
     console.error("Error fetching products by code:", error);
     return [];
   }
-  if (data) {
-    console.log("data==>", data);
-  }
   return data;
 }
 

@@ -6,6 +6,9 @@ import { FullProduct } from "@/model/product";
 import { SimpleUser } from "@/model/user";
 import HeartFillIcon from "./icons/HeartFillIcon";
 import LikeButton from "./LikeButton";
+import CartButton from "./CartButton";
+import ProductOptionsSelector from "./ProductOptionsSelector";
+import { useOption } from "@/store/option";
 
 type Props = {
   product: FullProduct;
@@ -24,7 +27,7 @@ export default function ProductDetailHeader({ product }: Props) {
 
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
-  //콘솔 likes 확인해보기
+
   return (
     <section className="flex flex-col sm:flex-row">
       <div className="relative w-96 h-96 object-cover">
@@ -78,29 +81,9 @@ export default function ProductDetailHeader({ product }: Props) {
             </div>
           </div>
         </div>
-        <ul>
-          {/* TODO:옵션 상태관리 "value" */}
-          {options &&
-            options.map((option) => (
-              <li key={option.name}>
-                <label htmlFor="option">{option.name}</label>
-                <select className="text-gray-500" id="option">
-                  <option value="">{option.name}</option>
-                  {option.items.map((item) => (
-                    <option key={item.value}>{item.value}</option>
-                  ))}
-                </select>
-              </li>
-            ))}
-        </ul>
+        <ProductOptionsSelector options={options} />
         <div className="flex gap-1">
-          <button
-            className={`border px-10 py-3 bg-white ${
-              stockQuantity > 0 ? "block" : "hidden"
-            }`}
-          >
-            장바구니 담기
-          </button>
+          <CartButton product={product} />
           <button
             className={`border px-10 py-3 bg-black text-white ${
               stockQuantity === 0 && "bg-gray-300 text-white"
