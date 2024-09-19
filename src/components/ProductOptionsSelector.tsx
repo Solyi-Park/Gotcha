@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Option } from "./forms/NewProductForm";
 import { useOption } from "@/store/option";
 
-//TODO: 여기저기 흩어진 타입들 정리하기
+//TODO: 여기저기 흩어진 타입들 정리하기z
 type Props = {
   options: Option[];
 };
