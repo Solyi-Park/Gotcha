@@ -44,9 +44,13 @@ export default function ProductOptionsSelector({ product }: Props) {
     if (isAllOptionsSelected) {
       const newOption = {
         id: generateOptionId(selectedOptions),
-        options: selectedOptions.map((opt) => opt.value),
+        optionItems: selectedOptions.map((opt) => ({
+          name: opt.name,
+          value: opt.value,
+        })),
         quantity: 1,
       };
+      console.log("newOpt", newOption);
       const existingOption = cartOptions.some((opt) => opt.id === newOption.id);
       if (existingOption) {
         alert("이미 존재하는 옵션입니다.");
@@ -120,7 +124,9 @@ export default function ProductOptionsSelector({ product }: Props) {
       <ul className="flex flex-col">
         {cartOptions.map((option) => (
           <li key={option.id}>
-            <span>{option.options.join(", ")}</span>
+            <span>
+              {option.optionItems.map((item) => `${item.value}`).join(" - ")}
+            </span>
             <button
               className="px-2 py-1 bg-gray-200"
               onClick={() => handleUpdateQuantity(option.id, -1)}

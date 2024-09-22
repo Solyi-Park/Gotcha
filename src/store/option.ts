@@ -1,56 +1,17 @@
 import { create } from "zustand";
 
-const example = [
-  {
-    options: [
-      {
-        name: "color",
-        value: "black",
-      },
-      {
-        name: "size",
-        value: "s",
-      },
-    ],
-    quantity: 1,
-  },
-  {
-    options: [
-      {
-        name: "color",
-        value: "red",
-      },
-      {
-        name: "size",
-        value: "m",
-      },
-    ],
-    quantity: 2,
-  },
-];
-
-const resultIWant = ["black", "s"];
-const example2 = example.map((item) => {
-  return {
-    options: item.options.reduce((acc: string[], opt) => {
-      acc = [...acc, opt.value];
-      return acc;
-    }, []),
-    quantity: item.quantity,
-  };
-});
-
 interface CartOption {
   id: string;
-  options: string[];
+  optionItems: { name: string; value: string }[];
   quantity: number;
 }
 
 interface CartState {
   cartOptions: CartOption[];
-  addOption: (option: CartOption) => void;
+  addOption: (newOption: CartOption) => void;
   updateQuantity: (id: string, delta: number) => void;
   deleteOption: (id: string) => void;
+  resetOption: () => void;
 }
 
 export const useCartOption = create<CartState>((set) => ({
@@ -80,4 +41,5 @@ export const useCartOption = create<CartState>((set) => ({
     set((state) => ({
       cartOptions: state.cartOptions.filter((opt) => opt.id !== id),
     })),
+  resetOption: () => set(() => ({ cartOptions: [] })),
 }));

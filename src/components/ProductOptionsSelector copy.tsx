@@ -17,8 +17,12 @@ export type SelectedOption = {
 
 export default function ProductOptionsSelector({ product }: Props) {
   const { options, price, discountRate } = product;
-  const { cartOptions, addCartOption, updateCartOption, removeCartOption } =
-    useCartOption();
+  const {
+    cartOption: cartOptions,
+    addCartOption,
+    updateCartOption,
+    removeCartOption,
+  } = useCartOption();
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const discountedPrice = getDiscountedPrice(price, discountRate);

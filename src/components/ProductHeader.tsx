@@ -1,3 +1,4 @@
+"use client";
 import { findFullCategoryNames } from "@/utils/categories";
 import Image from "next/image";
 import { getDiscountedPrice } from "@/utils/calculate";
@@ -8,10 +9,25 @@ import CategoryPath from "./CategoryPath";
 import ActionButton from "./ActionButton";
 import { useCartOption } from "@/store/option";
 import { MouseEvent } from "react";
+import { useSession } from "next-auth/react";
 
 type Props = {
   product: FullProduct;
 };
+export type CartOption = {
+  userId: string;
+  productId: string;
+  quantity: number;
+  optionItems: { name: string; value: string }[];
+};
+async function addProductToCart(cartOptions: CartOption[]) {
+  const res = fetch("/api/cart", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cartOptions),
+  });
+  return res;
+}
 export default function ProductDetailHeader({ product }: Props) {
   const {
     categoryCode,
@@ -22,21 +38,25 @@ export default function ProductDetailHeader({ product }: Props) {
     stockQuantity,
     likes,
     options,
+    id,
   } = product;
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
-  const { cartOptions } = useCartOption();
+  const { cartOptions, resetOption } = useCartOption();
+  // console.log("cartOptions???", cartOptions);
   const isAllOptionsSelected = options?.length === cartOptions?.length;
 
-  const handleAddToCart = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleAddToCart = async (e: MouseEvent<HTMLButtonElement>) => {
     // e.preventDefault()
     console.log("cartOptions", cartOptions);
     const totalQuantity = cartOptions.reduce(
       (sum, option) => sum + option.quantity,
       0
     );
-    if (!isAllOptionsSelected) {
+    if (cartOptions.length === 0) {
       alert("상품 옵션을 선택해주세요.");
       return;
     }
@@ -45,7 +65,18 @@ export default function ProductDetailHeader({ product }: Props) {
       return;
     } else {
       // 장바구니에 추가하는 로직
-      alert("장바구니에 상품이 담겼습니다.");
+      const cartOption: CartOption[] = cartOptions.map((opt) => ({
+        userId: user.id,
+        productId: id,
+        quantity: opt.quantity,
+        optionItems: opt.optionItems,
+      }));
+
+      const res = await addProductToCart(cartOption);
+      if (res.ok) {
+        alert("장바구니에 상품이 담겼습니다.");
+      }
+      resetOption();
     }
   };
 
