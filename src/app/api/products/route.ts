@@ -2,6 +2,7 @@ import {
   addProduct,
   getNewProducts,
   getProductsByCode,
+  getProductsByIds,
 } from "@/services/product";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,6 +26,13 @@ export async function GET(req: NextRequest) {
   }
 
   const searchParams = req.nextUrl.searchParams;
+  const ids = searchParams.get("ids");
+  if (ids) {
+    const productIds = ids.split(",");
+    return getProductsByIds(productIds)
+      .then((res) => NextResponse.json(res))
+      .catch((error) => error.message);
+  }
 
   const mediumCode = searchParams.get("categoryMediumCode");
   const smallCode = searchParams.get("categorySmallCode");

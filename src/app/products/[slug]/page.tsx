@@ -43,6 +43,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 async function FetchProductById(productId: string): Promise<FullProduct> {
+  //TODO: api 요청 경로 변경 - query string 사용
   return await fetch(`/api/products/${productId}`, {
     method: "GET",
   }).then((res) => res.json());

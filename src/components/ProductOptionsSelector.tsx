@@ -2,7 +2,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { Option } from "./forms/NewProductForm";
 import { useCartOption } from "@/store/option";
-// import CartButton from "./CartButton";
 import { FullProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
 

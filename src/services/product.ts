@@ -1,6 +1,11 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { categories } from "@/data/categories";
-import { FullProduct, newProduct, SimpleProduct } from "@/model/product";
+import {
+  CartItem,
+  FullProduct,
+  newProduct,
+  SimpleProduct,
+} from "@/model/product";
 
 export async function addProduct(
   newProduct: newProduct
@@ -101,6 +106,31 @@ export async function getProductById(id: string): Promise<FullProduct> {
     // throw new Error("Product not found");
   }
   return data;
+}
+
+export async function getProductsByIds(productIds: string[]) {
+  const res = await Promise.all(
+    productIds.map(async (id) => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("name, price,thumbnailUrls, discountRate,id")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error(error);
+      }
+
+      if (!data) {
+        console.log("Products not found");
+      }
+
+      return data;
+    })
+  );
+
+  console.log("resresresres", res);
+  return res;
 }
 
 //상품가져오기 갯수, 페이지네이션

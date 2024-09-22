@@ -1,5 +1,6 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { CartOption } from "@/components/ProductHeader";
+import { Cart } from "@/model/cart";
 
 type CartResponse = {
   id: string;
@@ -13,7 +14,7 @@ type CartResponse = {
 export async function addProductsToCart(
   cartOptions: CartOption[]
 ): Promise<CartResponse[]> {
-  const responses = await Promise.all(
+  const res = await Promise.all(
     cartOptions.map(async (opt) => {
       const { data, error } = await supabase
         .from("carts")
@@ -35,5 +36,20 @@ export async function addProductsToCart(
     })
   );
 
-  return responses;
+  return res;
+}
+
+export async function getCartItemsbyUserId(userId: string): Promise<Cart[]> {
+  const { data, error } = await supabase
+    .from("carts")
+    .select("*")
+    .eq("userId", userId);
+  if (error) {
+    console.error(error);
+  }
+  if (data) {
+    // console.log("아이디로 장바구니 상품 찾음", data);
+    return data as Cart[];
+  }
+  return [];
 }
