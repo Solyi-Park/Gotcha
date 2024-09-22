@@ -1,14 +1,13 @@
 import { findFullCategoryNames } from "@/utils/categories";
 import Image from "next/image";
-import HeartIcon from "./icons/HeartIcon";
 import { getDiscountedPrice } from "@/utils/calculate";
 import { FullProduct } from "@/model/product";
-import { SimpleUser } from "@/model/user";
-import HeartFillIcon from "./icons/HeartFillIcon";
 import LikeButton from "./LikeButton";
-import CartButton from "./CartButton";
 import ProductOptionsSelector from "./ProductOptionsSelector";
-import { useOption } from "@/store/option";
+import CategoryPath from "./CategoryPath";
+import ActionButton from "./ActionButton";
+import { useCartOption } from "@/store/option";
+import { MouseEvent } from "react";
 
 type Props = {
   product: FullProduct;
@@ -27,6 +26,32 @@ export default function ProductDetailHeader({ product }: Props) {
 
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
+  const { cartOptions } = useCartOption();
+  const isAllOptionsSelected = options?.length === cartOptions?.length;
+
+  const handleAddToCart = (e: MouseEvent<HTMLButtonElement>) => {
+    // e.preventDefault()
+    console.log("cartOptions", cartOptions);
+    const totalQuantity = cartOptions.reduce(
+      (sum, option) => sum + option.quantity,
+      0
+    );
+    if (!isAllOptionsSelected) {
+      alert("상품 옵션을 선택해주세요.");
+      return;
+    }
+    if (totalQuantity > stockQuantity) {
+      alert("재고 수량이 부족합니다.");
+      return;
+    } else {
+      // 장바구니에 추가하는 로직
+      alert("장바구니에 상품이 담겼습니다.");
+    }
+  };
+
+  const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {
+    console.log("바로구매하기!");
+  };
 
   return (
     <section className="flex flex-col sm:flex-row">
@@ -43,27 +68,13 @@ export default function ProductDetailHeader({ product }: Props) {
       <div>
         <div>
           <div className="flex justify-between">
-            {/* TODO: 상품 카테고리정보 컴포넌트분리하기 */}
-            <p>
-              {large && <span>{large}</span>}
-              {medium && (
-                <span>
-                  {" > "}
-                  {medium}
-                </span>
-              )}
-              {small && (
-                <span>
-                  {" > "}
-                  {small}
-                </span>
-              )}
-            </p>
+            <CategoryPath large={large} medium={medium} small={small} />
             <LikeButton product={product} isForDetail />
           </div>
           <h2 className="text-lg font-semibold">{name}</h2>
         </div>
         <div>
+          {/* TODO: 리뷰보기 클릭시 해당위치로 스크롤 이동 */}
           <button className="underline">164개 리뷰 보기</button>
           <div className="flex justify-between">
             <div>
@@ -75,23 +86,26 @@ export default function ProductDetailHeader({ product }: Props) {
               <div>
                 {discountRate && <span>{discountRate}%</span>}
                 <span className="font-bold text-xl">
-                  {getDiscountedPrice(price, discountRate)}원
+                  {getDiscountedPrice(price, discountRate).toLocaleString()}원
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <ProductOptionsSelector options={options} />
+        <ProductOptionsSelector product={product} />
         <div className="flex gap-1">
-          <CartButton product={product} />
-          <button
-            className={`border px-10 py-3 bg-black text-white ${
-              stockQuantity === 0 && "bg-gray-300 text-white"
-            }`}
-            disabled={stockQuantity === 0}
-          >
-            {stockQuantity > 0 ? "바로 구매하기" : "품절"}
-          </button>
+          <ActionButton
+            product={product}
+            type="cart"
+            title="cart"
+            onClick={(e) => handleAddToCart(e)}
+          />
+          <ActionButton
+            product={product}
+            type="buyNow"
+            title="buyNow"
+            onClick={(e) => handleBuyNow(e)}
+          />
         </div>
       </div>
     </section>

@@ -2,7 +2,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { Option } from "./forms/NewProductForm";
 import { useCartOption } from "@/store/option";
-// import CartButton from "./CartButton";
 import { FullProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
 
@@ -18,7 +17,7 @@ export type SelectedOption = {
 
 export default function ProductOptionsSelector({ product }: Props) {
   const { options, price, discountRate } = product;
-  const { cartOptions, addOption, updateQuantity, deleteOption } =
+  const { cartOptions, addCartOption, updateCartOption, removeCartOption } =
     useCartOption();
   const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
@@ -37,27 +36,27 @@ export default function ProductOptionsSelector({ product }: Props) {
     setTotalPrice(newTotalPrice);
   }, [cartOptions, discountedPrice]);
 
-  const generateOptionId = (selectedOptions: SelectedOption[]) => {
-    return selectedOptions.map((opt) => `${opt.name}:${opt.value}`).join(", ");
-  };
   useEffect(() => {
     if (isAllOptionsSelected) {
-      const newOption = {
-        id: generateOptionId(selectedOptions),
-        options: selectedOptions.map((opt) => opt.value),
-        quantity: 1,
-      };
-      const existingOption = cartOptions.some((opt) => opt.id === newOption.id);
-      if (existingOption) {
-        alert("이미 존재하는 옵션입니다.");
-        setSelectedOptions([]);
-        return;
-      } else {
-        addOption(newOption);
-      }
+      // const newOption = {
+      //   name: selectedOptions.map((opt) => opt.name).join(", "),
+      //   value: selectedOptions.map((opt) => opt.value).join(", "),
+      //   quantity: 1,
+      // };
+      const newOptions = selectedOptions.map((opt) => {
+        const entries = Object.entries(opt).map((opt) => opt[1]);
+        const option = {
+          name: entries[0],
+          value: entries[1],
+          quantity: 1,
+        };
+        return option;
+      });
+      newOptions.forEach((opt) => addCartOption(opt));
+
       setSelectedOptions([]);
     }
-  }, [isAllOptionsSelected, selectedOptions, addOption]);
+  }, [isAllOptionsSelected, selectedOptions, addCartOption]);
 
   const onChangeOptions = (
     e: ChangeEvent<HTMLSelectElement>,
@@ -78,16 +77,18 @@ export default function ProductOptionsSelector({ product }: Props) {
     setSelectedOptions(updatedOptions);
   };
 
-  const handleUpdateQuantity = (id: string, delta: number) => {
-    const option = cartOptions.find((opt) => opt.id === id);
+  const handleUpdateQuantity = (name: string, value: string, delta: number) => {
+    const option = cartOptions.find(
+      (opt) => opt.name === name && opt.value === value
+    );
     if (option) {
       const newQuantity = Math.max(1, option.quantity + delta);
-      updateQuantity(option.id, delta);
+      updateCartOption(name, value, newQuantity);
     }
   };
 
-  const handleDeleteOption = (id: string) => {
-    deleteOption(id);
+  const handleDeleteOption = (name: string, value: string) => {
+    removeCartOption(name, value);
   };
 
   return (
@@ -119,24 +120,26 @@ export default function ProductOptionsSelector({ product }: Props) {
 
       <ul className="flex flex-col">
         {cartOptions.map((option) => (
-          <li key={option.id}>
-            <span>{option.options.join(", ")}</span>
+          <li key={`${option.name}-${option.value}`}>
+            <span>{`${option.name}: ${option.value}`}</span>
             <button
               className="px-2 py-1 bg-gray-200"
-              onClick={() => handleUpdateQuantity(option.id, -1)}
+              onClick={() =>
+                handleUpdateQuantity(option.name, option.value, -1)
+              }
             >
               -
             </button>
             <span className="border px-2 py-1">{option.quantity}</span>
             <button
               className="px-2 py-1 bg-gray-200"
-              onClick={() => handleUpdateQuantity(option.id, 1)}
+              onClick={() => handleUpdateQuantity(option.name, option.value, 1)}
             >
               +
             </button>
             <button
               className="px-2 py-1 border"
-              onClick={() => handleDeleteOption(option.id)}
+              onClick={() => handleDeleteOption(option.name, option.value)}
             >
               삭제
             </button>
