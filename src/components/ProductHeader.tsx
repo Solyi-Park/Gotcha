@@ -10,6 +10,7 @@ import ActionButton from "./ActionButton";
 import { useCartOption } from "@/store/option";
 import { MouseEvent } from "react";
 import { useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   product: FullProduct;
@@ -18,7 +19,7 @@ export type CartOption = {
   userId: string;
   productId: string;
   quantity: number;
-  optionItems: { name: string; value: string }[];
+  option: { id: string; items: { name: string; value: string }[] } | null;
 };
 async function addProductToCart(cartOptions: CartOption[]) {
   const res = fetch("/api/cart", {
@@ -40,23 +41,26 @@ export default function ProductDetailHeader({ product }: Props) {
     options,
     id,
   } = product;
+
   const { data: session } = useSession();
   const user = session?.user;
 
+  const queryClient = useQueryClient();
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
   const { cartOptions, resetOption } = useCartOption();
   // console.log("cartOptions???", cartOptions);
-  const isAllOptionsSelected = options?.length === cartOptions?.length;
+  const isAllOptionsSelected =
+    options?.length === cartOptions[0]?.optionItems.length;
 
-  const handleAddToCart = async (e: MouseEvent<HTMLButtonElement>) => {
-    // e.preventDefault()
+  const handleAddToCart = async () => {
     console.log("cartOptions", cartOptions);
     const totalQuantity = cartOptions.reduce(
       (sum, option) => sum + option.quantity,
       0
     );
-    if (cartOptions.length === 0) {
+
+    if (options !== null && !isAllOptionsSelected) {
       alert("상품 옵션을 선택해주세요.");
       return;
     }
@@ -69,12 +73,18 @@ export default function ProductDetailHeader({ product }: Props) {
         userId: user.id,
         productId: id,
         quantity: opt.quantity,
-        optionItems: opt.optionItems,
+        option:
+          {
+            id: opt.id,
+            items: opt.optionItems,
+          } || null,
       }));
-
+      console.log("cartOption", cartOption);
       const res = await addProductToCart(cartOption);
       if (res.ok) {
         alert("장바구니에 상품이 담겼습니다.");
+        // TODO: 커스텀 모달: 장바구니 바로가기 버튼
+        queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
       }
       resetOption();
     }
@@ -129,7 +139,7 @@ export default function ProductDetailHeader({ product }: Props) {
             product={product}
             type="cart"
             title="cart"
-            onClick={(e) => handleAddToCart(e)}
+            onClick={() => handleAddToCart()}
           />
           <ActionButton
             product={product}

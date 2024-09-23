@@ -8,6 +8,7 @@ export default async function CartPage() {
   const user = session?.user;
 
   const userCart = await getCartItemsbyUserId(user.id);
+  console.log("Page - userCart?", userCart);
 
   return (
     <div>

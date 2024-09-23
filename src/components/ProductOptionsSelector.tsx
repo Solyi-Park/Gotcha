@@ -4,22 +4,19 @@ import { Option } from "./forms/NewProductForm";
 import { useCartOption } from "@/store/option";
 import { FullProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
+import QuantityAdjuster from "./QuantityAdjuster";
+import { CartOptionItem } from "@/model/cart";
 
 //TODO: 여기저기 흩어진 타입들 정리하기
 type Props = {
   product: FullProduct;
 };
 
-export type SelectedOption = {
-  name: string;
-  value: string;
-};
-
 export default function ProductOptionsSelector({ product }: Props) {
   const { options, price, discountRate } = product;
   const { cartOptions, addOption, updateQuantity, deleteOption } =
     useCartOption();
-  const [selectedOptions, setSelectedOptions] = useState<SelectedOption[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<CartOptionItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const discountedPrice = getDiscountedPrice(price, discountRate);
 
@@ -36,7 +33,7 @@ export default function ProductOptionsSelector({ product }: Props) {
     setTotalPrice(newTotalPrice);
   }, [cartOptions, discountedPrice]);
 
-  const generateOptionId = (selectedOptions: SelectedOption[]) => {
+  const generateOptionId = (selectedOptions: CartOptionItem[]) => {
     return selectedOptions.map((opt) => `${opt.name}:${opt.value}`).join(", ");
   };
   useEffect(() => {
@@ -70,6 +67,7 @@ export default function ProductOptionsSelector({ product }: Props) {
       name: option.name,
       value: e.target.value,
     };
+    console.log("newOption", newOption);
     const isExistingOption = selectedOptions.some(
       (opt) => opt.name === newOption.name
     );
@@ -81,11 +79,10 @@ export default function ProductOptionsSelector({ product }: Props) {
     setSelectedOptions(updatedOptions);
   };
 
-  const handleUpdateQuantity = (id: string, delta: number) => {
-    const option = cartOptions.find((opt) => opt.id === id);
+  const handleUpdateQuantity = (delta: number, optionId?: string) => {
+    const option = cartOptions.find((opt) => opt.id === optionId);
     if (option) {
-      const newQuantity = Math.max(1, option.quantity + delta);
-      updateQuantity(option.id, delta);
+      updateQuantity(option.id as string, delta);
     }
   };
 
@@ -122,23 +119,15 @@ export default function ProductOptionsSelector({ product }: Props) {
 
       <ul className="flex flex-col">
         {cartOptions.map((option) => (
-          <li key={option.id}>
+          <li className="flex items-center" key={option.id}>
             <span>
               {option.optionItems.map((item) => `${item.value}`).join(" - ")}
             </span>
-            <button
-              className="px-2 py-1 bg-gray-200"
-              onClick={() => handleUpdateQuantity(option.id, -1)}
-            >
-              -
-            </button>
-            <span className="border px-2 py-1">{option.quantity}</span>
-            <button
-              className="px-2 py-1 bg-gray-200"
-              onClick={() => handleUpdateQuantity(option.id, 1)}
-            >
-              +
-            </button>
+            <QuantityAdjuster
+              onClick={handleUpdateQuantity}
+              optionId={option.id}
+              quantity={option.quantity}
+            />
             <button
               className="px-2 py-1 border"
               onClick={() => handleDeleteOption(option.id)}
@@ -146,10 +135,7 @@ export default function ProductOptionsSelector({ product }: Props) {
               삭제
             </button>
             <span className="ml-4">
-              {`개별 가격:  ${getDiscountedPrice(
-                price,
-                discountRate
-              ).toLocaleString()}원`}
+              {`${getDiscountedPrice(price, discountRate).toLocaleString()}원`}
             </span>
           </li>
         ))}
