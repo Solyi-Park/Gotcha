@@ -1,37 +1,37 @@
 import { create } from "zustand";
 
-interface CartOption {
+interface ProductOption {
   id: string;
-  optionItems: { name: string; value: string }[];
+  items: { name: string; value: string }[];
   quantity: number;
 }
 
 interface CartState {
-  cartOptions: CartOption[];
-  addOption: (newOption: CartOption) => void;
+  productOptions: ProductOption[];
+  addOption: (newOption: ProductOption) => void;
   updateQuantity: (id: string, delta: number) => void;
   deleteOption: (id: string) => void;
   resetOption: () => void;
 }
 
-export const useCartOption = create<CartState>((set) => ({
-  cartOptions: [],
-  addOption: (newOption: CartOption) =>
+export const useProductOption = create<CartState>((set) => ({
+  productOptions: [],
+  addOption: (newOption: ProductOption) =>
     set((state) => {
-      const existingOption = state.cartOptions.some(
+      const existingOption = state.productOptions.some(
         (opt) => opt.id === newOption.id
       );
       if (existingOption) {
         return { ...state };
       } else {
         return {
-          cartOptions: [...state.cartOptions, newOption],
+          productOptions: [...state.productOptions, newOption],
         };
       }
     }),
   updateQuantity: (id: string, delta: number) =>
     set((state) => ({
-      cartOptions: state.cartOptions.map((opt) =>
+      productOptions: state.productOptions.map((opt) =>
         opt.id === id
           ? { ...opt, quantity: Math.max(1, opt.quantity + delta) }
           : opt
@@ -39,7 +39,7 @@ export const useCartOption = create<CartState>((set) => ({
     })),
   deleteOption: (id: string) =>
     set((state) => ({
-      cartOptions: state.cartOptions.filter((opt) => opt.id !== id),
+      productOptions: state.productOptions.filter((opt) => opt.id !== id),
     })),
-  resetOption: () => set(() => ({ cartOptions: [] })),
+  resetOption: () => set(() => ({ productOptions: [] })),
 }));

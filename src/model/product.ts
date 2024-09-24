@@ -33,7 +33,7 @@ export type SimpleProduct = Pick<
   | "description"
 >;
 
-export type CartItem = Pick<
+export type ProductForCart = Pick<
   FullProduct,
   "name" | "price" | "thumbnailUrls" | "discountRate" | "id"
 >;

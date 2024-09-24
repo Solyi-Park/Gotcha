@@ -1,14 +1,16 @@
 "use client";
-import { Cart, CartItemRowType } from "@/model/cart";
+import { CartItem, CartItemRowType } from "@/model/cart";
 import { SimpleUser } from "@/model/user";
 import { useQuery } from "@tanstack/react-query";
 import CartItemRow from "./CartItemRow";
 import { SimpleProduct } from "@/model/product";
-import { CartOption } from "./ProductHeader";
+import { getDiscountedPrice } from "@/utils/calculate";
+import { useEffect } from "react";
+import { useUserCart } from "@/store/cart";
 
 type Props = {
   user: SimpleUser;
-  userCart: Cart[];
+  userCartData: CartItem[];
 };
 
 async function getProductsByIds(productIds: string[]) {
@@ -18,8 +20,10 @@ async function getProductsByIds(productIds: string[]) {
   }).then((res) => res.json());
 }
 
-export default function CartDetails({ user, userCart }: Props) {
-  const productIds = userCart.map((item) => item.productId);
+export default function CartDetails({ user, userCartData }: Props) {
+  const { userCart, setUserCart } = useUserCart();
+  console.log("userCart??", userCart);
+  const productIds = userCartData.map((item) => item.productId);
 
   const {
     data: products,
@@ -31,28 +35,39 @@ export default function CartDetails({ user, userCart }: Props) {
     staleTime: 1000 * 60 * 30, // TODO: 수정
   });
 
-  const cartItems: CartItemRowType[] = userCart.map((item) => {
-    const productData: SimpleProduct = products?.find(
-      (product: SimpleProduct) => product.id === item.productId
-    );
+  useEffect(() => {
+    const cartItems: CartItemRowType[] = userCartData.map((item) => {
+      const productData: SimpleProduct = products?.find(
+        (product: SimpleProduct) => product.id === item.productId
+      );
+      return {
+        ...item,
+        product: productData,
+      };
+    });
+    setUserCart(cartItems);
+  }, [userCartData, products, setUserCart]);
 
-    return {
-      id: item.id,
-      quantity: item.quantity,
-      option: {
-        id: item.option.id,
-        items: item.option.items,
-      },
-      product: productData,
-    };
-  });
-
+  const totalPrice = userCart.reduce((acc, item) => {
+    const itemPrice =
+      products &&
+      item.quantity *
+        getDiscountedPrice(item.product?.price, item.product?.discountRate);
+    return acc + itemPrice;
+  }, 0);
+  console.log("totalPrice=====>", totalPrice);
+  if (userCart) {
+    console.log("userCart?", userCart);
+  }
   return (
     <ul>
-      {products &&
-        cartItems.map((item, index) => (
-          <li key={`${item.id}-${index}`}>
-            <CartItemRow item={item} product={item.product} />
+      {!isLoading &&
+        products &&
+        userCart &&
+        userCart.map((item, index) => (
+          <li className="flex items-center" key={`${item.id}-${index}`}>
+            <input type="checkbox" />
+            <CartItemRow item={item} />
           </li>
         ))}
     </ul>

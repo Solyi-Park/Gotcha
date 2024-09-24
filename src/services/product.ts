@@ -1,7 +1,7 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { categories } from "@/data/categories";
 import {
-  CartItem,
+  ProductForCart,
   FullProduct,
   newProduct,
   SimpleProduct,

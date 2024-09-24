@@ -7,7 +7,7 @@ import LikeButton from "./LikeButton";
 import ProductOptionsSelector from "./ProductOptionsSelector";
 import CategoryPath from "./CategoryPath";
 import ActionButton from "./ActionButton";
-import { useCartOption } from "@/store/option";
+import { useProductOption } from "@/store/option";
 import { MouseEvent } from "react";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -48,10 +48,9 @@ export default function ProductDetailHeader({ product }: Props) {
   const queryClient = useQueryClient();
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
-  const { cartOptions, resetOption } = useCartOption();
+  const { productOptions: cartOptions, resetOption } = useProductOption();
   // console.log("cartOptions???", cartOptions);
-  const isAllOptionsSelected =
-    options?.length === cartOptions[0]?.optionItems.length;
+  const isAllOptionsSelected = options?.length === cartOptions[0]?.items.length;
 
   const handleAddToCart = async () => {
     console.log("cartOptions", cartOptions);
@@ -76,7 +75,7 @@ export default function ProductDetailHeader({ product }: Props) {
         option:
           {
             id: opt.id,
-            items: opt.optionItems,
+            items: opt.items,
           } || null,
       }));
       console.log("cartOption", cartOption);

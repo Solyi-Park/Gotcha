@@ -7,16 +7,20 @@ export default async function CartPage() {
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
-  const userCart = await getCartItemsbyUserId(user.id);
-  console.log("Page - userCart?", userCart);
+  const userCartData = await getCartItemsbyUserId(user.id);
 
   return (
     <div>
-      <h2>{user.name}의 장바구니</h2>
-      {userCart.length === 0 && (
-        <p className="text-4xl">장바구니에 담은 상품이 없습니다.</p>
+      {/* 로딩스피너. */}
+      {userCartData.length === 0 && (
+        <div>
+          <p className="text-4xl">장바구니에 담은 상품이 없습니다.</p>
+          <button>CONTINUE SHOPPING</button>
+        </div>
       )}
-      {userCart.length > 0 && <CartDetails user={user} userCart={userCart} />}
+      {userCartData.length > 0 && (
+        <CartDetails user={user} userCartData={userCartData} />
+      )}
     </div>
   );
 }

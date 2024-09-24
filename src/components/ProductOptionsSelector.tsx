@@ -1,7 +1,7 @@
 "use client";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Option } from "./forms/NewProductForm";
-import { useCartOption } from "@/store/option";
+import { useProductOption } from "@/store/option";
 import { FullProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
 import QuantityAdjuster from "./QuantityAdjuster";
@@ -14,8 +14,12 @@ type Props = {
 
 export default function ProductOptionsSelector({ product }: Props) {
   const { options, price, discountRate } = product;
-  const { cartOptions, addOption, updateQuantity, deleteOption } =
-    useCartOption();
+  const {
+    productOptions: cartOptions,
+    addOption,
+    updateQuantity,
+    deleteOption,
+  } = useProductOption();
   const [selectedOptions, setSelectedOptions] = useState<CartOptionItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const discountedPrice = getDiscountedPrice(price, discountRate);
@@ -121,7 +125,7 @@ export default function ProductOptionsSelector({ product }: Props) {
         {cartOptions.map((option) => (
           <li className="flex items-center" key={option.id}>
             <span>
-              {option.optionItems.map((item) => `${item.value}`).join(" - ")}
+              {option.items.map((item) => `${item.value}`).join(" - ")}
             </span>
             <QuantityAdjuster
               onClick={handleUpdateQuantity}
