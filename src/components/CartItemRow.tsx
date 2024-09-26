@@ -1,25 +1,64 @@
 import { CartItemRowType } from "@/model/cart";
 import Image from "next/image";
-import QuantityAdjuster from "./QuantityAdjuster";
 import { getDiscountedPrice } from "@/utils/calculate";
 import Link from "next/link";
 import DeleteIcon from "./icons/DeleteIcon";
 import { useUserCart } from "@/store/cart";
-import { useProductOption } from "@/store/option";
+import QuantityAdjuster from "./QuantityAdjuster";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 type Props = {
   item: CartItemRowType;
 };
+
+async function updateCartItemQuantity(itemId: string, quantity: number) {
+  return await fetch("/api/cart", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ itemId, quantity }),
+  });
+}
+
+async function deleteCartItem(itemId: string) {
+  return await fetch(`/api/cart?itemId=${itemId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 export default function CartItemRow({ item }: Props) {
-  const { option, product } = item;
-  const { userCart, updateQuantity } = useUserCart();
-  console.log("userCart??", userCart);
+  console.log("카트아이템", item.product?.name);
+  const { option, product, userId, id } = item;
+  const { userCart, setUserCart, updateQuantity, deleteItem } = useUserCart();
+  const queryClient = useQueryClient();
+  //로컬에 상태가 필요한가?
+  const [localQuantity, setLocalQuantity] = useState(item.quantity);
 
-  const handleUpdateQuantity = (optionId: string, delta: number) =>
-    //TODO: 여기가 아니라 장바구니 DB가 업데이트 되어야함
-    // 쓰로틀링
-    updateQuantity(optionId, delta);
+  // TODO: 쓰로틀링
+  const handleUpdateQuantity = async (delta: number) => {
+    const newQuantity = localQuantity + delta;
+    if (newQuantity > 0) {
+      setLocalQuantity(newQuantity);
 
+      const res = await updateCartItemQuantity(item.id, newQuantity);
+      if (res.ok) {
+        updateQuantity(item.id, delta);
+        queryClient.invalidateQueries({ queryKey: ["cartItems", userId] });
+        queryClient.invalidateQueries({ queryKey: ["userCart", userId] });
+      }
+    }
+  };
+
+  const handleDeleteItem = async (itemId: string) => {
+    const res = await deleteCartItem(itemId);
+
+    if (res.ok) {
+      setUserCart(userCart.filter((i) => i.id !== itemId));
+      queryClient.invalidateQueries({ queryKey: ["cartItems", userId] });
+      queryClient.invalidateQueries({ queryKey: ["userCart", userId] });
+    }
+  };
   return (
     <div className="flex gap-2">
       <div className="flex">
@@ -44,7 +83,7 @@ export default function CartItemRow({ item }: Props) {
             {/* TODO: button icon 변경, 반응형구현 */}
             <button
               className="text-sm w-7 h-7"
-              // onClick={() => deleteOption(item.option.id)}
+              onClick={() => handleDeleteItem(id)}
             >
               <DeleteIcon size="large" />
             </button>
@@ -52,7 +91,7 @@ export default function CartItemRow({ item }: Props) {
           <span
             className={`${product?.discountRate && "line-through"} text-sm`}
           >
-            {product?.price.toLocaleString()}원
+            {product?.price.toLocaleString() || 0}원
           </span>
           <p className="text-red-400 text-sm">
             <span className="mr-1">[{product?.discountRate}%]</span>
@@ -60,18 +99,24 @@ export default function CartItemRow({ item }: Props) {
               {getDiscountedPrice(
                 product?.price,
                 product?.discountRate
-              ).toLocaleString()}
+              ).toLocaleString() || 0}
               원
             </span>
           </p>
           <ul className="flex gap-2 text-xs text-gray-700">
             {option &&
+              "items" in option &&
               option.items.map((opt) => (
                 <li className="flex " key={`${opt.name}${opt.value}`}>
                   <span>{`[${opt.name}] ${opt.value}`}</span>
                 </li>
               ))}
-            <button
+            <QuantityAdjuster
+              id={item.id}
+              quantity={localQuantity}
+              onClick={handleUpdateQuantity}
+            />
+            {/* <button
               className="px-2 py-1 bg-gray-200"
               onClick={() => handleUpdateQuantity(item.id, -1)}
             >
@@ -83,16 +128,16 @@ export default function CartItemRow({ item }: Props) {
               onClick={() => handleUpdateQuantity(item.id, +1)}
             >
               +
-            </button>
+            </button> */}
           </ul>
         </div>
         <div>
           <span>
             {/* TODO: 반복되는 금액 계산 로직 분리 */}
             {(
-              item.quantity *
+              localQuantity *
               getDiscountedPrice(product?.price, product?.discountRate)
-            ).toLocaleString()}
+            ).toLocaleString() || 0}
             원
           </span>
           <button className=" px-3 py-2 bg-black text-white text-sm rounded-sm hover:opacity-80">

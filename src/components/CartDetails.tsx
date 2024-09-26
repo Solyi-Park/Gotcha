@@ -1,7 +1,7 @@
 "use client";
 import { CartItem, CartItemRowType } from "@/model/cart";
 import { SimpleUser } from "@/model/user";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import CartItemRow from "./CartItemRow";
 import { SimpleProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
@@ -21,8 +21,10 @@ async function getProductsByIds(productIds: string[]) {
 }
 
 export default function CartDetails({ user, userCartData }: Props) {
+  console.log("userCartData", userCartData);
   const { userCart, setUserCart } = useUserCart();
-  console.log("userCart??", userCart);
+  const queryClient = useQueryClient();
+
   const productIds = userCartData.map((item) => item.productId);
 
   const {
@@ -38,38 +40,62 @@ export default function CartDetails({ user, userCartData }: Props) {
   useEffect(() => {
     const cartItems: CartItemRowType[] = userCartData.map((item) => {
       const productData: SimpleProduct = products?.find(
-        (product: SimpleProduct) => product.id === item.productId
+        (product: SimpleProduct) => product?.id === item.productId
       );
       return {
         ...item,
         product: productData,
       };
     });
-    setUserCart(cartItems);
+    const sortedCartItems = cartItems.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+    setUserCart(sortedCartItems);
+    queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
   }, [userCartData, products, setUserCart]);
 
-  const totalPrice = userCart.reduce((acc, item) => {
+  const totalOrtderPrice = userCart.reduce((total, item) => {
     const itemPrice =
       products &&
       item.quantity *
         getDiscountedPrice(item.product?.price, item.product?.discountRate);
-    return acc + itemPrice;
+    return total + itemPrice;
   }, 0);
-  console.log("totalPrice=====>", totalPrice);
-  if (userCart) {
-    console.log("userCart?", userCart);
-  }
+  const shippingFee = totalOrtderPrice >= 70000 ? 0 : 3500;
+  const totalPaymentAmount = totalOrtderPrice + shippingFee;
+
   return (
-    <ul>
-      {!isLoading &&
-        products &&
-        userCart &&
-        userCart.map((item, index) => (
-          <li className="flex items-center" key={`${item.id}-${index}`}>
-            <input type="checkbox" />
-            <CartItemRow item={item} />
-          </li>
-        ))}
-    </ul>
+    <>
+      <ul>
+        {!isLoading &&
+          products &&
+          userCart &&
+          userCart.map((item, index) => (
+            <li className="flex items-center" key={`${item.id}-${index}`}>
+              <input type="checkbox" />
+              <CartItemRow item={item} />
+            </li>
+          ))}
+      </ul>
+      <div>
+        <span>
+          총 주문금액:
+          {totalOrtderPrice ? totalOrtderPrice.toLocaleString() : 0}원
+        </span>
+        <span>
+          총 배송비:{" "}
+          {totalOrtderPrice && shippingFee ? shippingFee.toLocaleString() : 0}원
+        </span>
+        <span>
+          총 결제금액:
+          {totalOrtderPrice && totalPaymentAmount
+            ? totalPaymentAmount.toLocaleString()
+            : 0}
+          원
+        </span>
+      </div>
+    </>
   );
 }

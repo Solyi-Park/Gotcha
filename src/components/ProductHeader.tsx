@@ -8,27 +8,25 @@ import ProductOptionsSelector from "./ProductOptionsSelector";
 import CategoryPath from "./CategoryPath";
 import ActionButton from "./ActionButton";
 import { useProductOption } from "@/store/option";
-import { MouseEvent } from "react";
+import { MouseEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
+import QuantityAdjuster from "./QuantityAdjuster";
+import { NewCartItem } from "@/model/cart";
 
 type Props = {
   product: FullProduct;
 };
-export type CartOption = {
-  userId: string;
-  productId: string;
-  quantity: number;
-  option: { id: string; items: { name: string; value: string }[] } | null;
-};
-async function addProductToCart(cartOptions: CartOption[]) {
+
+async function addProductToCart(productOptions: NewCartItem[]) {
   const res = fetch("/api/cart", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(cartOptions),
+    body: JSON.stringify(productOptions),
   });
   return res;
 }
+
 export default function ProductDetailHeader({ product }: Props) {
   const {
     categoryCode,
@@ -48,45 +46,63 @@ export default function ProductDetailHeader({ product }: Props) {
   const queryClient = useQueryClient();
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
-  const { productOptions: cartOptions, resetOption } = useProductOption();
-  // console.log("cartOptions???", cartOptions);
-  const isAllOptionsSelected = options?.length === cartOptions[0]?.items.length;
+  const { productOptions, resetOption } = useProductOption();
+  const [quantity, setQuantity] = useState<number>(1);
+
+  const handleUpdateQuantity = (delta: number) => {
+    setQuantity((prev) => {
+      const updatedQuantity = prev + delta;
+      return updatedQuantity > 0 ? updatedQuantity : 1;
+    });
+  };
+
+  const isAllOptionsSelected =
+    options?.length === productOptions[0]?.items.length;
 
   const handleAddToCart = async () => {
-    console.log("cartOptions", cartOptions);
-    const totalQuantity = cartOptions.reduce(
-      (sum, option) => sum + option.quantity,
-      0
-    );
+    const totalQuantity = options
+      ? productOptions.reduce((sum, option) => sum + option.quantity, 0)
+      : quantity;
+    if (!options && quantity > stockQuantity) {
+      alert("재고 수량이 부족합니다.");
+    }
 
-    if (options !== null && !isAllOptionsSelected) {
+    if (options && !isAllOptionsSelected) {
       alert("상품 옵션을 선택해주세요.");
       return;
     }
     if (totalQuantity > stockQuantity) {
       alert("재고 수량이 부족합니다.");
       return;
-    } else {
-      // 장바구니에 추가하는 로직
-      const cartOption: CartOption[] = cartOptions.map((opt) => ({
-        userId: user.id,
-        productId: id,
-        quantity: opt.quantity,
-        option:
-          {
+    }
+    const newCartItems: NewCartItem[] = options
+      ? productOptions.map((opt) => ({
+          userId: user.id,
+          productId: id,
+          quantity: opt.quantity,
+          option: {
             id: opt.id,
             items: opt.items,
-          } || null,
-      }));
-      console.log("cartOption", cartOption);
-      const res = await addProductToCart(cartOption);
-      if (res.ok) {
-        alert("장바구니에 상품이 담겼습니다.");
-        // TODO: 커스텀 모달: 장바구니 바로가기 버튼
-        queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
-      }
-      resetOption();
+          },
+        }))
+      : [
+          {
+            userId: user.id,
+            productId: id,
+            quantity: totalQuantity,
+            option: {},
+          },
+        ];
+    console.log("장바구니에 넣을라고", newCartItems);
+    const res = await addProductToCart(newCartItems);
+    if (res.ok) {
+      // TODO: 커스텀 모달: 장바구니 바로가기 버튼
+      // CartDetails에서 useEffect가 userCartData에 의존하지 않는 경우 carItems invalidateQueries해줘야함
+      // queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["userCart", user.id] });
+      alert("장바구니에 상품이 담겼습니다.");
     }
+    resetOption();
   };
 
   const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {
@@ -133,6 +149,13 @@ export default function ProductDetailHeader({ product }: Props) {
           </div>
         </div>
         <ProductOptionsSelector product={product} />
+        {!options && (
+          <QuantityAdjuster
+            onClick={handleUpdateQuantity}
+            id={id}
+            quantity={quantity}
+          />
+        )}
         <div className="flex gap-1">
           <ActionButton
             product={product}

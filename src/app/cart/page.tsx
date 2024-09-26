@@ -1,24 +1,38 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../lib/auth";
-import { getCartItemsbyUserId } from "@/services/cart";
+"use client";
 import CartDetails from "@/components/CartDetails";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { CartItem } from "@/model/cart";
+import ContinueShoppingButton from "@/components/icons/ContinueShoppingButton";
 
-export default async function CartPage() {
-  const session = await getServerSession(authOptions);
+async function fetchUserCart(userId: string) {
+  const res = await fetch(`/api/cart?userId=${userId}`);
+  if (!res.ok) {
+    throw new Error(`Error: ${res.statusText}`);
+  }
+  const data = (await res.json()) as CartItem[];
+  return data;
+}
+
+export default function CartPage() {
+  const { data: session } = useSession();
   const user = session?.user;
-
-  const userCartData = await getCartItemsbyUserId(user.id);
+  const { data: userCartData, isLoading } = useQuery({
+    queryKey: ["userCart", user?.id],
+    queryFn: async () => await fetchUserCart(user?.id),
+    staleTime: 1000 * 60 * 30,
+  });
 
   return (
     <div>
-      {/* 로딩스피너. */}
-      {userCartData.length === 0 && (
+      {/* isLoading일때 로딩스피너 */}
+      {!isLoading && userCartData && userCartData.length === 0 && (
         <div>
           <p className="text-4xl">장바구니에 담은 상품이 없습니다.</p>
-          <button>CONTINUE SHOPPING</button>
+          <ContinueShoppingButton />
         </div>
       )}
-      {userCartData.length > 0 && (
+      {!isLoading && userCartData && userCartData.length > 0 && (
         <CartDetails user={user} userCartData={userCartData} />
       )}
     </div>

@@ -44,7 +44,7 @@ export default function ProductOptionsSelector({ product }: Props) {
     if (isAllOptionsSelected) {
       const newOption = {
         id: generateOptionId(selectedOptions),
-        optionItems: selectedOptions.map((opt) => ({
+        items: selectedOptions.map((opt) => ({
           name: opt.name,
           value: opt.value,
         })),
@@ -129,7 +129,7 @@ export default function ProductOptionsSelector({ product }: Props) {
             </span>
             <QuantityAdjuster
               onClick={handleUpdateQuantity}
-              optionId={option.id}
+              id={option.id}
               quantity={option.quantity}
             />
             <button
