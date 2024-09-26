@@ -1,12 +1,12 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import HeartIcon from "./icons/HeartIcon";
-import { MouseEvent, useState } from "react";
-import HeartFillIcon from "./icons/HeartFillIcon";
+import { MouseEvent } from "react";
 import { useSession } from "next-auth/react";
 import { SimpleProduct } from "@/model/product";
 import { useRouter } from "next/navigation";
 import useCategoryParams from "@/hooks/params";
+import HeartFillIcon from "../icons/HeartFillIcon";
+import HeartIcon from "../icons/HeartIcon";
 
 type Props = {
   product: SimpleProduct;

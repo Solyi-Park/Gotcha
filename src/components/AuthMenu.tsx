@@ -1,5 +1,4 @@
 import Link from "next/link";
-import AuthButton from "./AuthButton ";
 
 export default function AuthMenu() {
   return (

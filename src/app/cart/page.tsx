@@ -3,7 +3,7 @@ import CartDetails from "@/components/CartDetails";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { CartItem } from "@/model/cart";
-import ContinueShoppingButton from "@/components/ContinueShoppingButton";
+import ContinueShoppingButton from "@/components/buttons/ContinueShoppingButton";
 
 async function fetchUserCart(userId: string) {
   const res = await fetch(`/api/cart?userId=${userId}`);
