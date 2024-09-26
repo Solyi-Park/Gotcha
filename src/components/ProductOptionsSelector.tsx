@@ -1,11 +1,11 @@
 "use client";
 import { ChangeEvent, useEffect, useState } from "react";
-import { Option } from "./forms/NewProductForm";
+
 import { useProductOption } from "@/store/option";
-import { FullProduct } from "@/model/product";
+import { FullProduct, ProductOption } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
 import QuantityAdjuster from "./QuantityAdjuster";
-import { CartOptionItem } from "@/model/cart";
+import { CartItemOption } from "@/model/cart";
 
 //TODO: 여기저기 흩어진 타입들 정리하기
 type Props = {
@@ -20,7 +20,7 @@ export default function ProductOptionsSelector({ product }: Props) {
     updateQuantity,
     deleteOption,
   } = useProductOption();
-  const [selectedOptions, setSelectedOptions] = useState<CartOptionItem[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<CartItemOption[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const discountedPrice = getDiscountedPrice(price, discountRate);
 
@@ -37,7 +37,7 @@ export default function ProductOptionsSelector({ product }: Props) {
     setTotalPrice(newTotalPrice);
   }, [cartOptions, discountedPrice]);
 
-  const generateOptionId = (selectedOptions: CartOptionItem[]) => {
+  const generateOptionId = (selectedOptions: CartItemOption[]) => {
     return selectedOptions.map((opt) => `${opt.name}:${opt.value}`).join(", ");
   };
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function ProductOptionsSelector({ product }: Props) {
 
   const onChangeOptions = (
     e: ChangeEvent<HTMLSelectElement>,
-    option: Option
+    option: ProductOption
   ) => {
     const newOption = {
       name: option.name,

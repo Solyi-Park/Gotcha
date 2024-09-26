@@ -7,6 +7,8 @@ import { SimpleProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
 import { useEffect } from "react";
 import { useUserCart } from "@/store/cart";
+import ContinueShoppingButton from "./buttons/ContinueShoppingButton";
+import CheckOutButton from "./buttons/CheckOutButton";
 
 type Props = {
   user: SimpleUser;
@@ -95,6 +97,10 @@ export default function CartDetails({ user, userCartData }: Props) {
             : 0}
           원
         </span>
+      </div>
+      <div className="flex gap-2">
+        <ContinueShoppingButton />
+        <CheckOutButton />
       </div>
     </>
   );

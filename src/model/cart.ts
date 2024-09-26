@@ -10,7 +10,7 @@ export type CartItem = {
   option:
     | {
         id: string;
-        items: CartOptionItem[];
+        items: CartItemOption[];
       }
     | {};
 };
@@ -21,20 +21,8 @@ export type NewCartItem = Pick<
 >;
 
 export type CartItemRowType = CartItem & { product: SimpleProduct };
-// export type CartItemRow = {
-//   id: string;
-//   quantity: number;
-//   option: {
-//     id: string;
-//     items: {
-//       name: string;
-//       value: string;
-//     }[];
-//   };
-//   product: SimpleProduct;
-// };
 
-export type CartOptionItem = {
+export type CartItemOption = {
   name: string;
   value: string;
 };
