@@ -1,15 +1,32 @@
+"use client";
 import SaleProductList from "./SaleProductList";
-import { cache } from "react";
-import { getSaleProducts } from "@/services/product";
 import { CategoryProviderForSaleProducts } from "@/provider/CategoryProviderForSaleProducts";
 import SaleCategoryBar from "./SaleCategoryBar";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { SaleProductsResponse } from "@/services/product";
 
-const fetchSaleProducts = cache(async () => {
-  return await getSaleProducts();
-});
+// const fetchSaleProducts = cache(async () => {
+//   return await getSaleProducts();
+// });
 
-export default async function SaleProductSection() {
-  const saleProducts = await fetchSaleProducts();
+async function fetchSaleProducts() {
+  return await fetch("/api/products/sale", {
+    method: "GET",
+  }).then((res) => res.json());
+}
+export default function SaleProductSection() {
+  // const saleProducts = await fetchSaleProducts();
+
+  const {
+    data: saleProducts,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["saleProducts"],
+    queryFn: async () => await fetchSaleProducts(),
+    staleTime: 1000 * 60 * 15,
+  });
 
   return (
     <section>
@@ -19,7 +36,7 @@ export default async function SaleProductSection() {
       {/* TODO: nav bar 중복 */}
       <CategoryProviderForSaleProducts>
         <SaleCategoryBar />
-        <SaleProductList saleProducts={saleProducts} />
+        <SaleProductList products={saleProducts && saleProducts} />
       </CategoryProviderForSaleProducts>
     </section>
   );

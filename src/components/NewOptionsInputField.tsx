@@ -24,7 +24,6 @@ export default function NewOptionsInputField({
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const items = optionItems.split(",").map((item) => ({
-      groupName: optionGroup,
       value: item.trim(),
     }));
 
@@ -109,7 +108,7 @@ export default function NewOptionsInputField({
                         <button
                           className="border"
                           onClick={() =>
-                            deleteOptionItems(item.groupName, item.value)
+                            deleteOptionItems(option.name, item.value)
                           }
                         >
                           X

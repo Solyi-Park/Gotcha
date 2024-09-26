@@ -1,16 +1,33 @@
+"use client";
 import { findFullCategoryNames } from "@/utils/categories";
 import Image from "next/image";
-import HeartIcon from "./icons/HeartIcon";
 import { getDiscountedPrice } from "@/utils/calculate";
 import { FullProduct } from "@/model/product";
-import { SimpleUser } from "@/model/user";
-import HeartFillIcon from "./icons/HeartFillIcon";
+import LikeButton from "./LikeButton";
+import ProductOptionsSelector from "./ProductOptionsSelector";
+import CategoryPath from "./CategoryPath";
+import ActionButton from "./ActionButton";
+import { useProductOption } from "@/store/option";
+import { MouseEvent, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
+import QuantityAdjuster from "./QuantityAdjuster";
+import { NewCartItem } from "@/model/cart";
 
 type Props = {
   product: FullProduct;
-  user: SimpleUser & { id: string };
 };
-export default function ProductDetailHeader({ product, user }: Props) {
+
+async function addProductToCart(productOptions: NewCartItem[]) {
+  const res = fetch("/api/cart", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(productOptions),
+  });
+  return res;
+}
+
+export default function ProductDetailHeader({ product }: Props) {
   const {
     categoryCode,
     thumbnailUrls,
@@ -20,10 +37,77 @@ export default function ProductDetailHeader({ product, user }: Props) {
     stockQuantity,
     likes,
     options,
+    id,
   } = product;
 
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const queryClient = useQueryClient();
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
+  const { productOptions, resetOption } = useProductOption();
+  const [quantity, setQuantity] = useState<number>(1);
+
+  const handleUpdateQuantity = (delta: number) => {
+    setQuantity((prev) => {
+      const updatedQuantity = prev + delta;
+      return updatedQuantity > 0 ? updatedQuantity : 1;
+    });
+  };
+
+  const isAllOptionsSelected =
+    options?.length === productOptions[0]?.items.length;
+
+  const handleAddToCart = async () => {
+    const totalQuantity = options
+      ? productOptions.reduce((sum, option) => sum + option.quantity, 0)
+      : quantity;
+    if (!options && quantity > stockQuantity) {
+      alert("재고 수량이 부족합니다.");
+    }
+
+    if (options && !isAllOptionsSelected) {
+      alert("상품 옵션을 선택해주세요.");
+      return;
+    }
+    if (totalQuantity > stockQuantity) {
+      alert("재고 수량이 부족합니다.");
+      return;
+    }
+    const newCartItems: NewCartItem[] = options
+      ? productOptions.map((opt) => ({
+          userId: user.id,
+          productId: id,
+          quantity: opt.quantity,
+          option: {
+            id: opt.id,
+            items: opt.items,
+          },
+        }))
+      : [
+          {
+            userId: user.id,
+            productId: id,
+            quantity: totalQuantity,
+            option: {},
+          },
+        ];
+    console.log("장바구니에 넣을라고", newCartItems);
+    const res = await addProductToCart(newCartItems);
+    if (res.ok) {
+      // TODO: 커스텀 모달: 장바구니 바로가기 버튼
+      // CartDetails에서 useEffect가 userCartData에 의존하지 않는 경우 carItems invalidateQueries해줘야함
+      // queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["userCart", user.id] });
+      alert("장바구니에 상품이 담겼습니다.");
+    }
+    resetOption();
+  };
+
+  const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {
+    console.log("바로구매하기!");
+  };
 
   return (
     <section className="flex flex-col sm:flex-row">
@@ -40,32 +124,13 @@ export default function ProductDetailHeader({ product, user }: Props) {
       <div>
         <div>
           <div className="flex justify-between">
-            <p>
-              {large && <span>{large}</span>}
-              {medium && (
-                <span>
-                  {" > "}
-                  {medium}
-                </span>
-              )}
-              {small && (
-                <span>
-                  {" > "}
-                  {small}
-                </span>
-              )}
-            </p>
-            <button>
-              {likes && likes.includes(user.id) ? (
-                <HeartFillIcon />
-              ) : (
-                <HeartIcon size="large" />
-              )}
-            </button>
+            <CategoryPath large={large} medium={medium} small={small} />
+            <LikeButton product={product} isForDetail />
           </div>
           <h2 className="text-lg font-semibold">{name}</h2>
         </div>
         <div>
+          {/* TODO: 리뷰보기 클릭시 해당위치로 스크롤 이동 */}
           <button className="underline">164개 리뷰 보기</button>
           <div className="flex justify-between">
             <div>
@@ -77,43 +142,33 @@ export default function ProductDetailHeader({ product, user }: Props) {
               <div>
                 {discountRate && <span>{discountRate}%</span>}
                 <span className="font-bold text-xl">
-                  {getDiscountedPrice(price, discountRate)}원
+                  {getDiscountedPrice(price, discountRate).toLocaleString()}원
                 </span>
               </div>
             </div>
           </div>
         </div>
-        <ul>
-          {/* TODO:옵션 상태관리 "value" */}
-          {options &&
-            options.map((option) => (
-              <li key={option.name}>
-                <label htmlFor="option">{option.name}</label>
-                <select className="text-gray-500" id="option">
-                  <option value="">{option.name}</option>
-                  {option.items.map((item) => (
-                    <option>{item.value}</option>
-                  ))}
-                </select>
-              </li>
-            ))}
-        </ul>
+        <ProductOptionsSelector product={product} />
+        {!options && (
+          <QuantityAdjuster
+            onClick={handleUpdateQuantity}
+            id={id}
+            quantity={quantity}
+          />
+        )}
         <div className="flex gap-1">
-          <button
-            className={`border px-10 py-3 bg-white ${
-              stockQuantity > 0 ? "block" : "hidden"
-            }`}
-          >
-            장바구니 담기
-          </button>
-          <button
-            className={`border px-10 py-3 bg-black text-white ${
-              stockQuantity === 0 && "bg-gray-300 text-white"
-            }`}
-            disabled={stockQuantity === 0}
-          >
-            {stockQuantity > 0 ? "바로 구매하기" : "품절"}
-          </button>
+          <ActionButton
+            product={product}
+            type="cart"
+            title="cart"
+            onClick={() => handleAddToCart()}
+          />
+          <ActionButton
+            product={product}
+            type="buyNow"
+            title="buyNow"
+            onClick={(e) => handleBuyNow(e)}
+          />
         </div>
       </div>
     </section>

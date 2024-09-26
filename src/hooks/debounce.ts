@@ -14,3 +14,21 @@ export default function useDebounce(keyword: string, delay: number = 500) {
 
   return debouncedKeyword;
 }
+
+// export default function useLikeDebounce(
+//   productId: string,
+//   userId: string,
+//   like: boolean
+// ) {
+//   const [updatedLike, setUpdatedLike] = useState(like);
+//   useEffect(() => {
+//     const timer = setTimeout(async () => {
+//       await toggleLike(productId, userId);
+//     }, 500);
+//     return () => {
+//       clearTimeout(timer);
+//     };
+//   }, []);
+
+//   return updatedLike;
+// }

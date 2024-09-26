@@ -1,9 +1,10 @@
 import Image from "next/image";
-import HeartIcon from "./icons/HeartIcon";
-import { FullProduct } from "@/model/product";
+import { SimpleProduct } from "@/model/product";
+import LikeButton from "./LikeButton";
+import { useState } from "react";
 
 type Props = {
-  product: FullProduct;
+  product: SimpleProduct;
 };
 export default function HorizontalProductCard({ product }: Props) {
   return (
@@ -26,9 +27,7 @@ export default function HorizontalProductCard({ product }: Props) {
           </p>
         </div>
         <div className="sm:hidden md:flex flex-col justify-center p-5 gap-1">
-          <button>
-            <HeartIcon />
-          </button>
+          <LikeButton product={product} />
           <span className="text-center text-xs">{60}</span>
         </div>
       </div>

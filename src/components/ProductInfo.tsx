@@ -9,7 +9,7 @@ export default function ProductDetailInfo({ imageUrls }: Props) {
       {imageUrls &&
         imageUrls.length > 0 &&
         imageUrls.map((url) => (
-          <div className="relative w-96 h-96">
+          <div key={url} className="relative w-96 h-96">
             <Image src={url} alt="product image" fill priority />
           </div>
         ))}
