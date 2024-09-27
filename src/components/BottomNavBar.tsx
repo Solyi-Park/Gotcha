@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import HomeIcon from "./icons/HomeIcon";
-import SearchIcon from "./icons/SearchIcon";
-import UserIcon from "./icons/UserIcon";
-import HeartIcon from "./icons/HeartIcon";
 import CategoryIcon from "./icons/CategoryIcon";
+import SearchIcon from "./icons/SearchIcon";
+import HeartIcon from "./icons/HeartIcon";
+import UserIcon from "./icons/UserIcon";
 
 export default function BottomNavBar() {
   const [activeTab, setActiveTab] = useState("home");
@@ -17,12 +17,12 @@ export default function BottomNavBar() {
     {
       title: "HOME",
       href: "/",
-      icon: <HomeIcon />,
+      icon: <HomeIcon size="large" />,
     },
     {
       title: "CATEGORY",
       href: "/list",
-      icon: <CategoryIcon />,
+      icon: <CategoryIcon size="large" />,
     },
     {
       title: "SEARCH",

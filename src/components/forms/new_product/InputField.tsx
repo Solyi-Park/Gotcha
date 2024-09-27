@@ -1,11 +1,12 @@
 import { ChangeEvent, InputHTMLAttributes } from "react";
 
 type Props = {
-  label: string;
+  label?: string;
   value: string | number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   type?: "text" | "number";
   id: string;
+  style?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function InputField({
@@ -14,19 +15,20 @@ export default function InputField({
   onChange,
   type = "text",
   id,
+  style: css,
   ...props
 }: Props) {
   return (
-    <label htmlFor={id}>
-      {label}
+    <div>
+      {label && <label htmlFor={id}>{label}</label>}
       <input
         value={value}
         onChange={onChange}
-        className="border"
         type={type}
         id={id}
         {...props}
+        className={`border px-2 ${css && css}`}
       />
-    </label>
+    </div>
   );
 }
