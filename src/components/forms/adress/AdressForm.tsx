@@ -15,8 +15,6 @@ const deliveryNotes = [
   "직접입력",
 ];
 
-//드롭다운 구현 완료
-
 export default function AdressForm() {
   const { postalCode, fullAddress, setFullAddress, setPostalCode } =
     useAddress();
@@ -26,11 +24,9 @@ export default function AdressForm() {
   const [contact1, setContact1] = useState("");
   const [contact2, setContact2] = useState("");
   const [deliveryNote, setDeliveryNote] = useState("");
-  const [customDeliveryNote, setCustomDeliveryNote] = useState("");
   const [isDefault, setIsDefault] = useState(false);
+  const [customDeliveryNote, setCustomDeliveryNote] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  console.log("delivery note", deliveryNote);
 
   return (
     <form className="flex flex-col gap-2">
@@ -127,6 +123,7 @@ export default function AdressForm() {
                 onClick={() => {
                   setDeliveryNote(note);
                   setIsDropdownOpen(!isDropdownOpen);
+                  setCustomDeliveryNote("");
                 }}
                 className="hover:cursor-pointer hover:bg-neutral-200"
               >
@@ -135,11 +132,13 @@ export default function AdressForm() {
             ))}
           </ul>
         )}
-        {deliveryNote === "직접입력" && (
+        {deliveryNote === "직접입력" && !isDropdownOpen && (
           <input
             type="text"
             maxLength={50}
             placeholder="내용을 입력해주세요. (최대 50자)"
+            value={customDeliveryNote}
+            onChange={(e) => setCustomDeliveryNote(e.target.value)}
           />
         )}
       </div>
