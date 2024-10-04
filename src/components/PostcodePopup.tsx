@@ -1,17 +1,11 @@
 "use client";
-import { useAddress } from "@/store/address";
+import { useShippingDetailStore } from "@/store/shippingDetail";
 import React from "react";
 import { Address, useDaumPostcodePopup } from "react-daum-postcode";
 
 const PostcodePopup = () => {
   const open = useDaumPostcodePopup();
-  const {
-    setPostalCode,
-    setFullAddress,
-    resetFullAddress,
-    resetPosalCode,
-    resetAddressDetail,
-  } = useAddress();
+  const { setField, resetAddress } = useShippingDetailStore();
 
   const handleComplete = (data: Address) => {
     console.log("data", data);
@@ -29,16 +23,14 @@ const PostcodePopup = () => {
       }
       fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
     }
-    setPostalCode(postalCode);
-    setFullAddress(fullAddress);
+    setField("postCode", postalCode);
+    setField("address", fullAddress);
     console.log(fullAddress);
   };
 
   const handleClick = () => {
     open({ onComplete: handleComplete });
-    resetPosalCode();
-    resetFullAddress();
-    resetAddressDetail();
+    resetAddress();
   };
 
   return (

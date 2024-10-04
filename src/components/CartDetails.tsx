@@ -5,10 +5,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import CartItemRow from "./CartItemRow";
 import { SimpleProduct } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
-import { useEffect } from "react";
-import { useUserCart } from "@/store/cart";
+import { useEffect, useState } from "react";
+import { useCartStore } from "@/store/cart";
 import ContinueShoppingButton from "./buttons/ContinueShoppingButton";
 import CheckOutButton from "./buttons/CheckOutButton";
+import { useRouter } from "next/navigation";
+import { useCheckoutStore } from "@/store/checkout";
 
 type Props = {
   user: SimpleUser;
@@ -23,9 +25,12 @@ async function getProductsByIds(productIds: string[]) {
 }
 
 export default function CartDetails({ user, userCartData }: Props) {
-  console.log("userCartData", userCartData);
-  const { userCart, setUserCart } = useUserCart();
+  const [checkedItems, setCheckedItems] = useState<CartItemRowType[]>([]);
+  const { userCart, setUserCart } = useCartStore();
+  const { setCheckoutItems } = useCheckoutStore();
   const queryClient = useQueryClient();
+  const router = useRouter();
+  console.log("checkedItems", checkedItems);
 
   const productIds = userCartData.map((item) => item.productId);
 
@@ -38,6 +43,10 @@ export default function CartDetails({ user, userCartData }: Props) {
     queryFn: async () => await getProductsByIds(productIds),
     staleTime: 1000 * 60 * 30, // TODO: 수정
   });
+
+  useEffect(() => {
+    setCheckedItems(userCart);
+  }, [userCart]);
 
   useEffect(() => {
     const cartItems: CartItemRowType[] = userCartData.map((item) => {
@@ -76,7 +85,18 @@ export default function CartDetails({ user, userCartData }: Props) {
           userCart &&
           userCart.map((item, index) => (
             <li className="flex items-center" key={`${item.id}-${index}`}>
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                checked={checkedItems.some((i) => i.id === item.id)}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setCheckedItems((prev) => {
+                    return checked
+                      ? [...prev, item]
+                      : prev.filter((i) => i.id !== item.id);
+                  });
+                }}
+              />
               <CartItemRow item={item} />
             </li>
           ))}
@@ -100,7 +120,12 @@ export default function CartDetails({ user, userCartData }: Props) {
       </div>
       <div className="flex gap-2">
         <ContinueShoppingButton />
-        <CheckOutButton />
+        <CheckOutButton
+          onClick={() => {
+            router.push("/checkout");
+            setCheckoutItems(checkedItems);
+          }}
+        />
       </div>
     </>
   );

@@ -14,7 +14,7 @@ interface CartState {
   resetOption: () => void;
 }
 
-export const useProductOption = create<CartState>((set) => ({
+export const useProductOptionStore = create<CartState>((set) => ({
   productOptions: [],
   addOption: (newOption: ProductOption) =>
     set((state) => {
