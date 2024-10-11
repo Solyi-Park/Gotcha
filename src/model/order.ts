@@ -9,6 +9,7 @@ export type OrderItem = {
 };
 
 export type OrderDetails = {
+  orderId?: string;
   userId: string;
   paymentKey?: string | null;
   totalAmount: number;
@@ -17,6 +18,7 @@ export type OrderDetails = {
   orderQuantity: number;
   refundReason?: string | null;
   shippingCost: number;
+  displayOrderNumber: string;
 } & ShippingDetails;
 
 // 타입수정

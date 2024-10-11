@@ -1,14 +1,9 @@
+import { OrderDetails } from "@/model/order";
 import { create } from "zustand";
 
-interface OrderData {
-  paymentKey: string;
-  orderIf: string;
-  amount: number;
-}
-
 interface OrderState {
-  orderData: OrderData | null;
-  setOrderData: (data: OrderData) => void;
+  orderData: OrderDetails | null;
+  setOrderData: (data: OrderDetails) => void;
   resetOrderData: () => void;
 }
 

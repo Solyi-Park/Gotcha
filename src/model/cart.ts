@@ -7,12 +7,17 @@ export type CartItem = {
   quantity: number;
   createdAt: Date;
   updatedAt: Date | null;
-  option:
-    | {
-        id: string;
-        items: CartItemOption[];
-      }
-    | {};
+  option: Option;
+};
+
+export type Option = {
+  id: string;
+  items: CartItemOption[];
+};
+
+export type CartItemOption = {
+  name: string;
+  value: string;
 };
 
 export type NewCartItem = Pick<
@@ -21,8 +26,3 @@ export type NewCartItem = Pick<
 >;
 
 export type CartItemRowType = CartItem & { product: SimpleProduct };
-
-export type CartItemOption = {
-  name: string;
-  value: string;
-};

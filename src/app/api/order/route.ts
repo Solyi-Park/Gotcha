@@ -1,4 +1,4 @@
-import { saveOrderInfo } from "@/services/tossPayment";
+import { saveOrderInfo } from "@/services/order";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

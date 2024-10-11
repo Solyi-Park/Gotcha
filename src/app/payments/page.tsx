@@ -70,7 +70,7 @@ export default function Payments() {
         selector: "#payment-method",
         variantKey: "DEFAULT",
       });
-
+      console.log("renderPaymentMethods");
       await widgets.renderAgreement({
         selector: "#agreement",
         variantKey: "AGREEMENT",
@@ -104,7 +104,10 @@ export default function Payments() {
 }
 
 function generateRandomString() {
-  const randomString = window.btoa(Math.random().toString()).slice(0, 20);
-  console.log("randomString", randomString);
-  return randomString;
+  if (typeof window !== "undefined") {
+    const randomString = window.btoa(Math.random().toString()).slice(0, 20);
+    console.log("randomString", randomString);
+    return randomString;
+  }
+  return "";
 }

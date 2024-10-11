@@ -1,7 +1,7 @@
 "use client";
 import { ChangeEvent, useEffect, useState } from "react";
 
-import { useProductOptionStore } from "@/store/option";
+import { useProductOption } from "@/store/option";
 import { FullProduct, ProductOption } from "@/model/product";
 import { getDiscountedPrice } from "@/utils/calculate";
 import QuantityAdjuster from "./QuantityAdjuster";
@@ -19,7 +19,7 @@ export default function ProductOptionsSelector({ product }: Props) {
     addOption,
     updateQuantity,
     deleteOption,
-  } = useProductOptionStore();
+  } = useProductOption();
   const [selectedOptions, setSelectedOptions] = useState<CartItemOption[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const discountedPrice = getDiscountedPrice(price, discountRate);

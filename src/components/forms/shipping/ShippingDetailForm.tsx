@@ -20,6 +20,7 @@ const deliveryNotes = [
 //TODO: 반복 css 코드
 
 export default function ShippingDetailForm() {
+  //TODO: 값이 입력되지 않은 경우 결제불가.
   const [shippingDetails, setShippingDetails] = useState({
     addressTitle: "",
     recipient: "",

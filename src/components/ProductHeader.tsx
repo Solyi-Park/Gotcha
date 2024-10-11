@@ -6,7 +6,7 @@ import { FullProduct } from "@/model/product";
 import ProductOptionsSelector from "./ProductOptionsSelector";
 import CategoryPath from "./CategoryPath";
 import ActionButton from "./buttons/ActionButton";
-import { useProductOptionStore } from "@/store/option";
+import { useProductOption } from "@/store/option";
 import { MouseEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -46,7 +46,7 @@ export default function ProductDetailHeader({ product }: Props) {
   const queryClient = useQueryClient();
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
-  const { productOptions, resetOption } = useProductOptionStore();
+  const { productOptions, resetOption } = useProductOption();
   const [quantity, setQuantity] = useState<number>(1);
 
   const handleUpdateQuantity = (delta: number) => {
@@ -90,7 +90,10 @@ export default function ProductDetailHeader({ product }: Props) {
             userId: user.id,
             productId: id,
             quantity: totalQuantity,
-            option: {},
+            option: {
+              id: "",
+              items: [],
+            },
           },
         ];
     console.log("장바구니에 넣을라고", newCartItems);

@@ -26,7 +26,9 @@ export default function VerticalProductCard({ product }: Props) {
           <p className="font-semibold text-sm">{product.name}</p>
           <p className="flex items-center font-semibold text-xs sm:text-sm">
             {product.discountRate && (
-              <span className="mr-2 text-red-500">{product.discountRate}%</span>
+              <span className="mr-2 text-rose-500">
+                {product.discountRate}%
+              </span>
             )}
             {product.discountRate && (
               <span className=" text-gray-400  text-[10px] sm:text-xs font-normal line-through mr-2">

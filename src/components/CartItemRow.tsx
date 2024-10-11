@@ -92,7 +92,7 @@ export default function CartItemRow({ item }: Props) {
           >
             {product?.price.toLocaleString() || 0}원
           </span>
-          <p className="text-red-400 text-sm">
+          <p className="text-rose-400 text-sm">
             <span className="mr-1">[{product?.discountRate}%]</span>
             <span>
               {getDiscountedPrice(

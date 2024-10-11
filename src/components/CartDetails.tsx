@@ -125,6 +125,7 @@ export default function CartDetails({ user, userCartData }: Props) {
             router.push("/checkout");
             setCheckoutItems(checkedItems);
           }}
+          disabled={checkedItems.length === 0}
         />
       </div>
     </>

@@ -1,4 +1,4 @@
-import { confirmPayment } from "@/services/tossPayment";
+import { confirmPayment } from "@/services/payment";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
