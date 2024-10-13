@@ -45,7 +45,7 @@ export default function SearchResultPage() {
       )}
       {isLoading && <p>Loading...</p>}
       {isError && (
-        <p className="text-red-500 font-sm">
+        <p className="text-rose-500 font-sm">
           검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
         </p>
       )}

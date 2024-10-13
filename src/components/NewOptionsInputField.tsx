@@ -1,14 +1,14 @@
 "use client";
+import { ProductOption } from "@/model/product";
 import { MouseEvent } from "react";
-import { Option } from "./forms/NewProductForm";
 
 type Props = {
   optionGroup: string;
   setOptionGroup: (value: string) => void;
   optionItems: string;
   setOptionItems: (value: string) => void;
-  options: Option[];
-  setOptions: (options: Option[]) => void;
+  options: ProductOption[];
+  setOptions: (options: ProductOption[]) => void;
   optionButtonDisabled: boolean;
 };
 

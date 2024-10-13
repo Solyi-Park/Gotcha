@@ -1,4 +1,4 @@
-import AuthButton from "@/components/AuthButton ";
+import AuthButton from "@/components/buttons/AuthButton ";
 import HeartIcon from "@/components/icons/HeartIcon";
 import LoginIcon from "@/components/icons/LoginIcon";
 import LogoutIcon from "@/components/icons/LogoutIcon";
@@ -22,7 +22,7 @@ export default function UserMenu({ user }: Props) {
     {
       title: "SHOPPING BAG",
       href: "/cart",
-      icon: <ShoppingBagIcon />,
+      icon: <ShoppingBagIcon size={"small"} />,
     },
   ];
   return (

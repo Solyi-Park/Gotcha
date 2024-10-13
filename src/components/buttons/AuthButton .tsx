@@ -1,5 +1,5 @@
-import LoginIcon from "./icons/LoginIcon";
-import LogoutIcon from "./icons/LogoutIcon";
+import LoginIcon from "../icons/LoginIcon";
+import LogoutIcon from "../icons/LogoutIcon";
 
 type Props = {
   text: string;
@@ -11,7 +11,11 @@ export default function AuthButton({ text, onClick }: Props) {
     <button className="flex items-center justify-center" onClick={onClick}>
       <span className="hidden sm:inline text-xs">{text}</span>
       <span className=" sm:hidden ">
-        {text === "LOGIN" ? <LoginIcon /> : <LogoutIcon />}
+        {text === "LOGIN" ? (
+          <LoginIcon size="small" />
+        ) : (
+          <LogoutIcon size="small" />
+        )}
       </span>
     </button>
   );

@@ -3,16 +3,16 @@ import { findFullCategoryNames } from "@/utils/categories";
 import Image from "next/image";
 import { getDiscountedPrice } from "@/utils/calculate";
 import { FullProduct } from "@/model/product";
-import LikeButton from "./LikeButton";
 import ProductOptionsSelector from "./ProductOptionsSelector";
 import CategoryPath from "./CategoryPath";
-import ActionButton from "./ActionButton";
+import ActionButton from "./buttons/ActionButton";
 import { useProductOption } from "@/store/option";
 import { MouseEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { NewCartItem } from "@/model/cart";
+import LikeButton from "./buttons/LikeButton";
 
 type Props = {
   product: FullProduct;
@@ -90,7 +90,10 @@ export default function ProductDetailHeader({ product }: Props) {
             userId: user.id,
             productId: id,
             quantity: totalQuantity,
-            option: {},
+            option: {
+              id: "",
+              items: [],
+            },
           },
         ];
     console.log("장바구니에 넣을라고", newCartItems);

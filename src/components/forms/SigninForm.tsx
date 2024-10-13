@@ -78,7 +78,7 @@ export default function SigninForm({ csrfToken }: Props) {
           required
         />
       </label>
-      <span className="flex justify-center text-xs text-red-500">
+      <span className="flex justify-center text-xs text-rose-500">
         {errorMessage}
       </span>
       <button

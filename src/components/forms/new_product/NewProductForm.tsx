@@ -6,13 +6,10 @@ import { categoryOptions } from "@/constants/categoryOptions.ts";
 import InputField from "./InputField";
 import SelectField from "./SelectField";
 import FileInputField from "./FileInputField";
-import NewOptionsInputField from "../NewOptionsInputField";
 import TagInputField from "./TagInputField";
+import NewOptionsInputField from "@/components/NewOptionsInputField";
+import { ProductOption } from "@/model/product";
 
-export type Option = {
-  name: string;
-  items: { value: string }[];
-};
 // export type OptionItem = { groupName: string; value: string };
 // export type OptionItem = { value: string };
 
@@ -33,7 +30,7 @@ export default function NewProductForm() {
 
   const [optionGroup, setOptionGroup] = useState("");
   const [optionItems, setOptionItems] = useState("");
-  const [options, setOptions] = useState<Option[]>([]);
+  const [options, setOptions] = useState<ProductOption[]>([]);
 
   const [tags, setTags] = useState<string[]>([]);
 

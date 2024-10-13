@@ -91,6 +91,7 @@ export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
 }
 
 export async function getProductById(id: string): Promise<FullProduct> {
+  console.log("id?????", id);
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -129,7 +130,7 @@ export async function getProductsByIds(productIds: string[]) {
     })
   );
 
-  console.log("resresresres", res);
+  console.log("getProductsByIds", res);
   return res;
 }
 

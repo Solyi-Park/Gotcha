@@ -9,7 +9,7 @@ interface CartState {
   resetCart: () => void;
 }
 
-export const useUserCart = create<CartState>((set) => ({
+export const useCartStore = create<CartState>((set) => ({
   userCart: [],
   setUserCart: (cartItems) => set({ userCart: cartItems }),
   updateQuantity: (id, delta) =>

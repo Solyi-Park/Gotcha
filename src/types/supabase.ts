@@ -7,41 +7,69 @@ export type Json =
   | Json[];
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+          extensions?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       addresses: {
         Row: {
-          addDetail: string;
           address: string;
-          default: string;
+          addressDetail: string;
+          contact1: string;
+          contact2: string | null;
+          default: boolean | null;
+          deliveryNote: string;
+          fullname: string;
           id: string;
-          name: string;
-          request: string | null;
-          tel: string;
+          postalCode: string;
           userId: string | null;
-          zipcode: string;
         };
         Insert: {
-          addDetail: string;
           address: string;
-          default: string;
+          addressDetail?: string;
+          contact1: string;
+          contact2?: string | null;
+          default?: boolean | null;
+          deliveryNote?: string;
+          fullname: string;
           id?: string;
-          name: string;
-          request?: string | null;
-          tel: string;
+          postalCode: string;
           userId?: string | null;
-          zipcode: string;
         };
         Update: {
-          addDetail?: string;
           address?: string;
-          default?: string;
+          addressDetail?: string;
+          contact1?: string;
+          contact2?: string | null;
+          default?: boolean | null;
+          deliveryNote?: string;
+          fullname?: string;
           id?: string;
-          name?: string;
-          request?: string | null;
-          tel?: string;
+          postalCode?: string;
           userId?: string | null;
-          zipcode?: string;
         };
         Relationships: [
           {
@@ -112,75 +140,74 @@ export type Database = {
       };
       carts: {
         Row: {
-          count: number;
-          date: string;
+          createdAt: string;
           id: string;
-          ProductId: string;
+          option: Json;
+          productId: string;
+          quantity: number | null;
+          updatedAt: string | null;
           userId: string;
         };
         Insert: {
-          count?: number;
-          date: string;
+          createdAt?: string;
           id?: string;
-          ProductId: string;
+          option?: Json;
+          productId: string;
+          quantity?: number | null;
+          updatedAt?: string | null;
           userId: string;
         };
         Update: {
-          count?: number;
-          date?: string;
+          createdAt?: string;
           id?: string;
-          ProductId?: string;
+          option?: Json;
+          productId?: string;
+          quantity?: number | null;
+          updatedAt?: string | null;
           userId?: string;
         };
         Relationships: [
           {
             foreignKeyName: "Cart_ProductId_fkey";
-            columns: ["ProductId"];
+            columns: ["productId"];
             isOneToOne: false;
             referencedRelation: "products";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "carts_userId_fkey";
-            columns: ["userId"];
-            isOneToOne: false;
-            referencedRelation: "users";
             referencedColumns: ["id"];
           }
         ];
       };
       categories: {
         Row: {
-          code: string;
-          created_at: string | null;
+          code: number;
+          createdAt: string | null;
           id: string;
           name: string;
-          parent_id: string | null;
+          parentId: string | null;
           type: string;
-          updated_at: string | null;
+          updatedAt: string | null;
         };
         Insert: {
-          code: string;
-          created_at?: string | null;
+          code: number;
+          createdAt?: string | null;
           id: string;
           name: string;
-          parent_id?: string | null;
+          parentId?: string | null;
           type: string;
-          updated_at?: string | null;
+          updatedAt?: string | null;
         };
         Update: {
-          code?: string;
-          created_at?: string | null;
+          code?: number;
+          createdAt?: string | null;
           id?: string;
           name?: string;
-          parent_id?: string | null;
+          parentId?: string | null;
           type?: string;
-          updated_at?: string | null;
+          updatedAt?: string | null;
         };
         Relationships: [
           {
             foreignKeyName: "categories_parent_id_fkey";
-            columns: ["parent_id"];
+            columns: ["parentId"];
             isOneToOne: false;
             referencedRelation: "categories";
             referencedColumns: ["id"];
@@ -368,44 +395,41 @@ export type Database = {
           }
         ];
       };
-      orderDetails: {
+      orderItems: {
         Row: {
           id: string;
+          option: Json | null;
           orderId: string;
           price: number;
           productId: string;
-          productImages: string[];
           quantity: number;
-          refundReason: string | null;
         };
         Insert: {
           id?: string;
+          option?: Json | null;
           orderId: string;
           price: number;
           productId: string;
-          productImages: string[];
           quantity: number;
-          refundReason?: string | null;
         };
         Update: {
           id?: string;
+          option?: Json | null;
           orderId?: string;
           price?: number;
           productId?: string;
-          productImages?: string[];
           quantity?: number;
-          refundReason?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "OrderDetail_orderId_fkey";
+            foreignKeyName: "orderDetail_orderId_fkey";
             columns: ["orderId"];
             isOneToOne: false;
             referencedRelation: "orders";
-            referencedColumns: ["id"];
+            referencedColumns: ["orderId"];
           },
           {
-            foreignKeyName: "OrderDetail_productId_fkey";
+            foreignKeyName: "orderDetail_productId_fkey";
             columns: ["productId"];
             isOneToOne: false;
             referencedRelation: "products";
@@ -415,53 +439,129 @@ export type Database = {
       };
       orders: {
         Row: {
-          cardCompany: string | null;
-          contactNumber: number;
+          contact1: string;
+          contact2: string | null;
           createdAt: string;
-          id: string;
-          name: string;
+          customDeliveryNote: string | null;
+          deliveryNote: string | null;
+          fullAddress: string;
+          isDefault: boolean;
+          orderId: string;
           orderQuantity: number;
-          payment: string;
+          paymentKey: string | null;
+          recipient: string;
           refundReason: string | null;
-          shippingAddress: string;
+          shippingCost: number;
           status: string | null;
           totalAmount: number;
           updatedAt: string | null;
-          userId: string | null;
+          userId: string;
         };
         Insert: {
-          cardCompany?: string | null;
-          contactNumber: number;
+          contact1: string;
+          contact2?: string | null;
           createdAt?: string;
-          id?: string;
-          name: string;
+          customDeliveryNote?: string | null;
+          deliveryNote?: string | null;
+          fullAddress: string;
+          isDefault?: boolean;
+          orderId?: string;
           orderQuantity: number;
-          payment: string;
+          paymentKey?: string | null;
+          recipient: string;
           refundReason?: string | null;
-          shippingAddress: string;
+          shippingCost: number;
           status?: string | null;
           totalAmount: number;
           updatedAt?: string | null;
-          userId?: string | null;
+          userId: string;
         };
         Update: {
-          cardCompany?: string | null;
-          contactNumber?: number;
+          contact1?: string;
+          contact2?: string | null;
           createdAt?: string;
-          id?: string;
-          name?: string;
+          customDeliveryNote?: string | null;
+          deliveryNote?: string | null;
+          fullAddress?: string;
+          isDefault?: boolean;
+          orderId?: string;
           orderQuantity?: number;
-          payment?: string;
+          paymentKey?: string | null;
+          recipient?: string;
           refundReason?: string | null;
-          shippingAddress?: string;
+          shippingCost?: number;
           status?: string | null;
           totalAmount?: number;
           updatedAt?: string | null;
-          userId?: string | null;
+          userId?: string;
+        };
+        Relationships: [];
+      };
+      payments: {
+        Row: {
+          approvedAt: string;
+          card: Json | null;
+          createdAt: string;
+          easyPay: Json | null;
+          method: string;
+          orderId: string;
+          orderName: string;
+          paymentKey: string;
+          receipt: string;
+          totalAmount: number;
+          transfer: Json | null;
+        };
+        Insert: {
+          approvedAt: string;
+          card?: Json | null;
+          createdAt?: string;
+          easyPay?: Json | null;
+          method: string;
+          orderId: string;
+          orderName: string;
+          paymentKey: string;
+          receipt: string;
+          totalAmount: number;
+          transfer?: Json | null;
+        };
+        Update: {
+          approvedAt?: string;
+          card?: Json | null;
+          createdAt?: string;
+          easyPay?: Json | null;
+          method?: string;
+          orderId?: string;
+          orderName?: string;
+          paymentKey?: string;
+          receipt?: string;
+          totalAmount?: number;
+          transfer?: Json | null;
+        };
+        Relationships: [];
+      };
+      productLikes: {
+        Row: {
+          productId: string;
+          userId: string;
+        };
+        Insert: {
+          productId: string;
+          userId: string;
+        };
+        Update: {
+          productId?: string;
+          userId?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "orders_userId_fkey";
+            foreignKeyName: "productLikes_productId_fkey";
+            columns: ["productId"];
+            isOneToOne: true;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "productLikes_userId_fkey";
             columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "users";
@@ -471,66 +571,57 @@ export type Database = {
       };
       products: {
         Row: {
-          categoryId: string;
-          coupon: string | null;
+          categoryCode: string;
           createdAt: string;
           deleted: string;
           description: string;
-          discoutRate: number;
+          discountRate: number | null;
           id: string;
-          imageUrls: string[] | null;
+          imageUrls: string[];
+          likes: string[];
           name: string;
+          options: Json | null;
           price: number;
           stockQuantity: number;
-          thumbnaiIUrls: string[] | null;
-          updatedAt: string;
+          tags: string[];
+          thumbnailUrls: string[];
+          updatedAt: string | null;
         };
         Insert: {
-          categoryId?: string;
-          coupon?: string | null;
-          createdAt: string;
+          categoryCode: string;
+          createdAt?: string;
           deleted?: string;
           description: string;
-          discoutRate: number;
+          discountRate?: number | null;
           id?: string;
-          imageUrls?: string[] | null;
+          imageUrls: string[];
+          likes?: string[];
           name: string;
+          options?: Json | null;
           price: number;
           stockQuantity: number;
-          thumbnaiIUrls?: string[] | null;
-          updatedAt: string;
+          tags?: string[];
+          thumbnailUrls: string[];
+          updatedAt?: string | null;
         };
         Update: {
-          categoryId?: string;
-          coupon?: string | null;
+          categoryCode?: string;
           createdAt?: string;
           deleted?: string;
           description?: string;
-          discoutRate?: number;
+          discountRate?: number | null;
           id?: string;
-          imageUrls?: string[] | null;
+          imageUrls?: string[];
+          likes?: string[];
           name?: string;
+          options?: Json | null;
           price?: number;
           stockQuantity?: number;
-          thumbnaiIUrls?: string[] | null;
-          updatedAt?: string;
+          tags?: string[];
+          thumbnailUrls?: string[];
+          updatedAt?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: "Product_coupon_fkey";
-            columns: ["coupon"];
-            isOneToOne: false;
-            referencedRelation: "coupons";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "products_categoryId_fkey";
-            columns: ["categoryId"];
-            isOneToOne: false;
-            referencedRelation: "categories";
-            referencedColumns: ["id"];
-          }
-        ];
+        Relationships: [];
       };
       reviews: {
         Row: {
@@ -660,7 +751,15 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      search_products_by_keyword: {
+        Args: {
+          keyword: string;
+        };
+        Returns: {
+          total_count: number;
+          products: Json;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

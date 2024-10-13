@@ -3,10 +3,10 @@ import Image from "next/image";
 import { getDiscountedPrice } from "@/utils/calculate";
 import Link from "next/link";
 import DeleteIcon from "./icons/DeleteIcon";
-import { useUserCart } from "@/store/cart";
+import { useCartStore } from "@/store/cart";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   item: CartItemRowType;
@@ -28,9 +28,8 @@ async function deleteCartItem(itemId: string) {
 }
 
 export default function CartItemRow({ item }: Props) {
-  console.log("카트아이템", item.product?.name);
   const { option, product, userId, id } = item;
-  const { userCart, setUserCart, updateQuantity, deleteItem } = useUserCart();
+  const { userCart, setUserCart, updateQuantity, deleteItem } = useCartStore();
   const queryClient = useQueryClient();
   //로컬에 상태가 필요한가?
   const [localQuantity, setLocalQuantity] = useState(item.quantity);
@@ -93,7 +92,7 @@ export default function CartItemRow({ item }: Props) {
           >
             {product?.price.toLocaleString() || 0}원
           </span>
-          <p className="text-red-400 text-sm">
+          <p className="text-rose-400 text-sm">
             <span className="mr-1">[{product?.discountRate}%]</span>
             <span>
               {getDiscountedPrice(
@@ -116,19 +115,6 @@ export default function CartItemRow({ item }: Props) {
               quantity={localQuantity}
               onClick={handleUpdateQuantity}
             />
-            {/* <button
-              className="px-2 py-1 bg-gray-200"
-              onClick={() => handleUpdateQuantity(item.id, -1)}
-            >
-              -
-            </button>
-            <span className="border px-2 py-1">{item.quantity}</span>
-            <button
-              className="px-2 py-1 bg-gray-200"
-              onClick={() => handleUpdateQuantity(item.id, +1)}
-            >
-              +
-            </button> */}
           </ul>
         </div>
         <div>

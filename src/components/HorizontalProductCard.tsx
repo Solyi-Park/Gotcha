@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { SimpleProduct } from "@/model/product";
-import LikeButton from "./LikeButton";
-import { useState } from "react";
+import LikeButton from "./buttons/LikeButton";
 
 type Props = {
   product: SimpleProduct;
