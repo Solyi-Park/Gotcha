@@ -1,12 +1,12 @@
 import { supabase } from "@/app/lib/supabaseClient";
-import { FullUser, SimpleUser } from "@/model/user";
+import { AuthUser, FullUser, SimpleUser } from "@/model/user";
 
 // export async function addUser(user: SimpleUser) {
 //   const { data } = await supabase.from("users").insert(user).select().single();
 //   return data;
 // }
 
-export async function addUser(user: SimpleUser): Promise<FullUser | null> {
+export async function addUser(user: AuthUser): Promise<FullUser | null> {
   const { data, error } = await supabase.from("users").upsert(user).select();
   if (error) {
     console.error("Failed to add user", error);

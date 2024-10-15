@@ -8,5 +8,5 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   return getSaleProducts()
     .then((res) => NextResponse.json(res))
-    .catch((error) => error.message);
+    .catch((error) => new Response(error.message, { status: 500 }));
 }

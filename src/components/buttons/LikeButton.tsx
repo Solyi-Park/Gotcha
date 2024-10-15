@@ -1,12 +1,13 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MouseEvent } from "react";
-import { useSession } from "next-auth/react";
+import { MouseEvent, useState } from "react";
 import { SimpleProduct } from "@/model/product";
 import { useRouter } from "next/navigation";
 import useCategoryParams from "@/hooks/params";
 import HeartFillIcon from "../icons/HeartFillIcon";
 import HeartIcon from "../icons/HeartIcon";
+import { useSession } from "next-auth/react";
+import { Like } from "@/model/like";
 
 type Props = {
   product: SimpleProduct;
@@ -25,78 +26,97 @@ async function updateLike(productId: string, userId: string) {
 
 export default function LikeButton({ product, isForDetail }: Props) {
   // TODO: 코드 복잡함
-  const { id: productId, likes } = product;
+  const router = useRouter();
+  const { id: productId, likes, likeCount } = product;
+
   const { data: session } = useSession();
   const userId: string = session?.user.id;
 
-  const liked = userId ? likes?.includes(userId) : false;
-
-  const router = useRouter();
-
-  const { largeCode, mediumCode, smallCode } = useCategoryParams();
+  const liked = likes.includes(userId);
 
   const queryClient = useQueryClient();
   const { mutate: toggleLike } = useMutation({
     mutationFn: async () => await updateLike(productId, userId),
-    onMutate: async (productId) => {
+    onMutate: async () => {
       const prevProduct = queryClient.getQueryData<SimpleProduct>([
-        "products",
+        "product",
         productId,
       ]);
-      await queryClient.cancelQueries({ queryKey: ["products", productId] });
+      const prevSaleProducts = queryClient.getQueryData<SimpleProduct[]>([
+        "saleProducts",
+      ]);
+      const prevNewProducts = queryClient.getQueryData<SimpleProduct[]>([
+        "newProducts",
+      ]);
 
-      if (userId) {
-        queryClient.setQueryData<SimpleProduct>(
-          ["products", productId],
-          (old) => {
-            if (!old) return old;
+      await queryClient.cancelQueries({ queryKey: ["product", productId] });
 
-            const isLiked = old.likes.includes(userId);
-            return {
-              ...old,
-              likes: isLiked
-                ? old.likes.filter((uid) => uid !== userId)
-                : [...old.likes, userId],
-              likeCount: isLiked ? old.likeCount! - 1 : old.likeCount! + 1,
-            };
-          }
+      queryClient.setQueryData<SimpleProduct>(["product", productId], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          likes: liked
+            ? old.likes.filter((uid) => uid !== userId)
+            : [...old.likes, userId],
+          likeCount: liked ? old.likeCount! - 1 : old.likeCount! + 1,
+        };
+      });
+
+      if (prevSaleProducts) {
+        queryClient.setQueryData(["saleProducts"], (old: SimpleProduct[]) => {
+          if (!old) return old;
+          old.map((product) =>
+            product.id === productId
+              ? {
+                  ...product,
+                  likes: liked
+                    ? product.likes.filter((uid) => uid !== userId)
+                    : [...product.likes, userId],
+                  likeCount: liked
+                    ? product.likeCount! - 1
+                    : product.likeCount! + 1,
+                }
+              : product
+          );
+        });
+      }
+
+      if (prevNewProducts) {
+        queryClient.setQueryData(["newProducts"], (old: SimpleProduct[]) =>
+          old.map((product) =>
+            product.id === productId
+              ? {
+                  ...product,
+                  likes: liked
+                    ? product.likes.filter((uid) => uid !== userId)
+                    : [...product.likes, userId],
+                  likeCount: liked
+                    ? product.likeCount! - 1
+                    : product.likeCount! + 1,
+                }
+              : product
+          )
         );
       }
+
       return { prevProduct };
     },
     onError: (error, productId, context) => {
       if (context?.prevProduct) {
-        queryClient.setQueryData(["products", productId], context?.prevProduct);
+        queryClient.setQueryData(["product", productId], context?.prevProduct);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["newProducts"] });
-      queryClient.invalidateQueries({ queryKey: ["saleProducts"] });
+      // queryClient.invalidateQueries({ queryKey: ["newProducts"] });
+      // queryClient.invalidateQueries({ queryKey: ["saleProducts"] });
       queryClient.invalidateQueries({ queryKey: ["product", productId] });
-      queryClient.invalidateQueries({
-        queryKey: ["products", { largeCode, mediumCode, smallCode }],
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: ["products", { largeCode, mediumCode, smallCode }],
+      // });
     },
   });
 
-  // const setLike = (product: FullProduct, userId: string, like: boolean) => {
-  //   const newProduct = {
-  //     ...product,
-  //     likes: like
-  //       ? [...product.likes, userId]
-  //       : product.likes.filter((item) => item !== userId),
-  //   };
-  //   const newProducts = products?.map((p: FullProduct) =>
-  //     p.id === product.id ? newProduct : p
-  //   );
-
-  //   return mutate(updateLike);
-  // };
-
-  const handleLike = async (
-    e: MouseEvent<HTMLButtonElement>,
-    productId: string
-  ) => {
+  const handleLike = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     //TODO: 커스텀 모달
@@ -108,18 +128,9 @@ export default function LikeButton({ product, isForDetail }: Props) {
     }
 
     toggleLike();
-    //TODO:optimistic update
-    // setIsLiked(!isLiked);
-    // setIsLiked(productId)
-
-    // const data = (await toggleLike(productId, userId)) as string[];
-    // if (data) {
-    //   data.includes(userId) ? setIsLiked(true) : setIsLiked(false);
-    // }
-    // // const likeMutate = updateLikes();
   };
   return (
-    <button aria-label="likeButton" onClick={(e) => handleLike(e, productId)}>
+    <button aria-label="likeButton" onClick={(e) => handleLike(e)}>
       {liked ? (
         <HeartFillIcon size="large" />
       ) : (

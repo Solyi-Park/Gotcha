@@ -9,7 +9,7 @@ import ActionButton from "./buttons/ActionButton";
 import { useProductOption } from "@/store/option";
 import { MouseEvent, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { NewCartItem } from "@/model/cart";
 import LikeButton from "./buttons/LikeButton";
@@ -35,7 +35,6 @@ export default function ProductDetailHeader({ product }: Props) {
     name,
     price,
     stockQuantity,
-    likes,
     options,
     id,
   } = product;
@@ -44,6 +43,7 @@ export default function ProductDetailHeader({ product }: Props) {
   const user = session?.user;
 
   const queryClient = useQueryClient();
+
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
   const { productOptions, resetOption } = useProductOption();

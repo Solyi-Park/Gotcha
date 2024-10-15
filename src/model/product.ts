@@ -17,10 +17,10 @@ export type FullProduct = {
   stockQuantity: number;
   thumbnailUrls: string[];
   updatedAt: string;
-  likes: string[];
   options: ProductOption[];
   tags: string[];
-  likeCount?: number;
+  likeCount: number;
+  likes: string[];
 };
 
 export type SimpleProduct = Pick<
@@ -28,11 +28,11 @@ export type SimpleProduct = Pick<
   | "name"
   | "price"
   | "thumbnailUrls"
-  | "likes"
   | "createdAt"
   | "discountRate"
   | "id"
   | "likeCount"
+  | "likes"
   | "description"
 >;
 

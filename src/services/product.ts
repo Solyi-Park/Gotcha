@@ -29,33 +29,24 @@ export async function addProduct(
   return null;
 }
 // New
-export async function getNewProducts(): Promise<FullProduct[]> {
+export async function getNewProducts(): Promise<SimpleProduct[] | null> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(
+      "name, price, thumbnailUrls,createdAt, discountRate, id, description,likeCount, likes"
+    )
     .order("createdAt", { ascending: false })
-    .limit(10);
+    .limit(10)
+    .returns<SimpleProduct[]>();
   if (error) {
     console.error("Failed to get products data", error);
     return [];
   }
-
-  return data;
-}
-
-export async function getProductsByCategory(categoryCode: number) {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .like("categoryCode", `${categoryCode}%`)
-    .order("createdAt", { ascending: false })
-    .limit(3);
-  if (error) {
-    console.error("Failed to get products data by category", error);
-    return [];
+  if (data) {
+    return data;
   }
 
-  return data;
+  return null;
 }
 
 export type SaleProductsResponse = {
@@ -70,68 +61,70 @@ export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
 
   const results = await Promise.all(
     largeCategories.map(async (category): Promise<SaleProductsResponse> => {
-      const { data, error } = await supabase
+      const { data: products, error } = await supabase
         .from("products")
         .select(
-          "createdAt, name, price, thumbnailUrls, likes ,discountRate, id"
+          "createdAt, name, price, thumbnailUrls, description, discountRate, id, likeCount, likes"
         )
         .like("categoryCode", `${category.code.split("")[0]}%`)
         .gt("discountRate", 0)
         .order("createdAt", { ascending: false })
-        .limit(10);
+        .limit(10)
+        .returns<SimpleProduct[]>();
 
       if (error) {
         console.error("Error fetching products:", error);
         return { name: category.name, products: [] };
       }
-      return { name: category.name, products: data as SimpleProduct[] };
+      if (products) {
+        return { name: category.name, products };
+      }
+
+      return { name: category.name, products: [] };
     })
   );
   return results;
 }
 
-export async function getProductById(id: string): Promise<FullProduct> {
-  console.log("id?????", id);
+export async function getProductById(
+  id: string
+): Promise<SimpleProduct[] | null> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(
+      "createdAt, name, price, thumbnailUrls, description, discountRate, id, likeCount"
+    )
     .eq("id", id)
-    .single();
+    .returns<SimpleProduct[]>();
 
-  // if (error) {
-  //   return new Error("Error fetching product by ID");
-  // }
-
-  if (!data) {
-    console.log('"Product not found');
-    // throw new Error("Product not found");
+  if (error) {
+    throw new Error("Error fetching product by ID");
   }
-  return data;
+  if (data) {
+    return data;
+  }
+  return null;
 }
 
-export async function getProductsByIds(productIds: string[]) {
-  const res = await Promise.all(
-    productIds.map(async (id) => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("name, price,thumbnailUrls, discountRate,id")
-        .eq("id", id)
-        .single();
+export async function getProductsByIds(
+  productIds: string[]
+): Promise<SimpleProduct[] | null> {
+  const { data: products, error } = await supabase
+    .from("products")
+    .select(
+      "createdAt, name, price, thumbnailUrls, description, discountRate, id, likeCount"
+    )
+    .in("id", productIds)
+    .returns<SimpleProduct[]>();
 
-      if (error) {
-        console.error(error);
-      }
-
-      if (!data) {
-        console.log("Products not found");
-      }
-
-      return data;
-    })
-  );
-
-  console.log("getProductsByIds", res);
-  return res;
+  if (error) {
+    console.error(error);
+  }
+  if (!products || products.length === 0) {
+    console.log("해당 아이디로 상품을 찾을 수 없음.");
+    return null;
+  }
+  return products;
 }
 
 //상품가져오기 갯수, 페이지네이션
@@ -152,7 +145,7 @@ export async function getProductsByCode(
     query = query.like("categoryCode", `${code}%`);
   }
 
-  const { data, error } = await query;
+  const { data, error } = await query.returns<FullProduct[]>();
 
   if (error) {
     console.error("Error fetching products by code:", error);
@@ -187,37 +180,47 @@ export async function getProductsBySearchKeyword(
   return { products: [], totalCount: 0 };
 }
 
-// const { data, error } = await supabase
-//   .from("products")
-//   .select("*")
-//   .or(
-//     `name.ilike.%${keyword}%,description.ilike.%${keyword}%,tags.cs.{${keyword}}`
-//   );
+type LikeData = {
+  likes: string[];
+  likeCount: number;
+};
 
 export async function updateLikes(
   productId: string,
   userId: string
-): Promise<FullProduct | null> {
-  const { data: productData, error: productError } = await supabase
+): Promise<LikeData | null> {
+  console.log(`userId: ${userId}`);
+  console.log(`productId: ${productId}`);
+
+  const { data, error: productError } = await supabase
     .from("products")
-    .select("likes")
-    .eq("id", productId);
+    .select()
+    .eq("id", productId)
+    .returns<FullProduct[]>();
+
   if (productError) {
     console.error("Error fetching product data:", productError);
   }
+  if (!data) {
+    throw new Error("Not Found Product for given id");
+  }
 
-  if (!productData) return null;
+  const likes = data[0].likes;
+  const likeCount = data[0].likeCount;
 
-  const likes = productData[0].likes;
-  const updatedLikes = likes?.includes(userId)
-    ? likes.filter((uid: string) => uid !== userId)
-    : [...likes, userId];
+  const liked = likes?.includes(userId);
+  const updatedLikeData = {
+    likes: liked
+      ? likes.filter((uid: string) => uid !== userId)
+      : [...likes, userId],
+    likeCount: liked ? likeCount - 1 : likeCount + 1,
+  };
 
   const { data: updateData, error: updateError } = await supabase
     .from("products")
-    .update({ likes: updatedLikes })
+    .update(updatedLikeData)
     .eq("id", productId)
-    .select("likes");
+    .select("likes, likeCount");
 
   if (updateError) {
     console.error("Error fetching update data:", updateError);
@@ -226,6 +229,23 @@ export async function updateLikes(
   if (updateData) {
     console.log("update했엉", updateData);
     return updateData[0] as FullProduct;
+  }
+  return null;
+}
+
+export async function getLikedProductsOfUser(
+  userId: string
+): Promise<FullProduct[] | null> {
+  const { data, error } = await supabase
+    .from("products")
+    .select()
+    .contains("likes", [userId]);
+  if (error) {
+    console.error("Error fetching liked products.", error);
+  }
+  if (data) {
+    console.log("data", data);
+    return data;
   }
   return null;
 }

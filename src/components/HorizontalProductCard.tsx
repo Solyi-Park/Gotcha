@@ -1,10 +1,12 @@
 import Image from "next/image";
 import { SimpleProduct } from "@/model/product";
 import LikeButton from "./buttons/LikeButton";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
   product: SimpleProduct;
 };
+
 export default function HorizontalProductCard({ product }: Props) {
   return (
     <div className="flex gap-2 my-2">
@@ -27,7 +29,7 @@ export default function HorizontalProductCard({ product }: Props) {
         </div>
         <div className="sm:hidden md:flex flex-col justify-center p-5 gap-1">
           <LikeButton product={product} />
-          <span className="text-center text-xs">{60}</span>
+          <span className="text-center text-xs">{product.likeCount}</span>
         </div>
       </div>
     </div>
