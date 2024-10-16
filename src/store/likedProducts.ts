@@ -1,5 +1,5 @@
 import { FullProduct } from "@/model/product";
-import create from "zustand";
+import { create } from "zustand";
 
 interface LikedProductsState {
   products: FullProduct[];

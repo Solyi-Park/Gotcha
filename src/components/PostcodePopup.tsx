@@ -29,6 +29,7 @@ const PostcodePopup = () => {
   };
 
   const handleClick = () => {
+    console.log("클릭");
     open({ onComplete: handleComplete });
     resetAddress();
   };

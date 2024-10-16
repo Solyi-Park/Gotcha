@@ -6,6 +6,7 @@ import AddressTabs from "@/components/buttons/AddressTabs";
 
 import { useShippingDetailStore } from "@/store/shippingDetail";
 import { useDebouncedSync } from "@/hooks/debouncedSync";
+import AddressForm from "../AddressForm";
 
 const deliveryNotes = [
   "",
@@ -97,23 +98,12 @@ export default function ShippingDetailForm() {
         <div className="flex">
           <div className="flex">
             <h2 className="w-32">배송지</h2>
-            <div className="flex flex-col gap-2">
-              <div className="flex w-96 ">
-                <div className="min-w-64 h-10 border mr-2">{postCode}</div>
-                <PostcodePopup />
-              </div>
-              <div className="min-w-[460px] h-10 border">{address}</div>
-              <div>
-                <InputField
-                  name="addDetail"
-                  value={addDetail}
-                  onChange={handleInputChange}
-                  type="text"
-                  placeholder="상세주소 입력"
-                  style="min-w-[460px] h-10 focus:border-[1px] focus:border-black  focus:outline-none border  "
-                />
-              </div>
-            </div>
+            <AddressForm
+              postCode={postCode}
+              address={address}
+              addDetail={addDetail}
+              handleInputChange={handleInputChange}
+            />
           </div>
         </div>
         <div className="flex">

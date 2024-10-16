@@ -32,7 +32,7 @@ export default function LikeButton({ product, isForDetail }: Props) {
   const { data: session } = useSession();
   const userId: string = session?.user.id;
 
-  const liked = likes.includes(userId);
+  const liked = likes?.includes(userId);
 
   const queryClient = useQueryClient();
   const { mutate: toggleLike } = useMutation({

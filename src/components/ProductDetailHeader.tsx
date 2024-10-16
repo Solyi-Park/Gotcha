@@ -9,7 +9,7 @@ import ActionButton from "./buttons/ActionButton";
 import { useProductOption } from "@/store/option";
 import { MouseEvent, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { NewCartItem } from "@/model/cart";
 import LikeButton from "./buttons/LikeButton";
@@ -38,6 +38,7 @@ export default function ProductDetailHeader({ product }: Props) {
     options,
     id,
   } = product;
+  console.log("products", product);
 
   const { data: session } = useSession();
   const user = session?.user;

@@ -86,16 +86,13 @@ export async function getSaleProducts(): Promise<SaleProductsResponse[]> {
   return results;
 }
 
-export async function getProductById(
-  id: string
-): Promise<SimpleProduct[] | null> {
+export async function getProductById(id: string): Promise<FullProduct | null> {
   const { data, error } = await supabase
     .from("products")
-    .select(
-      "createdAt, name, price, thumbnailUrls, description, discountRate, id, likeCount"
-    )
+    .select()
     .eq("id", id)
-    .returns<SimpleProduct[]>();
+    .returns<FullProduct>()
+    .single();
 
   if (error) {
     throw new Error("Error fetching product by ID");
@@ -239,7 +236,8 @@ export async function getLikedProductsOfUser(
   const { data, error } = await supabase
     .from("products")
     .select()
-    .contains("likes", [userId]);
+    .contains("likes", [userId])
+    .order("createdAt", { ascending: true });
   if (error) {
     console.error("Error fetching liked products.", error);
   }

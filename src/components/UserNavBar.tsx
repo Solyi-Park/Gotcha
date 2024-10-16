@@ -4,7 +4,8 @@ import { SimpleUser } from "@/model/user";
 import { useLikedProductsStore } from "@/store/likedProducts";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 type Props = {
   user: SimpleUser;
@@ -14,14 +15,14 @@ const MYPAGE_SECTIONS = [
   {
     title: "나의 쇼핑 정보",
     items: [
-      { name: "주문배송조회", path: "/orders" },
-      { name: "취소/교환/반품내역", path: "/returns" },
-      { name: "상품 리뷰", path: "/reviews" },
+      { name: "주문배송조회", path: "/my-order" },
+      { name: "취소/교환/반품내역", path: "/my-order/cancel-list" },
+      { name: "상품 리뷰", path: "/my-order/review" },
     ],
   },
   {
     title: "나의 계정 설정",
-    items: [{ name: "회원정보수정", path: "/account-settings" }],
+    items: [{ name: "회원정보수정", path: "/edit/reconfirm" }],
   },
   {
     title: "고객센터",
@@ -36,7 +37,8 @@ async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
 }
 
 export default function UserNavBar({ user }: Props) {
-  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const pathname = usePathname();
+  const path = pathname.split("mypage")[1];
   const { setProducts } = useLikedProductsStore();
   const { data: likedProducts } = useQuery({
     queryKey: ["likedProducts", user.id],
@@ -48,6 +50,14 @@ export default function UserNavBar({ user }: Props) {
       setProducts(likedProducts);
     }
   }, [likedProducts]);
+
+  const isActive = (itemPath: string) => {
+    if (path.startsWith("/edit")) {
+      return itemPath.startsWith("/edit");
+    }
+
+    return path === itemPath;
+  };
 
   return (
     <div className="">
@@ -67,11 +77,10 @@ export default function UserNavBar({ user }: Props) {
               <li
                 key={item.name}
                 className={`${
-                  activeTab === item.name
+                  isActive(item.path)
                     ? "text-black font-semibold"
                     : "text-gray-400"
                 }`}
-                onClick={() => setActiveTab(item.name)}
               >
                 <Link href={`/mypage/${item.path}`}>{item.name}</Link>
               </li>
