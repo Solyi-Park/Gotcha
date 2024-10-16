@@ -33,7 +33,7 @@
 // }
 
 "use client";
-import ProductHeader from "@/components/ProductHeader";
+import ProductDetailHeader from "@/components/ProductDetailHeader";
 import ProductInfo from "@/components/ProductInfo";
 import ProductQnA from "@/components/ProductQnA";
 import ProductReviews from "@/components/ProductReviews";
@@ -77,7 +77,7 @@ export default function ProductDetailPage({
 
   return (
     <>
-      <ProductHeader product={product && product} />
+      <ProductDetailHeader product={product && product} />
       <ProductInfo imageUrls={imageUrls} />
       <ProductReviews />
       <ProductQnA />

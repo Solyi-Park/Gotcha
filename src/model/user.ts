@@ -1,3 +1,8 @@
+export type AuthUser = Pick<
+  FullUser,
+  "email" | "name" | "image" | "provider" | "providerId"
+>;
+
 export type SimpleUser = Pick<FullUser, "email" | "name" | "id"> & {
   image?: string | null;
   provider?: string | null;

@@ -4,18 +4,7 @@ import KakaoProvider from "next-auth/providers/kakao";
 import NaverProvider from "next-auth/providers/naver";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { addUser, findUser } from "@/services/user";
-import bcrypt from "bcrypt";
-import { FullUser } from "@/model/user";
-
-async function verifyPassword(plainPassword: string, hashedPassword: string) {
-  const isValid = await bcrypt.compare(plainPassword, hashedPassword);
-  return isValid;
-}
-export async function hashPassword(plainPassword: string) {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
-  return hashedPassword;
-}
+import { verifyPassword } from "@/utils/password";
 
 export const authOptions: NextAuthOptions = {
   providers: [

@@ -1,13 +1,15 @@
 import { supabase } from "@/app/lib/supabaseClient";
-import { FullUser, SimpleUser } from "@/model/user";
+import { AuthUser, FullUser, SimpleUser } from "@/model/user";
 
-// export async function addUser(user: SimpleUser) {
-//   const { data } = await supabase.from("users").insert(user).select().single();
-//   return data;
-// }
-
-export async function addUser(user: SimpleUser): Promise<FullUser | null> {
-  const { data, error } = await supabase.from("users").upsert(user).select();
+export async function addUser(
+  name: string,
+  email: string,
+  password: string
+): Promise<FullUser | null> {
+  const { data, error } = await supabase
+    .from("users")
+    .upsert({ name, email, password })
+    .select();
   if (error) {
     console.error("Failed to add user", error);
     return null;
@@ -18,42 +20,6 @@ export async function addUser(user: SimpleUser): Promise<FullUser | null> {
   }
   return null;
 }
-
-// export async function addCredentialUser(
-//   name: string,
-//   email: string,
-//   password: string
-// ) {
-//   const userData = {
-//     _id: uuidv4(),
-//     _type: "user",
-//     name,
-//     username: "",
-//     password,
-//     image: "",
-//     email,
-//     reviews: [],
-//     following: [],
-//     followers: [],
-//     collection: [],
-//   };
-//   return client.createIfNotExists(userData);
-// }
-
-// export async function findUserByEmail(email: string) {
-//   return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
-//       "id": _id,
-//       username,
-//       name,
-//       email,
-//       image,
-//       password,
-//       reviews[]->{"id":_id},
-//       following[]->{username,name, "id":_id},
-//       followers[]->{username,name,"id":_id},
-//       collection[]->{"id":_id},
-//       }`);
-// }
 
 export async function findUser(
   email: string | null | undefined,
@@ -78,21 +44,27 @@ export async function findUser(
   return data[0];
 }
 
-// export async function checkEmail(email: string) {
-//   return await client.fetch(`*[_type == "user" && email == "${email}"][0]{
-//       "id": _id,
-//       username,
-//       name,
-//       email,
-//       image,
-//       }`);
-// }
-
 export async function checkEmail(email: string) {
   const { data, error } = await supabase
     .from("users")
     .select()
     .eq("email", email);
 
+  return data;
+}
+
+export async function getUserById(userId: string): Promise<FullUser> {
+  const { data, error } = await supabase
+    .from("users")
+    .select()
+    .eq("id", userId)
+    .returns<FullUser>()
+    .single();
+  if (error) {
+    console.error(error);
+  }
+  if (!data) {
+    throw new Error("일치하는 사용자가 없음.");
+  }
   return data;
 }

@@ -1,5 +1,6 @@
 "use client";
-import { useDebounce } from "@/hooks/debounce";
+
+import useDebounce from "@/hooks/debouncedSync";
 import { useErrorMessage } from "@/hooks/errorMessage";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";

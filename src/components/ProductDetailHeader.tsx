@@ -35,15 +35,16 @@ export default function ProductDetailHeader({ product }: Props) {
     name,
     price,
     stockQuantity,
-    likes,
     options,
     id,
   } = product;
+  console.log("products", product);
 
   const { data: session } = useSession();
   const user = session?.user;
 
   const queryClient = useQueryClient();
+
   const categoryNames = findFullCategoryNames(categoryCode);
   const { large, medium, small } = categoryNames;
   const { productOptions, resetOption } = useProductOption();
