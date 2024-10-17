@@ -15,10 +15,7 @@ export async function POST(req: NextRequest) {
   if (!name || !email || !password) {
     return new Response("Bad Request", { status: 400 });
   }
+  const newUser = { name, email, password };
 
-  const hashedPassword = await hashPassword(password);
-
-  return addUser(name, email, hashedPassword).then((res) =>
-    NextResponse.json(res)
-  );
+  return addUser(newUser).then((res) => NextResponse.json(res));
 }
