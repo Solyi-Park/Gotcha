@@ -2,13 +2,10 @@
 import { PROVIDER_LOGOS } from "@/constants/provider";
 import { usePasswordCheck } from "@/hooks/password";
 import { FullUser } from "@/model/user";
-import { maskEmail } from "@/utils/email";
-
+import { maskEmail, maskName, maskPhoneNumber } from "@/utils/maskPersonalInfo";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
-// import { useForm } from "react-hook-form";
 
 type Props = {
   user: FullUser;
@@ -199,7 +196,17 @@ export default function EditUserInfo({ user }: Props) {
             )}
           </li>
           <li>
-            <h3>회원 정보</h3>
+            <h3 className="font-semibold">회원 정보</h3>
+            <div>
+              <div>
+                <span>성명</span>
+                <span>{maskName(name)}</span>
+              </div>
+              <div>
+                <span>연락처</span>
+                <span>{maskPhoneNumber(phone ?? "01000001234")}</span>
+              </div>
+            </div>
           </li>
         </ul>
       </fieldset>

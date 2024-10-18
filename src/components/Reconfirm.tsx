@@ -1,7 +1,8 @@
 "use client";
 import { usePasswordCheck } from "@/hooks/password";
 import { SimpleUser } from "@/model/user";
-import { maskEmail } from "@/utils/email";
+import { maskEmail } from "@/utils/maskPersonalInfo";
+
 import { Span } from "next/dist/trace";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

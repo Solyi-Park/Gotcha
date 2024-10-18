@@ -2,6 +2,7 @@
 import { FullProduct } from "@/model/product";
 import { SimpleUser } from "@/model/user";
 import { useLikedProductsStore } from "@/store/likedProducts";
+import { maskName } from "@/utils/maskPersonalInfo";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -62,7 +63,10 @@ export default function UserNavBar({ user }: Props) {
   return (
     <div className="">
       <section>
-        <h2 className="text-4xl font-bold">{user.name || "회원님"}</h2>
+        <h2 className="text-4xl font-bold">
+          {/* 글자수 길어지면 사이즈 줄이기 */}
+          {maskName(user.name) || "회원님"}
+        </h2>
         <div>
           <Link href="/mypage/like">
             좋아요 <span>{likedProducts?.length || 0}</span>
