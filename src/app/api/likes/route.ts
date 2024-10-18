@@ -8,7 +8,8 @@ export async function PUT(req: NextRequest, res: NextResponse) {
   }
 
   const { userId, productId } = await req.json();
-
+  console.log("userId", userId);
+  console.log("productId", productId);
   if (!userId || !productId === undefined) {
     return new Response("Bad Request", { status: 400 });
   }

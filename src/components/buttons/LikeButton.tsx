@@ -30,13 +30,18 @@ export default function LikeButton({ product, isForDetail }: Props) {
   const { id: productId, likes, likeCount } = product;
 
   const { data: session } = useSession();
-  const userId: string = session?.user.id;
+  const user = session?.user;
+  const userId = user?.id;
+  // ssession안에  user.id가 존재하지 않음.
+  // session 아이디로 user정보를 받아와서 해당 id로  likes확인 및 업데이트하는 로직으로 수정해야함.
+  // TODO: 해당 로직 커스텀훅으로 분리하여 재사용
+  console.log("userId 라이크버튼", user);
 
-  const liked = likes?.includes(userId);
+  const liked = likes?.includes(user);
 
   const queryClient = useQueryClient();
   const { mutate: toggleLike } = useMutation({
-    mutationFn: async () => await updateLike(productId, userId),
+    mutationFn: async () => await updateLike(productId, user.id),
     onMutate: async () => {
       const prevProduct = queryClient.getQueryData<SimpleProduct>([
         "product",
@@ -120,7 +125,7 @@ export default function LikeButton({ product, isForDetail }: Props) {
     e.preventDefault();
 
     //TODO: 커스텀 모달
-    if (!userId) {
+    if (!user) {
       if (window.confirm("로그인이 필요합니다. 로그인 하시겠습니까?")) {
         router.push("/auth/signin");
       }

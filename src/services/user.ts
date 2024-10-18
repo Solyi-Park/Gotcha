@@ -158,7 +158,7 @@ export async function checkUserPassword(
 }
 
 export async function changePassword(
-  userId: string,
+  email: string,
   newPassword: string
 ): Promise<void> {
   const hashedPassword = await hashPassword(newPassword);
@@ -166,7 +166,7 @@ export async function changePassword(
   const { error } = await supabase
     .from("users")
     .update({ password: hashedPassword })
-    .eq("id", userId);
+    .eq("email", email);
 
   if (error) {
     throw new Error("비밀번호 변경 중 오류가 발생했습니다.");

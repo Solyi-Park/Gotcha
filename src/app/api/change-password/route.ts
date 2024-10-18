@@ -7,17 +7,16 @@ export async function POST(req: NextRequest) {
   //TODO: 사용자 정보 인증하기
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user || !session.user.id) {
+  if (!session || !session.user) {
     return NextResponse.json(
       { message: "인증되지 않은 사용자입니다." },
       { status: 401 }
     );
   }
 
-  const userId = session.user.id;
-  console.log("userId", userId);
+  const email = session.user.email;
 
-  const { newPassword } = await req.json();
+  const newPassword = await req.json();
 
   if (!newPassword) {
     return NextResponse.json(
@@ -25,9 +24,11 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+  console.log("이메일은", email);
+  console.log("newPassword는", newPassword);
 
   try {
-    await changePassword(userId, newPassword);
+    await changePassword(email, newPassword);
     return NextResponse.json(
       { message: "비밀번호가 성공적으로 변경되었습니다." },
       { status: 200 }

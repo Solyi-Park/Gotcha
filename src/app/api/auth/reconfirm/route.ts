@@ -4,9 +4,9 @@ import { checkUserPassword } from "@/services/user";
 
 export async function POST(req: NextRequest) {
   // TODO: 다른 라우트 핸들러도 업데이트 하기.
-  const { userId, password } = await req.json();
+  const { email, password } = await req.json();
 
-  if (!userId || !password) {
+  if (!email || !password) {
     return NextResponse.json(
       { message: "잘못된 요청입니다." },
       { status: 400 }
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const isMatch = await checkUserPassword(userId, password);
+    const isMatch = await checkUserPassword(email, password);
     if (isMatch) {
       return NextResponse.json(
         { message: "비밀번호가 확인되었습니다." },

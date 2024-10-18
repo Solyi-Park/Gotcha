@@ -1,8 +1,10 @@
 "use client";
+import { PROVIDER_LOGOS } from "@/constants/provider";
 import { usePasswordCheck } from "@/hooks/password";
 import { FullUser } from "@/model/user";
 import { maskEmail } from "@/utils/email";
-import { divide } from "lodash";
+
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import { useState } from "react";
@@ -46,7 +48,7 @@ export default function EditUserInfo({ user }: Props) {
 
   //TODO: 패스워드 체크 반복.
   const handleChangePassword = async () => {
-    const isValid = await checkPassword(id, currentPassword || "");
+    const isValid = await checkPassword(email || "", currentPassword || "");
     if (!isValid) {
       alert("현재 비밀번호를 정확히 입력해주세요.");
       return;
@@ -67,18 +69,12 @@ export default function EditUserInfo({ user }: Props) {
       return;
     }
     const success = await changePassword(newPassword);
+    if (success) {
+      alert("비밀번호가 정상적으로 변경되었습니다. 다시 로그인해주세요.");
+      signOut();
+    }
   };
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   watch,
-  //   formState: { errors },
-  // } = useForm();
-  // const USER_INFO_FIELD = [
-  //   { title: "로그인 정보", data: { email, password } },
-  //   { title: "회원 정보", data: { name, email, address } },
-  // ];
-  // 사용자의 주소정보 설정, 테이블
+
   return (
     <section>
       <h2 className="text-xl">회원정보 수정</h2>
@@ -87,7 +83,7 @@ export default function EditUserInfo({ user }: Props) {
         <ul>
           <li>
             <h3 className="font-bold">로그인 정보</h3>
-            {email && (
+            {!provider && (
               <div>
                 <div>
                   <p>아이디(이메일)</p>
@@ -104,7 +100,6 @@ export default function EditUserInfo({ user }: Props) {
                       변경
                     </button>
                   </div>
-
                   <div className={`${isEditing ? "block" : "hidden"}`}>
                     <form className="flex flex-col" onSubmit={() => {}}>
                       <div>
@@ -176,7 +171,32 @@ export default function EditUserInfo({ user }: Props) {
                 </div>
               </div>
             )}
-            {provider && <div>아이콘들</div>}
+
+            {provider && (
+              <div>
+                <div>
+                  <div>SNS 연결</div>
+                  <p>연결된 SNS 계정으로 로그인할 수 있습니다.</p>
+                </div>
+                <ul className="flex">
+                  {PROVIDER_LOGOS.map((logo) => (
+                    <li key={logo.name}>
+                      <div className="relative w-10 h-10 rounded-full">
+                        <img
+                          src={
+                            logo.name === provider.toUpperCase()
+                              ? logo.activeImage
+                              : logo.inactiveImage
+                          }
+                          alt={`${logo} logo`}
+                          className="object-cover"
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </li>
           <li>
             <h3>회원 정보</h3>
