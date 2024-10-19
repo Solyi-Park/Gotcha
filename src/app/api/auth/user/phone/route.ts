@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { changePassword } from "@/services/user";
+import { changePassword, changePhoneNumber } from "@/services/user";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 
@@ -14,23 +14,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const email = session.user.email;
+  const newPhoneNumber = await req.json();
 
-  const newPassword = await req.json();
-
-  if (!newPassword) {
+  if (!newPhoneNumber) {
     return NextResponse.json(
-      { message: "새 비밀번호를 입력해주세요." },
+      { message: "변경할 연락처를 입력해주세요." },
       { status: 400 }
     );
   }
-  console.log("이메일은", email);
-  console.log("newPassword는", newPassword);
 
+  const user = {
+    email: session.user.email,
+    providerId: session.user.providerId,
+  };
   try {
-    await changePassword(email, newPassword);
+    await changePhoneNumber(user, newPhoneNumber);
     return NextResponse.json(
-      { message: "비밀번호가 성공적으로 변경되었습니다." },
+      { message: "연락처가 성공적으로 변경되었습니다." },
       { status: 200 }
     );
   } catch (error) {

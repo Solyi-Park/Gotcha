@@ -172,3 +172,24 @@ export async function changePassword(
     throw new Error("비밀번호 변경 중 오류가 발생했습니다.");
   }
 }
+
+type UserData = {
+  email: string;
+  providerId: string;
+};
+
+export async function changePhoneNumber(
+  user: UserData,
+  newPhoneNumber: string
+): Promise<void> {
+  const { email, providerId } = user;
+
+  const { error } = await supabase
+    .from("users")
+    .update({ phone: newPhoneNumber })
+    .or(`email.eq.${email},providerId.eq.${providerId}`);
+
+  if (error) {
+    throw new Error("연락처 변경 중 오류가 발생했습니다.");
+  }
+}

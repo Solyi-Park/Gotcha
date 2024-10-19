@@ -3,6 +3,7 @@ import { PROVIDER_LOGOS } from "@/constants/provider";
 import { usePasswordCheck } from "@/hooks/password";
 import { FullUser } from "@/model/user";
 import { maskEmail, maskName, maskPhoneNumber } from "@/utils/maskPersonalInfo";
+import { useQueryClient } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,7 +14,7 @@ type Props = {
 
 async function changePassword(newPassword: string) {
   try {
-    const response = await fetch("/api/change-password", {
+    const response = await fetch("/api/auth/user/password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,8 +32,10 @@ async function changePassword(newPassword: string) {
 
 export default function EditUserInfo({ user }: Props) {
   console.log("user", user);
-  const { name, phone, email, password, address, provider, id } = user;
-  const [isEditing, setIsEditing] = useState(false);
+  const { name, phone, email, password, address, provider, providerId, id } =
+    user;
+  const [isPasswordEditing, setPasswordIsEditing] = useState(false);
+  const [isPhoneNumberEditing, setPhoneNumberIsEditing] = useState(false);
 
   const router = useRouter();
 
@@ -41,6 +44,8 @@ export default function EditUserInfo({ user }: Props) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [newPhoneNumber, setNewPhoneNumber] = useState(phone ?? "");
   const [error, setError] = useState<string | null>(null);
 
   //TODO: 패스워드 체크 반복.
@@ -71,6 +76,27 @@ export default function EditUserInfo({ user }: Props) {
       signOut();
     }
   };
+  const queryClient = useQueryClient();
+
+  const handleChangePhoneNumber = async () => {
+    const res = await fetch("/api/auth/user/phone", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newPhoneNumber),
+    });
+
+    if (!res.ok) {
+      setPhoneNumberIsEditing(!isPhoneNumberEditing);
+      throw new Error("연락처 변경에 실패하였습니다.");
+    }
+    queryClient.invalidateQueries({
+      queryKey: ["user", email ?? "", providerId],
+    });
+    alert("연락처가 정상적으로 변경되었습니다.");
+    setPhoneNumberIsEditing(!isPhoneNumberEditing);
+  };
 
   return (
     <section>
@@ -88,16 +114,16 @@ export default function EditUserInfo({ user }: Props) {
                 </div>
                 <div className="relative">
                   <p>비밀번호</p>
-                  <div className={`${isEditing ? "hidden" : "block"}`}>
+                  <div className={`${isPasswordEditing ? "hidden" : "block"}`}>
                     <p>*********</p>
                     <button
-                      onClick={() => setIsEditing(!isEditing)}
+                      onClick={() => setPasswordIsEditing(!isPasswordEditing)}
                       className="absolute right-0  top-0 py-2 px-5 border"
                     >
                       변경
                     </button>
                   </div>
-                  <div className={`${isEditing ? "block" : "hidden"}`}>
+                  <div className={`${isPasswordEditing ? "block" : "hidden"}`}>
                     <form className="flex flex-col" onSubmit={() => {}}>
                       <div>
                         <label className="hidden" htmlFor="userPassword">
@@ -150,7 +176,9 @@ export default function EditUserInfo({ user }: Props) {
                       )}
                       <div className="flex gap-2">
                         <button
-                          onClick={() => setIsEditing(!isEditing)}
+                          onClick={() =>
+                            setPasswordIsEditing(!isPasswordEditing)
+                          }
                           className="py-2 w-[50%] border"
                         >
                           변경취소
@@ -196,16 +224,56 @@ export default function EditUserInfo({ user }: Props) {
             )}
           </li>
           <li>
-            <h3 className="font-semibold">회원 정보</h3>
-            <div>
+            <div className="relative">
+              <h3 className="font-semibold">회원 정보</h3>
               <div>
-                <span>성명</span>
-                <span>{maskName(name)}</span>
+                <div>
+                  <span>성명</span>
+                  <span>{maskName(name)}</span>
+                </div>
+                <div className={`${isPhoneNumberEditing && "hidden"}`}>
+                  <span>연락처</span>
+                  <span>{maskPhoneNumber(phone ?? "01000001234")}</span>
+                </div>
               </div>
-              <div>
-                <span>연락처</span>
-                <span>{maskPhoneNumber(phone ?? "01000001234")}</span>
-              </div>
+              <button
+                onClick={() => setPhoneNumberIsEditing(!isPasswordEditing)}
+                className={`${
+                  isPhoneNumberEditing
+                    ? "hidden"
+                    : "absolute right-0 top-2 py-2 px-5 border"
+                }`}
+              >
+                변경
+              </button>
+              {isPhoneNumberEditing && (
+                <div>
+                  <input
+                    className="border"
+                    type="text"
+                    value={newPhoneNumber}
+                    onChange={(e) => setNewPhoneNumber(e.target.value)}
+                  />
+                  {/* TODO: 비번 변경 버튼그룹과 동일함 */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        setPhoneNumberIsEditing(!isPhoneNumberEditing)
+                      }
+                      className="py-2 w-[50%] border"
+                    >
+                      변경취소
+                    </button>
+                    <button
+                      onClick={handleChangePhoneNumber}
+                      type="button"
+                      className="py-2 w-[50%] text-white bg-black"
+                    >
+                      확인
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </li>
         </ul>

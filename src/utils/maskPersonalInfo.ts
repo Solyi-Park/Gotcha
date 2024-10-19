@@ -1,4 +1,5 @@
 export function maskEmail(email: string) {
+  if (!email) return;
   const [userId, domain] = email.split("@");
   const visiblePart = userId.slice(0, 3);
   const maskedId = visiblePart + "*".repeat(userId.length - 3);
