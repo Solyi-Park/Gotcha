@@ -3,6 +3,7 @@ import { PROVIDER_LOGOS } from "@/constants/provider";
 import { usePasswordCheck } from "@/hooks/password";
 import { FullUser } from "@/model/user";
 import { maskEmail, maskName, maskPhoneNumber } from "@/utils/maskPersonalInfo";
+import { validate } from "@/utils/validate";
 import { useQueryClient } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -36,6 +37,7 @@ export default function EditUserInfo({ user }: Props) {
     user;
   const [isPasswordEditing, setPasswordIsEditing] = useState(false);
   const [isPhoneNumberEditing, setPhoneNumberIsEditing] = useState(false);
+  const [isEmailEditing, setIsEmailEditing] = useState(false);
 
   const router = useRouter();
 
@@ -46,7 +48,10 @@ export default function EditUserInfo({ user }: Props) {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [newPhoneNumber, setNewPhoneNumber] = useState(phone ?? "");
+  const [newEmail, setNewEmail] = useState(email ?? "");
+
   const [error, setError] = useState<string | null>(null);
+  //TODO: 변경로직에서 에러메세지 표시방식 통일하기, alert OR 입력필드 아래 ERROR MESSAGE
 
   //TODO: 패스워드 체크 반복.
   const handleChangePassword = async () => {
@@ -55,21 +60,20 @@ export default function EditUserInfo({ user }: Props) {
       alert("현재 비밀번호를 정확히 입력해주세요.");
       return;
     }
-    if (
-      newPassword.length < 8 ||
-      confirmPassword.length < 8 ||
-      newPassword.length > 20 ||
-      confirmPassword.length > 20
-    ) {
-      alert(
-        "새로운 비밀번호는 8~20자 이내의 영문 대소문자, 특수문자, 숫자의 조합으로 이루어져야 합니다."
-      );
+    const validationResult = validate.password(newPassword);
+    if (validationResult) {
+      alert(validationResult);
       return;
     }
-    if (newPassword !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+    const confirmResult = validate.confirmPassword(
+      newPassword,
+      confirmPassword
+    );
+    if (confirmResult) {
+      alert(confirmResult);
       return;
     }
+
     const success = await changePassword(newPassword);
     if (success) {
       alert("비밀번호가 정상적으로 변경되었습니다. 다시 로그인해주세요.");
@@ -79,6 +83,11 @@ export default function EditUserInfo({ user }: Props) {
   const queryClient = useQueryClient();
 
   const handleChangePhoneNumber = async () => {
+    const validationResult = validate.phone(newPhoneNumber);
+    if (validationResult) {
+      alert(validationResult);
+      return;
+    }
     const res = await fetch("/api/auth/user/phone", {
       method: "POST",
       headers: {
@@ -89,6 +98,7 @@ export default function EditUserInfo({ user }: Props) {
 
     if (!res.ok) {
       setPhoneNumberIsEditing(!isPhoneNumberEditing);
+      setNewPhoneNumber("");
       throw new Error("연락처 변경에 실패하였습니다.");
     }
     queryClient.invalidateQueries({
@@ -96,6 +106,34 @@ export default function EditUserInfo({ user }: Props) {
     });
     alert("연락처가 정상적으로 변경되었습니다.");
     setPhoneNumberIsEditing(!isPhoneNumberEditing);
+  };
+
+  const handleChangeEmail = async (newEmail: string) => {
+    const validationResult = validate.email(newEmail);
+    if (validationResult) {
+      setError(validationResult);
+      return;
+    }
+    const res = await fetch("/api/auth/user/email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newEmail),
+    });
+
+    if (!res.ok) {
+      //TODO setIsEmailEditing 부분 반복이니까 try-catch-finally?로 수정하면 될 듯.
+      setIsEmailEditing(!isEmailEditing);
+      setNewEmail("");
+      throw new Error(res.statusText);
+    }
+    queryClient.invalidateQueries({
+      queryKey: ["user", email ?? "", providerId],
+    });
+    alert("이메일이 정상적으로 변경되었습니다.");
+    setIsEmailEditing(!isEmailEditing);
+    setError(null);
   };
 
   return (
@@ -231,49 +269,101 @@ export default function EditUserInfo({ user }: Props) {
                   <span>성명</span>
                   <span>{maskName(name)}</span>
                 </div>
-                <div className={`${isPhoneNumberEditing && "hidden"}`}>
-                  <span>연락처</span>
-                  <span>{maskPhoneNumber(phone ?? "01000001234")}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => setPhoneNumberIsEditing(!isPasswordEditing)}
-                className={`${
-                  isPhoneNumberEditing
-                    ? "hidden"
-                    : "absolute right-0 top-2 py-2 px-5 border"
-                }`}
-              >
-                변경
-              </button>
-              {isPhoneNumberEditing && (
                 <div>
-                  <input
-                    className="border"
-                    type="text"
-                    value={newPhoneNumber}
-                    onChange={(e) => setNewPhoneNumber(e.target.value)}
-                  />
-                  {/* TODO: 비번 변경 버튼그룹과 동일함 */}
-                  <div className="flex gap-2">
+                  <span>연락처</span>
+                  <div className={`${isPhoneNumberEditing && "hidden"}`}>
+                    <span>{maskPhoneNumber(phone ?? "01000001234")}</span>
+                    {/* TODO:변경버튼 분리하기 */}
                     <button
                       onClick={() =>
-                        setPhoneNumberIsEditing(!isPhoneNumberEditing)
+                        setPhoneNumberIsEditing(!isPasswordEditing)
                       }
-                      className="py-2 w-[50%] border"
+                      className={`${
+                        isPhoneNumberEditing
+                          ? "hidden"
+                          : "absolute right-0 top-2 py-2 px-5 border"
+                      }`}
                     >
-                      변경취소
-                    </button>
-                    <button
-                      onClick={handleChangePhoneNumber}
-                      type="button"
-                      className="py-2 w-[50%] text-white bg-black"
-                    >
-                      확인
+                      변경
                     </button>
                   </div>
+                  {isPhoneNumberEditing && (
+                    // TODO: 이메일 변경과 동일한 형식
+                    <div>
+                      <input
+                        className="border"
+                        type="text"
+                        value={newPhoneNumber}
+                        onChange={(e) => setNewPhoneNumber(e.target.value)}
+                      />
+                      {/* TODO: 비번 변경 버튼그룹과 동일함 */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>
+                            setPhoneNumberIsEditing(!isPhoneNumberEditing)
+                          }
+                          className="py-2 w-[50%] border"
+                        >
+                          변경취소
+                        </button>
+                        <button
+                          onClick={handleChangePhoneNumber}
+                          type="button"
+                          className="py-2 w-[50%] text-white bg-black"
+                        >
+                          확인
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
+
+              <div className="flex flex-col relative">
+                <span>이메일</span>
+                {email ? (
+                  <span>{maskEmail(email)}</span>
+                ) : (
+                  <span>이메일을 등록해주세요.</span>
+                )}
+                <button
+                  onClick={() => setIsEmailEditing(!isEmailEditing)}
+                  className={`${
+                    isEmailEditing
+                      ? "hidden"
+                      : "absolute right-0 top-2 py-2 px-5 border"
+                  }`}
+                >
+                  변경
+                </button>
+                {isEmailEditing && (
+                  <div>
+                    <input
+                      className="border"
+                      type="text"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                    />
+                    {error && <span>{error}</span>}
+                    {/* TODO: 비번 변경 버튼그룹과 동일함 */}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setIsEmailEditing(!isEmailEditing)}
+                        className="py-2 w-[50%] border"
+                      >
+                        변경취소
+                      </button>
+                      <button
+                        onClick={() => handleChangeEmail(newEmail)}
+                        type="button"
+                        className="py-2 w-[50%] text-white bg-black"
+                      >
+                        확인
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </li>
         </ul>

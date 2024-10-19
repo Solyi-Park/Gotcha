@@ -8,27 +8,12 @@ type Props = {
   type: "signin" | "signup";
 };
 
-// type Provider = {
-//   name: string;
-//   image: string;
-// };
-// export const PROVIDER_LOGO_IMAGES: Provider[] = [
-//   {
-//     name: "Google",
-//     image: "/images/googleLogo.webp",
-//   },
-//   {
-//     name: "Kakao",
-//     image: "/images/kakaoLogo.webp",
-//   },
-//   {
-//     name: "Naver",
-//     image: "/images/naverLogo.webp",
-//   },
-// ];
 export function getProviderIcon(providerName: string) {
-  const provider = PROVIDER_LOGOS.find((item) => item.name === providerName);
-  return provider?.activeImage!;
+  const provider = PROVIDER_LOGOS.find(
+    (item) => item.name === providerName.toUpperCase()
+  );
+
+  return provider?.activeImage;
 }
 
 export default function OAuthSignin({ providers, type }: Props) {

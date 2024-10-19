@@ -193,3 +193,19 @@ export async function changePhoneNumber(
     throw new Error("연락처 변경 중 오류가 발생했습니다.");
   }
 }
+
+export async function changeEmail(
+  user: UserData,
+  newEmail: string
+): Promise<void> {
+  const { email, providerId } = user;
+
+  const { error } = await supabase
+    .from("users")
+    .update({ email: newEmail })
+    .or(`email.eq.${email},providerId.eq.${providerId}`);
+
+  if (error) {
+    throw new Error("이메일 변경 중 오류가 발생했습니다.");
+  }
+}

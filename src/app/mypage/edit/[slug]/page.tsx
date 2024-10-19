@@ -1,5 +1,6 @@
 "use client";
 import EditUserInfo from "@/components/EditUserInfo";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import Reconfirm from "@/components/Reconfirm";
 import { FullUser, SimpleUser } from "@/model/user";
 import { useQuery } from "@tanstack/react-query";
@@ -24,7 +25,7 @@ export default function EditPageDetail({ params: { slug } }: Props) {
 
   useEffect(() => {
     if (sessionUser) {
-      if (sessionUser.provider) {
+      if (sessionUser.provider !== null) {
         router.push("/mypage/edit/info");
       } else {
         router.push("/mypage/edit/reconfirm");
@@ -32,7 +33,7 @@ export default function EditPageDetail({ params: { slug } }: Props) {
     }
   }, [sessionUser, router]);
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["user", sessionUser?.email, sessionUser?.providerId],
     queryFn: async () => getUserData(),
     staleTime: 60000_15,
@@ -40,6 +41,7 @@ export default function EditPageDetail({ params: { slug } }: Props) {
 
   return (
     <div>
+      {isLoading && <LoadingSpinner />}
       {slug === "reconfirm" && user && <Reconfirm user={user} />}
       {slug === "info" && user && <EditUserInfo user={user} />}
     </div>

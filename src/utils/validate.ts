@@ -32,6 +32,13 @@ export const validate = {
 
     return null;
   },
+  phone: (phone: string): ValidationResult => {
+    const regex = /^\d{10,11}$/;
+    if (!regex.test(phone))
+      return "전화번호는 10자리 또는 11자리 숫자여야 합니다.";
+    return null;
+  },
+
   file: (fileName: string) => {
     const regex = /^[a-zA-Z0-9._\-\(\)\,\!\&\+\= ]+$/;
     return regex.test(fileName);
