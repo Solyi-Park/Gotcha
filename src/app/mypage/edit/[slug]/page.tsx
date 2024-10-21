@@ -2,6 +2,7 @@
 import EditUserInfo from "@/components/EditUserInfo";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Reconfirm from "@/components/Reconfirm";
+import useMe from "@/hooks/me";
 import { FullUser, SimpleUser } from "@/model/user";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -19,25 +20,7 @@ async function getUserData(): Promise<FullUser> {
 }
 
 export default function EditPageDetail({ params: { slug } }: Props) {
-  const { data: session } = useSession();
-  const sessionUser = session?.user as SimpleUser;
-  const router = useRouter();
-
-  useEffect(() => {
-    if (sessionUser) {
-      if (sessionUser.provider !== null) {
-        router.push("/mypage/edit/info");
-      } else {
-        router.push("/mypage/edit/reconfirm");
-      }
-    }
-  }, [sessionUser, router]);
-
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["user", sessionUser?.email, sessionUser?.providerId],
-    queryFn: async () => getUserData(),
-    staleTime: 60000_15,
-  });
+  const { user, isLoading, error } = useMe();
 
   return (
     <div>

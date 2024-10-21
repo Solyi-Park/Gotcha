@@ -233,6 +233,7 @@ export async function updateLikes(
 export async function getLikedProductsOfUser(
   userId: string
 ): Promise<FullProduct[] | null> {
+  console.log("현재사용자", userId);
   const { data, error } = await supabase
     .from("products")
     .select()
@@ -242,7 +243,7 @@ export async function getLikedProductsOfUser(
     console.error("Error fetching liked products.", error);
   }
   if (data) {
-    console.log("data", data);
+    console.log("좋아요 data", data);
     return data;
   }
   return null;

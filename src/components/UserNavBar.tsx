@@ -1,4 +1,5 @@
 "use client";
+import useMe from "@/hooks/me";
 import { FullProduct } from "@/model/product";
 import { SimpleUser } from "@/model/user";
 import { useLikedProductsStore } from "@/store/likedProducts";
@@ -37,13 +38,19 @@ async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
   }).then((res) => res.json());
 }
 
-export default function UserNavBar({ user }: Props) {
+export default function UserNavBar() {
+  const { user } = useMe();
   const pathname = usePathname();
   const path = pathname.split("mypage")[1];
   const { setProducts } = useLikedProductsStore();
   const { data: likedProducts } = useQuery({
-    queryKey: ["likedProducts", user.id],
-    queryFn: async () => await fetchLikedProducts(user.id),
+    queryKey: ["likedProducts", user?.id],
+    queryFn: async () => {
+      if (user) {
+        return await fetchLikedProducts(user.id);
+      }
+    },
+    staleTime: 60000 * 15,
   });
 
   useEffect(() => {
@@ -65,7 +72,7 @@ export default function UserNavBar({ user }: Props) {
       <section>
         <h2 className="text-4xl font-bold">
           {/* 글자수 길어지면 사이즈 줄이기 */}
-          {maskName(user.name) || "회원님"}
+          {maskName(user?.name ?? "") || "회원님"}
         </h2>
         <div>
           <Link href="/mypage/like">

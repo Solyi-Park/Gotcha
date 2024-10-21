@@ -125,7 +125,7 @@ export async function getUser(user: AuthUser): Promise<FullUser | null> {
   // }
   return data;
 }
-
+//TODO: getUser 로직 정리하기
 export async function getUserByEmail(email: string): Promise<FullUser> {
   const { data, error } = await supabase
     .from("users")
