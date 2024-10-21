@@ -53,10 +53,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 }
 
 export async function DELETE(req: NextRequest) {
-  console.log("DELETE");
-  if (req.method !== "DELETE") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
+  //여기부터 생각해보기
   const searchParams = req.nextUrl.searchParams;
   const id = searchParams.get("itemId");
   console.log("아이템 id야", id);

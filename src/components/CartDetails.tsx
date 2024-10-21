@@ -1,6 +1,6 @@
 "use client";
 import { CartItem, CartItemRowType } from "@/model/cart";
-import { SimpleUser } from "@/model/user";
+import { FullUser } from "@/model/user";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import CartItemRow from "./CartItemRow";
 import { SimpleProduct } from "@/model/product";
@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkout";
 
 type Props = {
-  user: SimpleUser;
+  user: FullUser;
   userCartData: CartItem[];
 };
 

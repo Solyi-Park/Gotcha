@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { NewCartItem } from "@/model/cart";
 import LikeButton from "./buttons/LikeButton";
+import useMe from "@/hooks/me";
 
 type Props = {
   product: FullProduct;
@@ -40,8 +41,7 @@ export default function ProductDetailHeader({ product }: Props) {
   } = product;
   console.log("products", product);
 
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { user, isLoading } = useMe();
 
   const queryClient = useQueryClient();
 
@@ -76,37 +76,39 @@ export default function ProductDetailHeader({ product }: Props) {
       alert("재고 수량이 부족합니다.");
       return;
     }
-    const newCartItems: NewCartItem[] = options
-      ? productOptions.map((opt) => ({
-          userId: user.id,
-          productId: id,
-          quantity: opt.quantity,
-          option: {
-            id: opt.id,
-            items: opt.items,
-          },
-        }))
-      : [
-          {
-            userId: user.id,
+    if (user) {
+      const newCartItems: NewCartItem[] = options
+        ? productOptions.map((opt) => ({
+            userId: user?.id,
             productId: id,
-            quantity: totalQuantity,
+            quantity: opt.quantity,
             option: {
-              id: "",
-              items: [],
+              id: opt.id,
+              items: opt.items,
             },
-          },
-        ];
-    console.log("장바구니에 넣을라고", newCartItems);
-    const res = await addProductToCart(newCartItems);
-    if (res.ok) {
-      // TODO: 커스텀 모달: 장바구니 바로가기 버튼
-      // CartDetails에서 useEffect가 userCartData에 의존하지 않는 경우 carItems invalidateQueries해줘야함
-      // queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
-      queryClient.invalidateQueries({ queryKey: ["userCart", user.id] });
-      alert("장바구니에 상품이 담겼습니다.");
+          }))
+        : [
+            {
+              userId: user?.id,
+              productId: id,
+              quantity: totalQuantity,
+              option: {
+                id: "",
+                items: [],
+              },
+            },
+          ];
+      console.log("장바구니에 넣을라고", newCartItems);
+      const res = await addProductToCart(newCartItems);
+      if (res.ok) {
+        // TODO: 커스텀 모달: 장바구니 바로가기 버튼
+        // CartDetails에서 useEffect가 userCartData에 의존하지 않는 경우 carItems invalidateQueries해줘야함
+        // queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
+        queryClient.invalidateQueries({ queryKey: ["userCart", user?.id] });
+        alert("장바구니에 상품이 담겼습니다.");
+      }
+      resetOption();
     }
-    resetOption();
   };
 
   const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {

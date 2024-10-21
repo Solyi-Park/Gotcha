@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { CartItem } from "@/model/cart";
 import ContinueShoppingButton from "@/components/buttons/ContinueShoppingButton";
+import useMe from "@/hooks/me";
 
 async function fetchUserCart(userId: string) {
   const res = await fetch(`/api/cart?userId=${userId}`);
@@ -15,11 +16,14 @@ async function fetchUserCart(userId: string) {
 }
 
 export default function CartPage() {
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { user } = useMe();
   const { data: userCartData, isLoading } = useQuery({
     queryKey: ["userCart", user?.id],
-    queryFn: async () => await fetchUserCart(user?.id),
+    queryFn: async () => {
+      if (user) {
+        return await fetchUserCart(user?.id);
+      }
+    },
     staleTime: 1000 * 60 * 30,
   });
 
@@ -32,7 +36,7 @@ export default function CartPage() {
           <ContinueShoppingButton />
         </div>
       )}
-      {!isLoading && userCartData && userCartData.length > 0 && (
+      {!isLoading && user && userCartData && userCartData.length > 0 && (
         <CartDetails user={user} userCartData={userCartData} />
       )}
     </div>
