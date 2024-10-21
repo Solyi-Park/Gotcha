@@ -1,31 +1,36 @@
-import { getUserById } from "@/services/user";
-import { hashPassword, verifyPassword } from "@/utils/password";
+// /app/api/auth/reconfirm/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { checkUserPassword } from "@/services/user";
 
 export async function POST(req: NextRequest) {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-  const { userId, password } = await req.json();
+  // TODO: 다른 라우트 핸들러도 업데이트 하기.
+  const { email, password } = await req.json();
 
-  if (!userId || !password) {
-    return new Response("Bad Request", { status: 400 });
+  if (!email || !password) {
+    return NextResponse.json(
+      { message: "잘못된 요청입니다." },
+      { status: 400 }
+    );
   }
 
-  //   const hashedPassword = await hashPassword(password);
   try {
-    const user = await getUserById(userId);
-
-    const hashedPassword = user.password !== null ? user.password : "";
-    const isMatch = await verifyPassword(password, hashedPassword);
+    const isMatch = await checkUserPassword(email, password);
     if (isMatch) {
-      return NextResponse.json("비밀번호가 확인되었습니다.", { status: 200 });
+      return NextResponse.json(
+        { message: "비밀번호가 확인되었습니다." },
+        { status: 200 }
+      );
     } else {
-      return NextResponse.json("비밀번호를 다시 확인해주세요.", {
-        status: 401,
-      });
+      return NextResponse.json(
+        { message: "비밀번호를 다시 확인해주세요." },
+        { status: 401 }
+      );
     }
   } catch (error) {
-    return NextResponse.json("서버 오류가 발생했습니다.", { status: 500 });
+    console.error(error);
+    return NextResponse.json(
+      { message: "서버 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }

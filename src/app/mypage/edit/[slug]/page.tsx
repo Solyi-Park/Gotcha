@@ -1,24 +1,49 @@
-import { authOptions } from "@/app/lib/auth";
+"use client";
 import EditUserInfo from "@/components/EditUserInfo";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import Reconfirm from "@/components/Reconfirm";
-import { SimpleUser } from "@/model/user";
-import { getUserById } from "@/services/user";
-import { getServerSession } from "next-auth";
+import { FullUser, SimpleUser } from "@/model/user";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type Props = {
   params: { slug: string };
 };
-export default async function EditPage({ params: { slug } }: Props) {
-  const session = await getServerSession(authOptions);
-  const sessionUser = session?.user as SimpleUser;
-  const email = sessionUser?.email;
 
-  const user = await getUserById(sessionUser.id);
+async function getUserData(): Promise<FullUser> {
+  return await fetch("/api/auth/user", {
+    method: "GET",
+  }).then((res) => res.json());
+}
+
+export default function EditPageDetail({ params: { slug } }: Props) {
+  const { data: session } = useSession();
+  const sessionUser = session?.user as SimpleUser;
+  const router = useRouter();
+
+  useEffect(() => {
+    if (sessionUser) {
+      if (sessionUser.provider !== null) {
+        router.push("/mypage/edit/info");
+      } else {
+        router.push("/mypage/edit/reconfirm");
+      }
+    }
+  }, [sessionUser, router]);
+
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user", sessionUser?.email, sessionUser?.providerId],
+    queryFn: async () => getUserData(),
+    staleTime: 60000_15,
+  });
 
   return (
     <div>
-      {slug === "reconfirm" && email && <Reconfirm user={sessionUser} />}
-      {slug === "info" && <EditUserInfo user={user} />}
+      {isLoading && <LoadingSpinner />}
+      {slug === "reconfirm" && user && <Reconfirm user={user} />}
+      {slug === "info" && user && <EditUserInfo user={user} />}
     </div>
   );
 }

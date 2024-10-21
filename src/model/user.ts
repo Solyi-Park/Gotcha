@@ -22,6 +22,7 @@ export type FullUser = {
   signupDate: string;
   signout: string;
   role?: string;
+  address: string | null;
 };
 
 // 이거 타입  체크..

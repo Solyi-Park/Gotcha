@@ -1,5 +1,8 @@
 "use client";
+import { usePasswordCheck } from "@/hooks/password";
 import { SimpleUser } from "@/model/user";
+import { maskEmail } from "@/utils/maskPersonalInfo";
+
 import { Span } from "next/dist/trace";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,27 +12,23 @@ type Props = {
 };
 export default function Reconfirm({ user }: Props) {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const userId = user.id;
 
   const maskedEmail = maskEmail(user.email!);
-  const router = useRouter();
-  const handleClick = async () => {
-    const response = await fetch("/api/auth/reconfirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, password }),
-    });
+  const { checkPassword, error } = usePasswordCheck();
 
-    if (!response.ok) {
-      setError(response.statusText || "비밀번호를 다시 확인해주세요");
-      return;
+  const router = useRouter();
+  //TODO: 패스워드 체크 반복.
+  const handleCheckPassword = async () => {
+    const isValid = await checkPassword(userId, password);
+    if (isValid) {
+      router.push("/mypage/edit/info");
     }
-    router.push("/mypage/edit/info");
   };
 
   return (
     <fieldset>
+      <legend className="hidden">비밀번호 재확인 절차</legend>
       <div>
         <h2>비밀번호 재확인</h2>
         <span>
@@ -57,21 +56,11 @@ export default function Reconfirm({ user }: Props) {
       </div>
       <button
         className="px-16 py-3 bg-black text-white"
-        onClick={handleClick}
+        onClick={handleCheckPassword}
         type="submit"
       >
         다음
       </button>
     </fieldset>
   );
-}
-
-function maskEmail(email: string) {
-  const [userId, domain] = email.split("@");
-  const visiblePart = userId.slice(0, 3);
-  const maskedId = visiblePart + "*".repeat(userId.length - 3);
-
-  const [domainName, topLevelDomain] = domain.split(".");
-  const maskedDomain = "*".repeat(domainName.length) + "." + topLevelDomain;
-  return `${maskedId}@${maskedDomain}`;
 }
