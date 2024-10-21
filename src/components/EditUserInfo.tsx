@@ -33,8 +33,7 @@ async function changePassword(newPassword: string) {
 
 export default function EditUserInfo({ user }: Props) {
   console.log("user", user);
-  const { name, phone, email, password, address, provider, providerId, id } =
-    user;
+  const { name, phone, email, address, provider, providerId } = user;
   const [isPasswordEditing, setPasswordIsEditing] = useState(false);
   const [isPhoneNumberEditing, setPhoneNumberIsEditing] = useState(false);
   const [isEmailEditing, setIsEmailEditing] = useState(false);
@@ -54,6 +53,7 @@ export default function EditUserInfo({ user }: Props) {
   //TODO: 변경로직에서 에러메세지 표시방식 통일하기, alert OR 입력필드 아래 ERROR MESSAGE
 
   //TODO: 패스워드 체크 반복.
+  // 비밀번호 변경 취소시 새로고침 원인 찾기
   const handleChangePassword = async () => {
     const isValid = await checkPassword(email || "", currentPassword || "");
     if (!isValid) {
@@ -108,7 +108,7 @@ export default function EditUserInfo({ user }: Props) {
     setPhoneNumberIsEditing(!isPhoneNumberEditing);
   };
 
-  const handleChangeEmail = async (newEmail: string) => {
+  const handleChangeEmail = async () => {
     const validationResult = validate.email(newEmail);
     if (validationResult) {
       setError(validationResult);
@@ -218,6 +218,7 @@ export default function EditUserInfo({ user }: Props) {
                             setPasswordIsEditing(!isPasswordEditing)
                           }
                           className="py-2 w-[50%] border"
+                          type="button"
                         >
                           변경취소
                         </button>
@@ -272,17 +273,18 @@ export default function EditUserInfo({ user }: Props) {
                 <div>
                   <span>연락처</span>
                   <div className={`${isPhoneNumberEditing && "hidden"}`}>
-                    <span>{maskPhoneNumber(phone ?? "01000001234")}</span>
+                    <span>{maskPhoneNumber(phone ?? "")}</span>
                     {/* TODO:변경버튼 분리하기 */}
                     <button
                       onClick={() =>
-                        setPhoneNumberIsEditing(!isPasswordEditing)
+                        setPhoneNumberIsEditing(!isPhoneNumberEditing)
                       }
                       className={`${
                         isPhoneNumberEditing
                           ? "hidden"
                           : "absolute right-0 top-2 py-2 px-5 border"
                       }`}
+                      type="button"
                     >
                       변경
                     </button>
@@ -303,6 +305,7 @@ export default function EditUserInfo({ user }: Props) {
                             setPhoneNumberIsEditing(!isPhoneNumberEditing)
                           }
                           className="py-2 w-[50%] border"
+                          type="button"
                         >
                           변경취소
                         </button>
@@ -333,6 +336,7 @@ export default function EditUserInfo({ user }: Props) {
                       ? "hidden"
                       : "absolute right-0 top-2 py-2 px-5 border"
                   }`}
+                  type="button"
                 >
                   변경
                 </button>
@@ -350,11 +354,12 @@ export default function EditUserInfo({ user }: Props) {
                       <button
                         onClick={() => setIsEmailEditing(!isEmailEditing)}
                         className="py-2 w-[50%] border"
+                        type="button"
                       >
                         변경취소
                       </button>
                       <button
-                        onClick={() => handleChangeEmail(newEmail)}
+                        onClick={handleChangeEmail}
                         type="button"
                         className="py-2 w-[50%] text-white bg-black"
                       >

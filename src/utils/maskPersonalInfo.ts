@@ -1,5 +1,5 @@
 export function maskEmail(email: string) {
-  if (!email) return;
+  if (!email) return "";
   const [userId, domain] = email.split("@");
   const visiblePart = userId.slice(0, 3);
   const maskedId = visiblePart + "*".repeat(userId.length - 3);
@@ -10,6 +10,7 @@ export function maskEmail(email: string) {
 }
 
 export function maskName(name: string) {
+  if (!name) return "";
   if (name.length === 2) {
     return name[0] + "*";
   }
@@ -19,6 +20,7 @@ export function maskName(name: string) {
 }
 
 export function maskPhoneNumber(phoneNumber: string) {
+  if (!phoneNumber) return "";
   if (phoneNumber.length >= 10) {
     return (
       phoneNumber.slice(0, 3) +
