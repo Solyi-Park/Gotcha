@@ -6,7 +6,6 @@ export async function DELETE(req: NextRequest) {
     return new Response("Method Not Allowed", { status: 405 });
   }
   const orderId = req.nextUrl.pathname.split("/").pop();
-  console.log("삭제할 orderId", orderId);
 
   if (!orderId) {
     return new Response("Bad Request", { status: 400 });
@@ -27,7 +26,6 @@ export async function GET(req: NextRequest) {
     return new Response("Method Not Allowed", { status: 405 });
   }
   const orderId = req.nextUrl.pathname.split("/").pop()?.split("?")[0];
-  console.log("orderId", orderId);
 
   const params = req.nextUrl.searchParams;
   const type = params.get("type");

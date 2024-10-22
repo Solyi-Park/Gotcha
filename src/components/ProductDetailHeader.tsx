@@ -13,7 +13,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { NewCartItem } from "@/model/cart";
 import LikeButton from "./buttons/LikeButton";
-import useMe from "@/hooks/me";
 
 type Props = {
   product: FullProduct;
@@ -23,7 +22,7 @@ async function addProductToCart(productOptions: NewCartItem[]) {
   const res = fetch("/api/cart", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(productOptions),
+    body: JSON.stringify({ productOptions }),
   });
   return res;
 }
@@ -41,7 +40,8 @@ export default function ProductDetailHeader({ product }: Props) {
   } = product;
   console.log("products", product);
 
-  const { user, isLoading } = useMe();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   const queryClient = useQueryClient();
 

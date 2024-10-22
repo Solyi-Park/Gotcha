@@ -1,12 +1,12 @@
 "use client";
 import { usePasswordCheck } from "@/hooks/password";
-import { FullUser } from "@/model/user";
+import { FullUser, SimpleUser } from "@/model/user";
 import { maskEmail } from "@/utils/maskPersonalInfo";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
-  user: FullUser;
+  user: SimpleUser;
 };
 export default function Reconfirm({ user }: Props) {
   const [password, setPassword] = useState("");

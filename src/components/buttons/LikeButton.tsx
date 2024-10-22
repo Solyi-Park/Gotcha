@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { FullUser } from "@/model/user";
 import HeartFillIcon from "../icons/HeartFillIcon";
 import HeartIcon from "../icons/HeartIcon";
-import useMe from "@/hooks/me";
 
 type Props = {
   product: SimpleProduct;
@@ -30,15 +29,13 @@ export default function LikeButton({ product, isForDetail }: Props) {
 
   const { data: session } = useSession();
 
-  const { user, isLoading, error } = useMe();
-
-  const userId = user?.id as string;
-
-  const liked = likes?.includes(userId);
+  const user = session?.user;
+  console.log("클라-", user);
+  const liked = likes?.includes(user?.id);
 
   const queryClient = useQueryClient();
   const { mutate: toggleLike } = useMutation({
-    mutationFn: async () => await updateLike(productId, userId),
+    mutationFn: async () => await updateLike(productId, user?.id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["product", productId] });
 
@@ -47,8 +44,8 @@ export default function LikeButton({ product, isForDetail }: Props) {
         return {
           ...old,
           likes: liked
-            ? old.likes.filter((uid) => uid !== userId)
-            : [...old.likes, userId],
+            ? old.likes.filter((uid) => uid !== user?.id)
+            : [...old.likes, user?.id],
           likeCount: liked ? old.likeCount! - 1 : old.likeCount! + 1,
         };
       });

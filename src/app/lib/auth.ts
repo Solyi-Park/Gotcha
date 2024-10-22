@@ -5,6 +5,7 @@ import NaverProvider from "next-auth/providers/naver";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { addUser, findUser } from "@/services/user";
 import { verifyPassword } from "@/utils/password";
+import { v4 as uuidv4 } from "uuid";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,18 +17,26 @@ export const authOptions: NextAuthOptions = {
           type: "email",
         },
         password: { label: "Password", type: "password" },
+        name: { label: "Name", type: "name" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials!;
+        const { email, password, name } = credentials!;
+        console.log("크레덴셜", credentials);
 
         const user = await findUser(email);
 
-        console.log("authorize-findUser", user);
-        if (!user || !user.password) return null;
-        if (!user !== null) {
+        if (!user) {
+          const user = await addUser({
+            email,
+            password,
+            name,
+          });
+          console.log("authorize-findUser", user);
         }
+
         const verifyPw = await verifyPassword(password, user.password);
         if (!verifyPw) return null;
+
         return {
           id: user.id,
           email: user.email,
@@ -67,35 +76,28 @@ export const authOptions: NextAuthOptions = {
         session.user = {
           ...user,
           email: user.email || "",
-          // id: token.id as string,
-          providerId: token.id as string,
+          id: token.id as string,
           provider: token.provider as string,
         };
       }
       return session;
     },
-    async signIn({ user, account }) {
-      if (!user.id) {
+    async signIn({ user: { id, email, name, image }, account }) {
+      if (!id) {
         return false;
       }
-      const existingUser = await findUser(
-        user.email,
-        account?.providerAccountId
-      );
+      const existingUser = await findUser(email, id);
 
       if (!existingUser) {
         const userData = {
-          email: user.email || null,
-          name: user.name || "",
-          image: user.image || null,
+          email: email || null,
+          name: name || "",
+          image: image || null,
           provider: account?.provider as string,
-          providerId: account?.providerAccountId as string,
+          id,
         };
-        const newUser = await addUser(userData);
-        console.log("newUser", newUser);
-        if (newUser) {
-          user.id = newUser.id;
-        }
+
+        await addUser(userData);
       }
       return true;
     },

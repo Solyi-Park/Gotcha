@@ -8,21 +8,15 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    return NextResponse.json(
-      { message: "인증되지 않은 사용자입니다." },
-      { status: 401 }
-    );
+    return new Response("인증되지 않은 사용자입니다.", { status: 401 });
   }
 
   const email = session.user.email;
 
-  const newPassword = await req.json();
+  const { newPassword } = await req.json();
 
   if (!newPassword) {
-    return NextResponse.json(
-      { message: "새 비밀번호를 입력해주세요." },
-      { status: 400 }
-    );
+    return new Response("새 비밀번호를 입력해주세요.", { status: 400 });
   }
 
   try {

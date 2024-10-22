@@ -1,32 +1,21 @@
-"use client";
+import { authOptions } from "@/app/lib/auth";
 import EditUserInfo from "@/components/EditUserInfo";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import Reconfirm from "@/components/Reconfirm";
-import useMe from "@/hooks/me";
-import { FullUser, SimpleUser } from "@/model/user";
-import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { getServerSession } from "next-auth";
 
 type Props = {
   params: { slug: string };
 };
 
-async function getUserData(): Promise<FullUser> {
-  return await fetch("/api/auth/user", {
-    method: "GET",
-  }).then((res) => res.json());
-}
-
-export default function EditPageDetail({ params: { slug } }: Props) {
-  const { user, isLoading, error } = useMe();
+export default async function EditPageDetail({ params: { slug } }: Props) {
+  const sesssion = await getServerSession(authOptions);
+  const user = sesssion?.user;
+  console.log("user", user);
 
   return (
     <div>
-      {isLoading && <LoadingSpinner />}
       {slug === "reconfirm" && user && <Reconfirm user={user} />}
-      {slug === "info" && user && <EditUserInfo user={user} />}
+      {slug === "info" && user && <EditUserInfo />}
     </div>
   );
 }

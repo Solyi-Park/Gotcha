@@ -1,13 +1,8 @@
-export type AuthUser = Pick<
-  FullUser,
-  "email" | "name" | "image" | "provider" | "providerId"
->;
+export type AuthUser = Pick<FullUser, "email" | "name" | "image" | "provider">;
 
 export type SimpleUser = Pick<FullUser, "email" | "name" | "id"> & {
-  image?: string | null;
-  provider?: string | null;
-  providerId?: string | null;
-  password?: string | null;
+  image: string | null;
+  provider: string | null;
 };
 
 export type FullUser = {
@@ -18,7 +13,6 @@ export type FullUser = {
   name: string;
   image: string | null;
   provider: string | null;
-  providerId: string | null;
   signupDate: string;
   signout: string;
   role?: string;

@@ -1,6 +1,7 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { AuthUser, FullUser } from "@/model/user";
 import { hashPassword, verifyPassword } from "@/utils/password";
+import { v4 as uuidv4 } from "uuid";
 
 type NewUser = {
   email: string | null;
@@ -8,20 +9,21 @@ type NewUser = {
   password?: string;
   image?: string | null;
   provider?: string;
-  providerId?: string;
+  id?: string;
 };
+// TODO: 수정하기
 export async function addUser(user: NewUser): Promise<FullUser | null> {
-  const { email, name, password, image, provider, providerId } = user;
+  const { email, name, password, image, provider, id } = user;
 
-  if (!email && !providerId) {
-    console.error("이메일 또는 Provider ID가 필요합니다.");
+  if (!email && !provider) {
+    console.error("이메일 또는 Provider가 필요합니다.");
     return null;
   }
 
   const { data: existingUser, error: findError } = await supabase
     .from("users")
     .select("*")
-    .or(`email.eq.${email},providerId.eq.${providerId}`)
+    .or(`email.eq.${email},provider.eq.${provider}`)
     .single();
 
   if (findError && findError.code !== "PGRST116") {
@@ -38,6 +40,7 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
   if (!provider && password) {
     const hashedPassword = await hashPassword(password);
     newUser = {
+      id: uuidv4(),
       name,
       email,
       password: hashedPassword,
@@ -48,10 +51,9 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
       email,
       image,
       provider,
-      providerId,
+      id,
     };
   }
-
   const { data, error } = await supabase.from("users").insert(newUser).select();
 
   if (error) {
@@ -60,28 +62,21 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
   }
 
   if (data && data.length > 0) {
-    console.log("새 사용자 데이터:", data[0]);
+    console.log("새 사용자:", data[0]);
     return data[0];
   }
 
   return null;
 }
-
-export async function findUser(
-  email: string | null | undefined,
-  providerId?: string
-) {
+//TODO:이메일로 찾는 로직, id로 찾는로직 분리하기.
+export async function findUser(email: string | null | undefined, id?: string) {
   console.log("email 있나요?", email);
-  console.log("providerId 있나요?", providerId);
-  let query = supabase.from("users").select("*");
+  console.log("id 있나요?", id);
 
-  if (email) {
-    query = query.eq("email", email);
-  }
-  if (!email && providerId) {
-    query = query.eq("providerId", providerId);
-  }
-  const { data, error } = await query;
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .or(`id.eq.${id}, email.eq.${email}`);
 
   if (error) {
     console.error("findUser error", error);
@@ -99,10 +94,8 @@ export async function checkEmail(email: string) {
   return data;
 }
 
-export async function getUser(user: AuthUser): Promise<FullUser | null> {
-  const { email, providerId } = user;
-
-  if (!email && !providerId) {
+export async function getUser(userId: string): Promise<FullUser | null> {
+  if (!userId) {
     console.error("이메일 또는 Provider ID가 필요합니다.");
     return null;
   }
@@ -110,7 +103,7 @@ export async function getUser(user: AuthUser): Promise<FullUser | null> {
   const { data, error } = await supabase
     .from("users")
     .select()
-    .or(`email.eq.${email},providerId.eq.${providerId}`)
+    .eq("id", userId)
     .returns<FullUser>()
     .single();
   if (error) {

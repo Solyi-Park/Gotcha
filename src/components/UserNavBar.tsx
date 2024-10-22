@@ -1,17 +1,12 @@
 "use client";
-import useMe from "@/hooks/me";
 import { FullProduct } from "@/model/product";
-import { SimpleUser } from "@/model/user";
 import { useLikedProductsStore } from "@/store/likedProducts";
 import { maskName } from "@/utils/maskPersonalInfo";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-
-type Props = {
-  user: SimpleUser;
-};
 
 const MYPAGE_SECTIONS = [
   {
@@ -24,7 +19,7 @@ const MYPAGE_SECTIONS = [
   },
   {
     title: "나의 계정 설정",
-    items: [{ name: "회원정보수정", path: "/edit/reconfirm" }],
+    items: [{ name: "회원정보수정", path: "/edit" }],
   },
   {
     title: "고객센터",
@@ -39,7 +34,9 @@ async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
 }
 
 export default function UserNavBar() {
-  const { user } = useMe();
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const pathname = usePathname();
   const path = pathname.split("mypage")[1];
   const { setProducts } = useLikedProductsStore();

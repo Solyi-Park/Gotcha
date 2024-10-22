@@ -1,17 +1,14 @@
 "use client";
 import { PROVIDER_LOGOS } from "@/constants/provider";
+import useMe from "@/hooks/me";
 import { usePasswordCheck } from "@/hooks/password";
-import { FullUser } from "@/model/user";
+import { FullUser, SimpleUser } from "@/model/user";
 import { maskEmail, maskName, maskPhoneNumber } from "@/utils/maskPersonalInfo";
 import { validate } from "@/utils/validate";
 import { useQueryClient } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-type Props = {
-  user: FullUser;
-};
 
 async function changePassword(newPassword: string) {
   try {
@@ -20,7 +17,7 @@ async function changePassword(newPassword: string) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newPassword),
+      body: JSON.stringify({ newPassword }),
     });
     if (!response.ok) {
       throw new Error("비밀번호 변경에 실패하였습니다.");
@@ -31,9 +28,9 @@ async function changePassword(newPassword: string) {
   }
 }
 
-export default function EditUserInfo({ user }: Props) {
-  console.log("user", user);
-  const { name, phone, email, address, provider, providerId } = user;
+export default function EditUserInfo() {
+  const { user } = useMe();
+
   const [isPasswordEditing, setPasswordIsEditing] = useState(false);
   const [isPhoneNumberEditing, setPhoneNumberIsEditing] = useState(false);
   const [isEmailEditing, setIsEmailEditing] = useState(false);
@@ -46,8 +43,8 @@ export default function EditUserInfo({ user }: Props) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [newPhoneNumber, setNewPhoneNumber] = useState(phone ?? "");
-  const [newEmail, setNewEmail] = useState(email ?? "");
+  const [newPhoneNumber, setNewPhoneNumber] = useState(user?.phone ?? "");
+  const [newEmail, setNewEmail] = useState(user?.email ?? "");
 
   const [error, setError] = useState<string | null>(null);
   //TODO: 변경로직에서 에러메세지 표시방식 통일하기, alert OR 입력필드 아래 ERROR MESSAGE
@@ -55,7 +52,10 @@ export default function EditUserInfo({ user }: Props) {
   //TODO: 패스워드 체크 반복.
   // 비밀번호 변경 취소시 새로고침 원인 찾기
   const handleChangePassword = async () => {
-    const isValid = await checkPassword(email || "", currentPassword || "");
+    const isValid = await checkPassword(
+      user?.email || "",
+      currentPassword || ""
+    );
     if (!isValid) {
       alert("현재 비밀번호를 정확히 입력해주세요.");
       return;
@@ -93,7 +93,7 @@ export default function EditUserInfo({ user }: Props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newPhoneNumber),
+      body: JSON.stringify({ newPhoneNumber }),
     });
 
     if (!res.ok) {
@@ -102,7 +102,7 @@ export default function EditUserInfo({ user }: Props) {
       throw new Error("연락처 변경에 실패하였습니다.");
     }
     queryClient.invalidateQueries({
-      queryKey: ["user", email ?? "", providerId],
+      queryKey: ["user", user?.id],
     });
     alert("연락처가 정상적으로 변경되었습니다.");
     setPhoneNumberIsEditing(!isPhoneNumberEditing);
@@ -119,7 +119,7 @@ export default function EditUserInfo({ user }: Props) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newEmail),
+      body: JSON.stringify({ newEmail }),
     });
 
     if (!res.ok) {
@@ -129,7 +129,7 @@ export default function EditUserInfo({ user }: Props) {
       throw new Error(res.statusText);
     }
     queryClient.invalidateQueries({
-      queryKey: ["user", email ?? "", providerId],
+      queryKey: ["user", user?.id],
     });
     alert("이메일이 정상적으로 변경되었습니다.");
     setIsEmailEditing(!isEmailEditing);
@@ -144,11 +144,11 @@ export default function EditUserInfo({ user }: Props) {
         <ul>
           <li>
             <h3 className="font-bold">로그인 정보</h3>
-            {!provider && (
+            {!user?.provider && (
               <div>
                 <div>
                   <p>아이디(이메일)</p>
-                  <p>{maskEmail(email || "")}</p>
+                  <p>{maskEmail(user?.email || "")}</p>
                 </div>
                 <div className="relative">
                   <p>비밀번호</p>
@@ -236,7 +236,7 @@ export default function EditUserInfo({ user }: Props) {
               </div>
             )}
 
-            {provider && (
+            {user?.provider && (
               <div>
                 <div>
                   <div>SNS 연결</div>
@@ -248,7 +248,7 @@ export default function EditUserInfo({ user }: Props) {
                       <div className="relative w-10 h-10 rounded-full">
                         <img
                           src={
-                            logo.name === provider.toUpperCase()
+                            logo.name === user?.provider?.toUpperCase()
                               ? logo.activeImage
                               : logo.inactiveImage
                           }
@@ -268,12 +268,12 @@ export default function EditUserInfo({ user }: Props) {
               <div>
                 <div>
                   <span>성명</span>
-                  <span>{maskName(name)}</span>
+                  <span>{maskName(user?.name || "")}</span>
                 </div>
                 <div>
                   <span>연락처</span>
                   <div className={`${isPhoneNumberEditing && "hidden"}`}>
-                    <span>{maskPhoneNumber(phone ?? "")}</span>
+                    <span>{maskPhoneNumber(user?.phone ?? "")}</span>
                     {/* TODO:변경버튼 분리하기 */}
                     <button
                       onClick={() =>
@@ -324,8 +324,8 @@ export default function EditUserInfo({ user }: Props) {
 
               <div className="flex flex-col relative">
                 <span>이메일</span>
-                {email ? (
-                  <span>{maskEmail(email)}</span>
+                {user?.email ? (
+                  <span>{maskEmail(user?.email)}</span>
                 ) : (
                   <span>이메일을 등록해주세요.</span>
                 )}

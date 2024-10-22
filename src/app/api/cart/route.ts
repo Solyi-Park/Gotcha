@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
-  const newCartItems = await req.json();
+  const { newCartItems } = await req.json();
 
   if (!newCartItems) {
     return new Response("Bad Request", { status: 400 });

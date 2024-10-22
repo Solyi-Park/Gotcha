@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
 import { CartItem } from "@/model/cart";
 import ContinueShoppingButton from "@/components/buttons/ContinueShoppingButton";
-import useMe from "@/hooks/me";
 
 async function fetchUserCart(userId: string) {
   const res = await fetch(`/api/cart?userId=${userId}`);
@@ -16,7 +15,11 @@ async function fetchUserCart(userId: string) {
 }
 
 export default function CartPage() {
-  const { user } = useMe();
+  //TODO: user 정보 캐시해야하는곳확인하기
+
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const { data: userCartData, isLoading } = useQuery({
     queryKey: ["userCart", user?.id],
     queryFn: async () => {

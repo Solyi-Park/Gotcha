@@ -1,6 +1,7 @@
 import { supabase } from "@/app/lib/supabaseClient";
 
 import { CartItem, NewCartItem } from "@/model/cart";
+import { getOrderItems } from "./order";
 
 type CartResponse = {
   id: string;
@@ -99,7 +100,6 @@ export async function updateCartItemQuantity(
   itemId: string,
   newQuantity: number
 ) {
-  // console.log(itemId, "의 수량을", newQuantity, "로 업데이트해줘");
   return await supabase
     .from("carts")
     .update({ quantity: newQuantity, updatedAt: new Date() })
@@ -108,4 +108,19 @@ export async function updateCartItemQuantity(
 
 export async function deleteCartItem(itemId: string) {
   return await supabase.from("carts").delete().eq("id", itemId);
+}
+
+export async function clearCart(orderId: string) {
+  const items = await getOrderItems(orderId);
+  const productIds = items?.map((item) => item.productId);
+  if (productIds) {
+    const { error } = await supabase
+      .from("carts")
+      .delete()
+      .in("productId", productIds);
+    if (error) {
+      throw new Error(error.message);
+    }
+    console.log("장바구니 아이템 삭제 완료.");
+  }
 }

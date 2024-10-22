@@ -152,8 +152,8 @@ export async function updateOrderInfo(
     console.error(`No order found with ID: ${orderId}`);
     return null;
   }
+  console.log("업데이트된 주문 정보 =>", data);
 
-  console.log("주문정보 수정 완료! 상태:", status);
   return data[0];
 }
 

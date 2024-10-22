@@ -28,6 +28,7 @@ export default function Payments() {
   };
   console.log("살거", checkoutItems);
   const user = session?.user;
+  console.log("user 금방 업뎃", user);
 
   const [amount, setAmount] = useState<Amount>({
     currency: "KRW",

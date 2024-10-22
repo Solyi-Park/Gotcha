@@ -12,20 +12,14 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
-    return NextResponse.json(
-      { message: "인증되지 않은 사용자입니다." },
-      { status: 401 }
-    );
+    return new Response("인증되지 않은 사용자입니다.", { status: 401 });
   }
 
-  const newEmail = await req.json();
+  const { newEmail } = await req.json();
   console.log("newEmail?", newEmail);
 
   if (!newEmail) {
-    return NextResponse.json(
-      { message: "변경할 이메일을 입력해주세요." },
-      { status: 400 }
-    );
+    return new Response("변경할 이메일을 입력해주세요.", { status: 400 });
   }
 
   const user = {
