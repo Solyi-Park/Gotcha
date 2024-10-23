@@ -114,26 +114,33 @@ export default function EditUserInfo() {
       setError(validationResult);
       return;
     }
-    const res = await fetch("/api/auth/user/email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ newEmail }),
-    });
+    try {
+      const res = await fetch("/api/auth/user/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newEmail }),
+      });
 
-    if (!res.ok) {
-      //TODO setIsEmailEditing 부분 반복이니까 try-catch-finally?로 수정하면 될 듯.
+      if (!res.ok) {
+        //TODO setIsEmailEditing 부분 반복이니까 try-catch-finally?로 수정하면 될 듯.
+        const errorData = await res.json();
+        throw new Error(errorData.error);
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["user", user?.id],
+      });
+      alert("이메일이 정상적으로 변경되었습니다.");
+      setError(null);
+    } catch (error: any) {
+      console.error(error);
+      // setError(error.message);
+      alert(error.message);
+    } finally {
       setIsEmailEditing(!isEmailEditing);
       setNewEmail("");
-      throw new Error(res.statusText);
     }
-    queryClient.invalidateQueries({
-      queryKey: ["user", user?.id],
-    });
-    alert("이메일이 정상적으로 변경되었습니다.");
-    setIsEmailEditing(!isEmailEditing);
-    setError(null);
   };
 
   return (

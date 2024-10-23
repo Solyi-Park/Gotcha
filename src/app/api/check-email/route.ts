@@ -1,4 +1,4 @@
-import { checkEmail } from "@/services/user";
+import { checkIfEmailExists } from "@/services/user";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return new Response("Bad Request", { status: 400 });
   }
 
-  return checkEmail(email)
+  return checkIfEmailExists(email)
     .then((res) => NextResponse.json(res))
     .catch((error) => error.message);
 }
