@@ -88,24 +88,32 @@ export default function EditUserInfo() {
       alert(validationResult);
       return;
     }
-    const res = await fetch("/api/auth/user/phone", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ newPhoneNumber }),
-    });
+    try {
+      const res = await fetch("/api/auth/user/phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newPhoneNumber }),
+      });
 
-    if (!res.ok) {
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error);
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["user", user?.id],
+      });
+      alert("연락처가 정상적으로 변경되었습니다.");
+      setError(null);
+    } catch (error: any) {
+      console.error(error);
+      // setError(error.message);
+      alert(error.message);
+    } finally {
       setPhoneNumberIsEditing(!isPhoneNumberEditing);
       setNewPhoneNumber("");
-      throw new Error("연락처 변경에 실패하였습니다.");
     }
-    queryClient.invalidateQueries({
-      queryKey: ["user", user?.id],
-    });
-    alert("연락처가 정상적으로 변경되었습니다.");
-    setPhoneNumberIsEditing(!isPhoneNumberEditing);
   };
 
   const handleChangeEmail = async () => {

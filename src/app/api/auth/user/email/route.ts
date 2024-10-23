@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  changeEmail,
-  changePassword,
-  changePhoneNumber,
-} from "@/services/user";
+import { changeEmail } from "@/services/user";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 
