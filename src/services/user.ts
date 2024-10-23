@@ -85,13 +85,37 @@ export async function findUser(email: string | null | undefined, id?: string) {
   return data[0];
 }
 
-export async function checkEmail(email: string) {
+export async function checkIfEmailExists(email: string) {
   const { data, error } = await supabase
     .from("users")
     .select()
     .eq("email", email);
 
-  return data;
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (data && data.length > 0) {
+    console.log("checkIfEmailExists?", data);
+    return data[0];
+  }
+  return null;
+}
+
+export async function checkIfPhoneNumberExists(phoneNumber: string) {
+  console.log("phoneNumber", phoneNumber);
+  const { data, error } = await supabase
+    .from("users")
+    .select()
+    .eq("phone", phoneNumber);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (data && data.length > 0) {
+    console.log("checkIfPhoneNumberExists?", data);
+    return data[0];
+  }
+  return null;
 }
 
 export async function getUser(userId: string): Promise<FullUser | null> {
@@ -172,33 +196,42 @@ type UserData = {
 };
 
 export async function changePhoneNumber(
-  user: UserData,
+  userId: string,
   newPhoneNumber: string
-): Promise<void> {
-  const { email, providerId } = user;
-
+) {
+  const userExists = await checkIfPhoneNumberExists(newPhoneNumber);
+  if (userExists) {
+    throw new Error("이미 등록된 번호입니다.");
+  }
   const { error } = await supabase
     .from("users")
     .update({ phone: newPhoneNumber })
-    .or(`email.eq.${email},providerId.eq.${providerId}`);
+    .eq("id", userId);
 
   if (error) {
+    console.error(error);
     throw new Error("연락처 변경 중 오류가 발생했습니다.");
   }
+  return null;
 }
 
-export async function changeEmail(
-  user: UserData,
-  newEmail: string
-): Promise<void> {
-  const { email, providerId } = user;
+export async function changeEmail(userId: string, newEmail: string) {
+  const userExists = await checkIfEmailExists(newEmail);
+  console.log("userExists", userExists);
+  if (userExists) {
+    throw new Error("이미 등록된 이메일입니다.");
+  }
 
   const { error } = await supabase
     .from("users")
     .update({ email: newEmail })
-    .or(`email.eq.${email},providerId.eq.${providerId}`);
+    .eq("id", userId);
 
   if (error) {
-    throw new Error("이메일 변경 중 오류가 발생했습니다.");
+    console.error(error);
+    throw new Error(
+      `이메일 변경 중 오류가 발생했습니다. Error:${error.message}`
+    );
   }
+  return null;
 }

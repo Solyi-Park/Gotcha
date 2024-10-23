@@ -52,7 +52,7 @@ export default function SignupForm({ csrfToken }: Props) {
       });
 
       const data = await res.json();
-      if (data.length > 0) {
+      if (data) {
         setEmailError("이미 사용중인 이메일 입니다.");
         setEmailAvailable(false);
       } else {

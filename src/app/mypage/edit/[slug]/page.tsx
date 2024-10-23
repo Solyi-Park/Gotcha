@@ -10,7 +10,7 @@ type Props = {
 export default async function EditPageDetail({ params: { slug } }: Props) {
   const sesssion = await getServerSession(authOptions);
   const user = sesssion?.user;
-  console.log("user", user);
+  // console.log("user", user);
 
   return (
     <div>

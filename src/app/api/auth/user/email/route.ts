@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  changeEmail,
-  changePassword,
-  changePhoneNumber,
-} from "@/services/user";
+import { changeEmail } from "@/services/user";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 
@@ -21,21 +17,17 @@ export async function POST(req: NextRequest) {
   if (!newEmail) {
     return new Response("변경할 이메일을 입력해주세요.", { status: 400 });
   }
+  const userId = session.user.id;
 
-  const user = {
-    email: session.user.email,
-    providerId: session.user.providerId,
-  };
   try {
-    await changeEmail(user, newEmail);
+    await changeEmail(userId, newEmail);
     return NextResponse.json(
       { message: "이메일이 성공적으로 변경되었습니다." },
       { status: 200 }
     );
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
     return NextResponse.json(
-      { message: "서버 오류가 발생했습니다." },
+      { error: error.message || "서버 오류가 발생했습니다." },
       { status: 500 }
     );
   }
