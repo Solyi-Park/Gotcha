@@ -22,7 +22,7 @@ async function addProductToCart(productOptions: NewCartItem[]) {
   const res = fetch("/api/cart", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ productOptions }),
+    body: JSON.stringify({ newCartItems: productOptions }),
   });
   return res;
 }

@@ -138,7 +138,7 @@ export default function SuccessPage() {
                   </li>
                   {items &&
                     items.map((item: OrderItem) => (
-                      <li key={item.productId}>
+                      <li key={`${item.productId}-${item.options}`}>
                         <OrderProductDetail
                           productId={item.productId}
                           order={order}

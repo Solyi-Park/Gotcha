@@ -12,25 +12,25 @@ export async function saveOrderInfo(
   const fullAddress = `${shippingDetails.postCode} ${shippingDetails.address} ${
     shippingDetails.addDetail ? shippingDetails.addDetail : ""
   }`;
-
+  const orderQuantity = products.reduce((acc, item) => {
+    return (acc += item.quantity);
+  }, 0);
   const newOrder: OrderDetails = {
     userId,
     totalAmount: amount + shippingCost, // 배송비 분리?
     recipient: shippingDetails.recipient,
     fullAddress,
     contact1: shippingDetails.contact1,
-    orderQuantity: products.reduce((acc, item) => {
-      return (acc += item.quantity);
-    }, 0),
-    contact2: shippingDetails.contact2 ? shippingDetails.contact2 : null,
+    orderQuantity,
+    contact2: shippingDetails.contact2 || null,
     shippingCost,
     deliveryNote: shippingDetails.deliveryNote,
     customDeliveryNote: shippingDetails.customDeliveryNote,
-    isDefault: shippingDetails.isDefault ?? false,
+    isDefault: shippingDetails.isDefault || false,
     displayOrderNumber: generateDisplayOrderNumber(new Date()),
   };
-  console.log("newOrder", newOrder);
-
+  // console.log("newOrder", newOrder);
+  // TODO: 똑같은 상품정보가 있는경우 저장하지 않아야함.
   const { data: orderResult, error } = await supabase
     .from("orders")
     .insert(newOrder)
@@ -42,7 +42,8 @@ export async function saveOrderInfo(
     console.error("Error saving order information for user:", userId, error);
     return null;
   }
-  //나중에 리턴갑 없애기
+  //나중에 리턴값 없애기
+  console.log("product의 옵션", products[0].option);
   const orderItemsResult = await saveOrderItems(
     orderResult[0].orderId,
     products
@@ -58,7 +59,6 @@ export async function saveOrderInfo(
   }
   return null;
 }
-
 export async function saveOrderItems(
   orderId: string,
   items: CartItemRowType[]
@@ -68,8 +68,9 @@ export async function saveOrderItems(
     productId: item.productId,
     price: item.product.price,
     quantity: item.quantity,
-    option: item.option.items,
+    options: item.option.items, // 빈배열로할때는 작동함.,
   }));
+
   const { data, error } = await supabase
     .from("orderItems")
     .insert(orderItems)
@@ -81,7 +82,7 @@ export async function saveOrderItems(
   }
 
   if (data) {
-    console.log("주문 상품 데이터 저장완료!");
+    console.log("주문 상품 데이터 저장완료! 주문한상품들:", data);
     return data;
   }
   return null;

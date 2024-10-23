@@ -21,18 +21,25 @@ export async function GET(req: NextRequest) {
     .catch((error) => error.message);
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
+
   const { newCartItems } = await req.json();
+  console.log("newCartItems?", newCartItems);
 
   if (!newCartItems) {
     return new Response("Bad Request", { status: 400 });
   }
-  return addProductsToCart(newCartItems)
-    .then((res) => NextResponse.json(res))
-    .catch((error) => error.message);
+
+  try {
+    const res = await addProductsToCart(newCartItems);
+    return NextResponse.json(res);
+  } catch (error) {
+    console.error(error);
+    return new Response("Intenal Server Error.", { status: 500 });
+  }
 }
 
 export async function PUT(req: NextRequest, res: NextResponse) {

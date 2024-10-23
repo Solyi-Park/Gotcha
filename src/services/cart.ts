@@ -10,7 +10,7 @@ type CartResponse = {
   quantity: number;
   createdAt: Date;
   updatedAt: Date;
-  options: { id: string; items: { name: string; value: string }[] };
+  option: { id: string; items: { name: string; value: string }[] };
 };
 // TODO: cartOptions 테이블을 따로 만들어야하나
 export async function addProductsToCart(
@@ -73,6 +73,7 @@ export async function addProductsToCart(
       return data as CartResponse;
     })
   );
+  console.log("장바구니에 담았어", res);
 
   return res;
 }
@@ -112,15 +113,28 @@ export async function deleteCartItem(itemId: string) {
 
 export async function clearCart(orderId: string) {
   const items = await getOrderItems(orderId);
-  const productIds = items?.map((item) => item.productId);
-  if (productIds) {
-    const { error } = await supabase
-      .from("carts")
-      .delete()
-      .in("productId", productIds);
-    if (error) {
-      throw new Error(error.message);
+
+  if (items && items.length > 0) {
+    for (const item of items) {
+      const { productId, options } = item;
+      console.log("item", item.productId, JSON.stringify(options));
+
+      const { error } = await supabase
+        .from("carts")
+        .delete()
+        .eq("productId", productId)
+        .contains("option", { items: options });
+
+      if (error) {
+        console.error(
+          `카트아이템 삭제중 에러 발생(productId: ${productId}):`,
+          error
+        );
+      }
+
+      console.log(`카트아이템(${productId})이 정상적으로 삭제 됨)`);
     }
-    console.log("장바구니 아이템 삭제 완료.");
+  } else {
+    console.log("해당 주문에 대한 아이템을 찾을 수 없음");
   }
 }
