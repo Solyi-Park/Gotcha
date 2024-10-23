@@ -70,7 +70,7 @@ export default function PaymentButton({
       const orderResponse = await saveOrderData(requestData);
       const data = await orderResponse.json();
       console.log("주문 정보 저장: ", data);
-      const orderId: string = data.orderId; //타입
+      const orderId: string = data?.orderId; //타입
       setOrderId(orderId);
 
       // if (!orderResponse.ok) {
@@ -101,8 +101,6 @@ export default function PaymentButton({
           customerName: user.name,
           customerMobilePhone: "01012341234",
         });
-
-      console.log("결제요청 완료!! 문제없음");
 
       // router.push(`/confirmed/${orderId}`);
     } catch (error) {

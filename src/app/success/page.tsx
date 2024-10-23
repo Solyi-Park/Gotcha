@@ -15,36 +15,6 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-async function fetchOrderItems(orderId: string) {
-  try {
-    const res = await fetch(`/api/order/${orderId}?type=items`, {
-      method: "GET",
-    });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch order items with orderId:${orderId}`);
-    }
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function fetchOrderData(orderId: string) {
-  try {
-    const res = await fetch(`/api/order/${orderId}?type=orders`, {
-      method: "GET",
-    });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch order data with orderId:${orderId}`);
-    }
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 export default function SuccessPage() {
   const router = useRouter();
   const params = useSearchParams();
@@ -81,6 +51,9 @@ export default function SuccessPage() {
 
         console.log("paymentResult", json);
         setPaymentResult(json);
+
+        await clearCart(json.orderId);
+
         // router.push(`/confirmed/${json.orderId}`);
       } catch (error) {
         console.error("결제 실패:", error);
@@ -165,7 +138,7 @@ export default function SuccessPage() {
                   </li>
                   {items &&
                     items.map((item: OrderItem) => (
-                      <li key={item.productId}>
+                      <li key={`${item.productId}-${item.options}`}>
                         <OrderProductDetail
                           productId={item.productId}
                           order={order}
@@ -250,4 +223,55 @@ export default function SuccessPage() {
       )}
     </>
   );
+}
+
+async function fetchOrderItems(orderId: string) {
+  try {
+    const res = await fetch(`/api/order/${orderId}?type=items`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch order items with orderId:${orderId}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function fetchOrderData(orderId: string) {
+  try {
+    const res = await fetch(`/api/order/${orderId}?type=orders`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch order data with orderId:${orderId}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function clearCart(orderId: string) {
+  try {
+    const response = await fetch(`/api/cart/clear`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({ orderId }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to clear cart");
+    }
+
+    console.log("Cart cleared successfully");
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+  }
 }

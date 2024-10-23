@@ -1,9 +1,7 @@
 "use client";
 import { usePasswordCheck } from "@/hooks/password";
-import { SimpleUser } from "@/model/user";
+import { FullUser, SimpleUser } from "@/model/user";
 import { maskEmail } from "@/utils/maskPersonalInfo";
-
-import { Span } from "next/dist/trace";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -12,7 +10,7 @@ type Props = {
 };
 export default function Reconfirm({ user }: Props) {
   const [password, setPassword] = useState("");
-  const userId = user.id;
+  const email = user.email;
 
   const maskedEmail = maskEmail(user.email!);
   const { checkPassword, error } = usePasswordCheck();
@@ -20,7 +18,8 @@ export default function Reconfirm({ user }: Props) {
   const router = useRouter();
   //TODO: 패스워드 체크 반복.
   const handleCheckPassword = async () => {
-    const isValid = await checkPassword(userId, password);
+    const isValid = await checkPassword(email || "", password);
+    console.log("isValid", isValid);
     if (isValid) {
       router.push("/mypage/edit/info");
     }

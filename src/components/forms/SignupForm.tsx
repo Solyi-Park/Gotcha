@@ -48,7 +48,7 @@ export default function SignupForm({ csrfToken }: Props) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(email),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();

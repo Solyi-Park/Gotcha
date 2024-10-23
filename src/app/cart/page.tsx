@@ -15,11 +15,18 @@ async function fetchUserCart(userId: string) {
 }
 
 export default function CartPage() {
+  //TODO: user 정보 캐시해야하는곳확인하기
+
   const { data: session } = useSession();
   const user = session?.user;
+
   const { data: userCartData, isLoading } = useQuery({
     queryKey: ["userCart", user?.id],
-    queryFn: async () => await fetchUserCart(user?.id),
+    queryFn: async () => {
+      if (user) {
+        return await fetchUserCart(user?.id);
+      }
+    },
     staleTime: 1000 * 60 * 30,
   });
 
@@ -32,7 +39,7 @@ export default function CartPage() {
           <ContinueShoppingButton />
         </div>
       )}
-      {!isLoading && userCartData && userCartData.length > 0 && (
+      {!isLoading && user && userCartData && userCartData.length > 0 && (
         <CartDetails user={user} userCartData={userCartData} />
       )}
     </div>

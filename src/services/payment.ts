@@ -46,7 +46,7 @@ export async function confirmPayment(
     card: (result.card && result.card.acquirerCode) || null,
     transfer: (result.transfer && result.transfer.bankCode) || null,
     easyPay: (result.easyPay && result.easyPay.provider) || null,
-    receipt: result.receipt,
+    receipt: result.receipt.url,
     status: result.status,
   };
 

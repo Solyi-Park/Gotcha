@@ -1,6 +1,7 @@
 import { supabase } from "@/app/lib/supabaseClient";
 
 import { CartItem, NewCartItem } from "@/model/cart";
+import { getOrderItems } from "./order";
 
 type CartResponse = {
   id: string;
@@ -9,7 +10,7 @@ type CartResponse = {
   quantity: number;
   createdAt: Date;
   updatedAt: Date;
-  options: { id: string; items: { name: string; value: string }[] };
+  option: { id: string; items: { name: string; value: string }[] };
 };
 // TODO: cartOptions 테이블을 따로 만들어야하나
 export async function addProductsToCart(
@@ -72,6 +73,7 @@ export async function addProductsToCart(
       return data as CartResponse;
     })
   );
+  console.log("장바구니에 담았어", res);
 
   return res;
 }
@@ -99,7 +101,6 @@ export async function updateCartItemQuantity(
   itemId: string,
   newQuantity: number
 ) {
-  // console.log(itemId, "의 수량을", newQuantity, "로 업데이트해줘");
   return await supabase
     .from("carts")
     .update({ quantity: newQuantity, updatedAt: new Date() })
@@ -108,4 +109,32 @@ export async function updateCartItemQuantity(
 
 export async function deleteCartItem(itemId: string) {
   return await supabase.from("carts").delete().eq("id", itemId);
+}
+
+export async function clearCart(orderId: string) {
+  const items = await getOrderItems(orderId);
+
+  if (items && items.length > 0) {
+    for (const item of items) {
+      const { productId, options } = item;
+      console.log("item", item.productId, JSON.stringify(options));
+
+      const { error } = await supabase
+        .from("carts")
+        .delete()
+        .eq("productId", productId)
+        .contains("option", { items: options });
+
+      if (error) {
+        console.error(
+          `카트아이템 삭제중 에러 발생(productId: ${productId}):`,
+          error
+        );
+      }
+
+      console.log(`카트아이템(${productId})이 정상적으로 삭제 됨)`);
+    }
+  } else {
+    console.log("해당 주문에 대한 아이템을 찾을 수 없음");
+  }
 }
