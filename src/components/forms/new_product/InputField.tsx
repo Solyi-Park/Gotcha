@@ -8,6 +8,7 @@ type Props = {
   type?: "text" | "number";
   id?: string;
   style?: string;
+  defaultValue?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function InputField({
@@ -18,6 +19,7 @@ export default function InputField({
   type = "text",
   id,
   style,
+  defaultValue,
   ...props
 }: Props) {
   return (
@@ -35,6 +37,7 @@ export default function InputField({
         type={type}
         id={id}
         {...props}
+        defaultValue={defaultValue}
         className={`border px-2 ${style && style}`}
       />
     </div>

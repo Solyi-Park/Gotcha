@@ -8,7 +8,10 @@ import { validate } from "@/utils/validate";
 import { useQueryClient } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AddressForm from "./forms/AddressForm";
+import { useShippingDetailStore } from "@/store/shippingDetail";
+import { useDebouncedSync } from "@/hooks/debouncedSync";
 
 async function changePassword(newPassword: string) {
   try {
@@ -30,6 +33,7 @@ async function changePassword(newPassword: string) {
 
 export default function EditUserInfo() {
   const { user } = useMe();
+  console.log("me", user);
 
   const [isPasswordEditing, setPasswordIsEditing] = useState(false);
   const [isPhoneNumberEditing, setPhoneNumberIsEditing] = useState(false);
@@ -46,8 +50,21 @@ export default function EditUserInfo() {
   const [newPhoneNumber, setNewPhoneNumber] = useState(user?.phone ?? "");
   const [newEmail, setNewEmail] = useState(user?.email ?? "");
 
+  const {
+    setField,
+    shippingDetails: { postCode, address, addDetail },
+  } = useShippingDetailStore();
+
   const [error, setError] = useState<string | null>(null);
   //TODO: 변경로직에서 에러메세지 표시방식 통일하기, alert OR 입력필드 아래 ERROR MESSAGE
+
+  useEffect(() => {
+    if (user?.addresses) {
+      setField("postCode", user.addresses.postCode);
+      setField("address", user.addresses.address);
+      setField("addDetail", user.addresses.addDetail);
+    }
+  }, [user]);
 
   //TODO: 패스워드 체크 반복.
   // 비밀번호 변경 취소시 새로고침 원인 찾기
@@ -150,6 +167,53 @@ export default function EditUserInfo() {
       setNewEmail("");
     }
   };
+
+  const handleSaveDefaultAddress = async () => {
+    const addressData = {
+      postCode,
+      address,
+      addDetail,
+      default: true,
+      name: user?.name,
+      contact: user?.phone,
+    };
+
+    if (
+      !addressData.postCode ||
+      !addressData.address
+      // !addressData.addDetail
+    ) {
+      alert("주소가 올바르지 않습니다.");
+      return;
+    }
+
+    console.log("addressData", addressData);
+    try {
+      const res = await fetch("/api/auth/user/address", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addressData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error);
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["user", user?.id],
+      });
+
+      alert("수정되었습니다.");
+      setError(null);
+    } catch (error: any) {
+      console.error(error);
+      // setError(error.message);
+      alert(error.message);
+    }
+  };
+  //TODO: 핸들러함수들도 커스텀 훅으로 넣기
 
   return (
     <section>
@@ -340,7 +404,7 @@ export default function EditUserInfo() {
               <div className="flex flex-col relative">
                 <span>이메일</span>
                 {user?.email ? (
-                  <span>{maskEmail(user?.email)}</span>
+                  <span>{user?.email}</span>
                 ) : (
                   <span>이메일을 등록해주세요.</span>
                 )}
@@ -383,6 +447,22 @@ export default function EditUserInfo() {
                     </div>
                   </div>
                 )}
+              </div>
+
+              <div>
+                <span>주소정보</span>
+                <AddressForm
+                  postCode={postCode ?? ""}
+                  address={address ?? ""}
+                  addDetail={addDetail ?? ""}
+                />
+                <button
+                  onClick={handleSaveDefaultAddress}
+                  type="button"
+                  className="py-2 w-[50%] text-white bg-black"
+                >
+                  저장하기
+                </button>
               </div>
             </div>
           </li>

@@ -1,16 +1,14 @@
 "use client";
 import { MouseEvent, useState } from "react";
 
+type Props = {
+  activeTab: string;
+  handleActiveTab: (e: MouseEvent<HTMLLIElement>) => void;
+};
+
 const ADDRESS_TAB = ["기존배송지", "신규입력"];
 
-export default function AddressTabs() {
-  const [activeTab, setActiveTab] = useState("기존배송지");
-
-  const handleActiveTab = (e: MouseEvent<HTMLLIElement>) => {
-    const value = e.currentTarget.getAttribute("data-value");
-    if (value) setActiveTab(value);
-  };
-
+export default function AddressTabs({ activeTab, handleActiveTab }: Props) {
   return (
     <ul className="flex">
       {ADDRESS_TAB.map((tab) => (

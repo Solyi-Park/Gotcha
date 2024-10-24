@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import PostcodePopup from "../PostcodePopup";
 import InputField from "./new_product/InputField";
 
@@ -5,7 +7,7 @@ type Props = {
   postCode: string;
   address: string;
   addDetail: string;
-  handleInputChange: (
+  handleInputChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
 };
@@ -16,6 +18,12 @@ export default function AddressForm({
   addDetail,
   handleInputChange,
 }: Props) {
+  const [addressDetail, setAddressDetail] = useState(addDetail);
+  useEffect(() => {
+    if (addDetail) {
+      setAddressDetail(addDetail);
+    }
+  }, [addDetail]);
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-96 ">
@@ -26,8 +34,12 @@ export default function AddressForm({
       <div>
         <InputField
           name="addDetail"
-          value={addDetail}
-          onChange={handleInputChange}
+          value={addressDetail}
+          onChange={
+            handleInputChange
+              ? handleInputChange
+              : (e) => setAddressDetail(e.target.value)
+          }
           type="text"
           placeholder="상세주소 입력"
           style="min-w-[460px] h-10 focus:border-[1px] focus:border-black  focus:outline-none border  "
