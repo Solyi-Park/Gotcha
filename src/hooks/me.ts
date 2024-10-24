@@ -1,3 +1,4 @@
+"use client";
 import { FullUser } from "@/model/user";
 import { useQuery } from "@tanstack/react-query";
 export default function useMe() {
@@ -7,10 +8,11 @@ export default function useMe() {
     error,
   } = useQuery({
     queryKey: ["user"],
-    queryFn: async (): Promise<FullUser> =>
-      await fetch("/api/me", {
+    queryFn: async (): Promise<FullUser> => {
+      return await fetch("/api/me", {
         method: "GET",
-      }).then((res) => res.json()),
+      }).then((res) => res.json());
+    },
   });
 
   return { user, isLoading, error };

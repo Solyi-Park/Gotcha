@@ -19,7 +19,7 @@ interface State {
 }
 
 interface Action {
-  setField: (field: keyof ShippingDetails, value: string | boolean) => void;
+  setField: (field: string, value: string | boolean) => void;
   resetAll: () => void;
   resetAddress: () => void;
 }

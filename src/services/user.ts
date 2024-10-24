@@ -1,4 +1,5 @@
 import { supabase } from "@/app/lib/supabaseClient";
+import { Address } from "@/model/address";
 import { AuthUser, FullUser } from "@/model/user";
 import { hashPassword, verifyPassword } from "@/utils/password";
 import { v4 as uuidv4 } from "uuid";
@@ -118,7 +119,7 @@ export async function checkIfPhoneNumberExists(phoneNumber: string) {
   return null;
 }
 
-export async function getUser(userId: string): Promise<FullUser | null> {
+export async function getUser(userId: string) {
   if (!userId) {
     console.error("이메일 또는 Provider ID가 필요합니다.");
     return null;
@@ -126,10 +127,10 @@ export async function getUser(userId: string): Promise<FullUser | null> {
 
   const { data, error } = await supabase
     .from("users")
-    .select()
+    .select("*,addresses(*)")
     .eq("id", userId)
-    .returns<FullUser>()
     .single();
+
   if (error) {
     throw new Error(error.message);
   }
@@ -233,5 +234,45 @@ export async function changeEmail(userId: string, newEmail: string) {
       `이메일 변경 중 오류가 발생했습니다. Error:${error.message}`
     );
   }
+  return null;
+}
+
+export async function changeAddress(
+  userId: string,
+  addressData: {
+    postCode: string;
+    address: string;
+    addDetail: string;
+    default: boolean;
+    name: string;
+    contact: string;
+    title: string | null;
+  }
+) {
+  const address: Address = {
+    userId,
+    title: addressData.title ?? null,
+    postCode: addressData.postCode,
+    address: addressData.address,
+    addDetail: addressData.addDetail,
+    default: addressData.default,
+    name: addressData.name,
+    contact: addressData.contact,
+  };
+
+  const { data, error } = await supabase
+    .from("addresses")
+    .upsert(address, { onConflict: "userId" })
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
+  if (data) {
+    return data;
+  }
+
   return null;
 }

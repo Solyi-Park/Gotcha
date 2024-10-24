@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import InputField from "../new_product/InputField";
 import PostcodePopup from "@/components/PostcodePopup";
 import AddressTabs from "@/components/buttons/AddressTabs";
@@ -7,6 +7,7 @@ import AddressTabs from "@/components/buttons/AddressTabs";
 import { useShippingDetailStore } from "@/store/shippingDetail";
 import { useDebouncedSync } from "@/hooks/debouncedSync";
 import AddressForm from "../AddressForm";
+import useMe from "@/hooks/me";
 
 const deliveryNotes = [
   "",
@@ -21,31 +22,64 @@ const deliveryNotes = [
 //TODO: 반복 css 코드
 
 export default function ShippingDetailForm() {
+  const { user } = useMe();
+  // console.log("me", user);
+
+  const [activeTab, setActiveTab] = useState("기존배송지");
+
+  const handleActiveTab = (e: MouseEvent<HTMLLIElement>) => {
+    const value = e.currentTarget.getAttribute("data-value");
+    if (value) setActiveTab(value);
+  };
   //TODO: 값이 입력되지 않은 경우 결제불가.
-  const [shippingDetails, setShippingDetails] = useState({
-    addressTitle: "",
-    recipient: "",
-    addDetail: "",
-    contact1: "",
-    contact2: "",
-    deliveryNote: "",
-    isDefault: false,
-    customDeliveryNote: "",
-  });
-  const {
-    addressTitle,
-    recipient,
-    addDetail,
-    contact1,
-    contact2,
-    deliveryNote,
-    customDeliveryNote,
-    isDefault,
-  } = shippingDetails;
+  // const [shippingDetails, setShippingDetails] = useState({
+  //   addressTitle: "",
+  //   recipient: "",
+  //   // addDetail: "",
+  //   contact1: "",
+  //   contact2: "",
+  //   deliveryNote: "",
+  //   isDefault: false,
+  //   customDeliveryNote: "",
+  // });
+  // const {
+  //   addressTitle,
+  //   recipient,
+  //   addDetail,
+  //   contact1,
+  //   contact2,
+  //   deliveryNote,
+  //   customDeliveryNote,
+  //   isDefault,
+  // } = shippingDetails;
 
   const {
-    shippingDetails: { postCode, address },
+    setField,
+    shippingDetails: {
+      addressTitle,
+      postCode,
+      address,
+      addDetail,
+      recipient,
+      contact1,
+      contact2,
+      deliveryNote,
+      customDeliveryNote,
+      isDefault,
+    },
   } = useShippingDetailStore();
+
+  useEffect(() => {
+    if (user && user?.addresses) {
+      if (user.addresses.default) {
+        setField("postCode", user.addresses.postCode);
+        setField("address", user.addresses.address);
+        setField("addDetail", user.addresses.addDetail);
+        setField("recipient", user.addresses.name);
+        setField("contact1", user.addresses.contact ?? "");
+      }
+    }
+  }, [user]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   useDebouncedSync("addressTitle", addressTitle, 500);
@@ -63,17 +97,32 @@ export default function ShippingDetailForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-    setShippingDetails({
-      ...shippingDetails,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    });
+
+    setField(
+      `${name}`,
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : value
+    );
+    // setShippingDetails({
+    //   ...shippingDetails,
+    //   [name]:
+    //     type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    // });
   };
+  console.log("addressTitle", addressTitle);
+  console.log("recipient", recipient);
+  console.log("postCode", postCode);
+  console.log("address", address);
+  console.log("addDetail", addDetail);
+  console.log("contact1", contact1);
+  console.log("contact2", contact2);
+  console.log("deliveryNote", deliveryNote);
+  console.log("customDeliveryNote", customDeliveryNote);
+  console.log("isDefault", isDefault);
   return (
     <>
       <section className="flex flex-col gap-2">
         <header className="font-bold text-2xl">배송정보</header>
-        <AddressTabs />
+        <AddressTabs activeTab={activeTab} handleActiveTab={handleActiveTab} />
         <div className="flex h-12 items-center">
           <InputField
             label="배송지명"
@@ -102,7 +151,7 @@ export default function ShippingDetailForm() {
               postCode={postCode}
               address={address}
               addDetail={addDetail}
-              handleInputChange={handleInputChange}
+              // handleInputChange={handleInputChange}
             />
           </div>
         </div>
@@ -126,22 +175,27 @@ export default function ShippingDetailForm() {
             style="min-w-[360px] h-10 border focus:border-[1px] focus:border-black  focus:outline-none "
           />
         </div>
-        <div className="flex items-center h-10 ml-32 gap-2 ">
-          <input
-            id="checkbox"
-            name="isDefault"
-            type="checkbox"
-            checked={isDefault}
-            onChange={handleInputChange}
-          />
-          {/* TODO: 기본배송지 데이터 사용시 메세지 */}
-          <label
-            className={`${isDefault && "font-bold"} cursor-pointer`}
-            htmlFor="checkbox"
-          >
-            기본 배송지로 등록
-          </label>
-        </div>
+        {activeTab === "신규입력" ? (
+          <div className="flex items-center h-10 ml-32 gap-2 ">
+            <input
+              id="checkbox"
+              name="isDefault"
+              type="checkbox"
+              checked={isDefault}
+              onChange={handleInputChange}
+            />
+            {/* TODO: 기본배송지 데이터 사용시 메세지 */}
+            <label
+              className={`${isDefault && "font-bold"} cursor-pointer`}
+              htmlFor="checkbox"
+            >
+              기본 배송지로 등록
+            </label>
+          </div>
+        ) : (
+          <span className=" ml-32 ">기본배송지입니다.</span>
+        )}
+
         <div className="relative w-[500px] ml-32 ">
           <input
             className="px-5 py-2 w-full h-10 border hover:cursor-pointer focus:outline-none"
@@ -162,17 +216,19 @@ export default function ShippingDetailForm() {
                   role="button"
                   key={note}
                   onClick={(e) => {
-                    setShippingDetails((prev) => ({
-                      ...prev,
-                      deliveryNote: note,
-                    }));
+                    setField("deliveryNote", note);
+                    // setShippingDetails((prev) => ({
+                    //   ...prev,
+                    //   deliveryNote: note,
+                    // }));
 
                     // setDeliveryNote(note);
                     setIsDropdownOpen(!isDropdownOpen);
-                    setShippingDetails((prev) => ({
-                      ...prev,
-                      customDeliveryNote: "",
-                    }));
+                    setField("customDeliveryNote", "");
+                    // setShippingDetails((prev) => ({
+                    //   ...prev,
+                    //   customDeliveryNote: "",
+                    // }));
                     e.target !== e.currentTarget && setIsDropdownOpen(false);
                   }}
                   className={`px-5 py-2 bg-white h-10 hover:cursor-pointer hover:bg-neutral-200 ${

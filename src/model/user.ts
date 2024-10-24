@@ -1,3 +1,5 @@
+import { Address } from "./address";
+
 export type AuthUser = Pick<FullUser, "email" | "name" | "image" | "provider">;
 
 export type SimpleUser = Pick<FullUser, "email" | "name" | "id"> & {
@@ -16,7 +18,7 @@ export type FullUser = {
   signupDate: string;
   signout: string;
   role?: string;
-  address: string | null;
+  addresses: Address | null;
 };
 
 // 이거 타입  체크..

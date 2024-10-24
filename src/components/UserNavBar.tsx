@@ -36,6 +36,7 @@ async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
 export default function UserNavBar() {
   const { data: session } = useSession();
   const user = session?.user;
+  //TODO: 로그인한 유저정보 캐싱
 
   const pathname = usePathname();
   const path = pathname.split("mypage")[1];

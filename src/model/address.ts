@@ -1,11 +1,11 @@
 export type Address = {
-  title?: string;
-  fullname: string;
-  postalCode: number;
+  id?: string;
+  title: string | null;
+  userId: string;
+  postCode: string;
   address: string;
-  addressDetail: string;
-  contact1: number;
-  contact2?: number;
-  deliveryNote: string;
+  addDetail: string;
   default: boolean;
+  name: string;
+  contact: string | null;
 };
