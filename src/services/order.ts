@@ -1,6 +1,7 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { CartItemRowType } from "@/model/cart";
 import { OrderDetails, OrderItem, ShippingDetails } from "@/model/order";
+import { updateAddress } from "./address";
 
 export async function saveOrderInfo(
   userId: string,
@@ -9,12 +10,27 @@ export async function saveOrderInfo(
   shippingCost: number,
   shippingDetails: ShippingDetails
 ) {
+  console.log("shippingDetails", shippingDetails);
+  //주소정보 저장
+  if (shippingDetails.isDefault) {
+    const updateAddressResult = await updateAddress(userId, {
+      postCode: shippingDetails.postCode ?? "",
+      address: shippingDetails.address ?? "",
+      addDetail: shippingDetails.addDetail ?? "",
+      default: shippingDetails.isDefault,
+      name: shippingDetails.recipient,
+      contact: shippingDetails.contact1,
+      title: shippingDetails.addressTitle ?? "",
+    });
+  }
+
   const fullAddress = `${shippingDetails.postCode} ${shippingDetails.address} ${
     shippingDetails.addDetail ? shippingDetails.addDetail : ""
   }`;
   const orderQuantity = products.reduce((acc, item) => {
     return (acc += item.quantity);
   }, 0);
+  //TODO: 주소부분을 분리해야하나
   const newOrder: OrderDetails = {
     userId,
     totalAmount: amount + shippingCost, // 배송비 분리?
@@ -22,11 +38,11 @@ export async function saveOrderInfo(
     fullAddress,
     contact1: shippingDetails.contact1,
     orderQuantity,
-    contact2: shippingDetails.contact2 || null,
+    contact2: shippingDetails.contact2 ?? "",
     shippingCost,
     deliveryNote: shippingDetails.deliveryNote,
     customDeliveryNote: shippingDetails.customDeliveryNote,
-    isDefault: shippingDetails.isDefault || false,
+    isDefault: shippingDetails.isDefault ?? false,
     displayOrderNumber: generateDisplayOrderNumber(new Date()),
   };
   // console.log("newOrder", newOrder);

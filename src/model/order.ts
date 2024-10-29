@@ -29,8 +29,8 @@ export type ShippingDetails = {
   address?: string;
   addDetail?: string;
   contact1: string;
-  contact2?: string | null;
-  deliveryNote: string;
+  contact2: string;
+  deliveryNote: string | null;
   customDeliveryNote: string | null;
-  isDefault?: boolean;
+  isDefault: boolean;
 };

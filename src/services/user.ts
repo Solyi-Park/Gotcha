@@ -16,15 +16,15 @@ type NewUser = {
 export async function addUser(user: NewUser): Promise<FullUser | null> {
   const { email, name, password, image, provider, id } = user;
 
-  if (!email && !provider) {
-    console.error("이메일 또는 Provider가 필요합니다.");
+  if (!email) {
+    console.error("이메일이 필요합니다.");
     return null;
   }
 
   const { data: existingUser, error: findError } = await supabase
     .from("users")
     .select("*")
-    .or(`email.eq.${email},provider.eq.${provider}`)
+    .or(`email.eq.${email}`)
     .single();
 
   if (findError && findError.code !== "PGRST116") {
@@ -71,8 +71,8 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
 }
 //TODO:이메일로 찾는 로직, id로 찾는로직 분리하기.
 export async function findUser(email: string | null | undefined, id?: string) {
-  console.log("email 있나요?", email);
-  console.log("id 있나요?", id);
+  console.log("email:", email);
+  console.log("id:", id);
 
   const { data, error } = await supabase
     .from("users")
@@ -120,28 +120,24 @@ export async function checkIfPhoneNumberExists(phoneNumber: string) {
 }
 
 export async function getUser(userId: string) {
+  console.log("userId", userId);
   if (!userId) {
-    console.error("이메일 또는 Provider ID가 필요합니다.");
+    console.error("userId가 필요합니다.");
     return null;
   }
 
   const { data, error } = await supabase
     .from("users")
     .select("*,addresses(*)")
-    .eq("id", userId)
-    .single();
+    .eq("id", userId);
 
   if (error) {
     throw new Error(error.message);
   }
-  if (!data) {
-    throw new Error("일치하는 사용자가 없습니다.");
+  if (data && data.length > 0) {
+    return data[0];
   }
-
-  // if (error || !data) {
-  //   throw new Error("일치하는 사용자가 없습니다.");
-  // }
-  return data;
+  throw new Error("일치하는 사용자가 없습니다.");
 }
 //TODO: getUser 로직 정리하기
 export async function getUserByEmail(email: string): Promise<FullUser> {
@@ -234,45 +230,5 @@ export async function changeEmail(userId: string, newEmail: string) {
       `이메일 변경 중 오류가 발생했습니다. Error:${error.message}`
     );
   }
-  return null;
-}
-
-export async function changeAddress(
-  userId: string,
-  addressData: {
-    postCode: string;
-    address: string;
-    addDetail: string;
-    default: boolean;
-    name: string;
-    contact: string;
-    title: string | null;
-  }
-) {
-  const address: Address = {
-    userId,
-    title: addressData.title ?? null,
-    postCode: addressData.postCode,
-    address: addressData.address,
-    addDetail: addressData.addDetail,
-    default: addressData.default,
-    name: addressData.name,
-    contact: addressData.contact,
-  };
-
-  const { data, error } = await supabase
-    .from("addresses")
-    .upsert(address, { onConflict: "userId" })
-    .select()
-    .single();
-
-  if (error) {
-    console.error(error);
-    throw new Error(error.message);
-  }
-  if (data) {
-    return data;
-  }
-
   return null;
 }

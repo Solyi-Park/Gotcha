@@ -223,7 +223,7 @@ export default function EditUserInfo() {
         <ul>
           <li>
             <h3 className="font-bold">로그인 정보</h3>
-            {!user?.provider && (
+            {user?.provider && (
               <div>
                 <div>
                   <p>아이디(이메일)</p>
