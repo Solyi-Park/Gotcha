@@ -23,7 +23,7 @@ const deliveryNotes = [
 
 export default function ShippingDetailForm() {
   const { user } = useMe();
-  // console.log("me", user);
+  console.log("me", user);
 
   const [activeTab, setActiveTab] = useState("기존배송지");
 
@@ -67,19 +67,28 @@ export default function ShippingDetailForm() {
       customDeliveryNote,
       isDefault,
     },
+    resetAll,
   } = useShippingDetailStore();
 
   useEffect(() => {
-    if (user && user?.addresses) {
+    if (user && user?.addresses && activeTab === "기존배송지") {
       if (user.addresses.default) {
         setField("postCode", user.addresses.postCode);
         setField("address", user.addresses.address);
         setField("addDetail", user.addresses.addDetail);
         setField("recipient", user.addresses.name);
         setField("contact1", user.addresses.contact ?? "");
+        setField("addressTitle", user.addresses.title ?? "");
+        setField("isDefault", true);
       }
     }
-  }, [user]);
+  }, [user, activeTab]);
+
+  useEffect(() => {
+    if (activeTab === "신규입력") {
+      resetAll();
+    }
+  }, [activeTab]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   useDebouncedSync("addressTitle", addressTitle, 500);
@@ -118,6 +127,7 @@ export default function ShippingDetailForm() {
   console.log("deliveryNote", deliveryNote);
   console.log("customDeliveryNote", customDeliveryNote);
   console.log("isDefault", isDefault);
+
   return (
     <>
       <section className="flex flex-col gap-2">
@@ -193,7 +203,10 @@ export default function ShippingDetailForm() {
             </label>
           </div>
         ) : (
-          <span className=" ml-32 ">기본배송지입니다.</span>
+          <span className=" ml-32 ">
+            기본배송지입니다. 주문 시 변경하신 내용으로 기본 배송지 주소가
+            수정됩니다.
+          </span>
         )}
 
         <div className="relative w-[500px] ml-32 ">

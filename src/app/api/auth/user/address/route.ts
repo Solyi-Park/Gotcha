@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
-import { changeAddress } from "@/services/user";
+import { updateAddress } from "@/services/address";
 
 export async function POST(req: NextRequest) {
   //TODO: 사용자 정보 인증하기
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   const userId = session.user.id;
 
   try {
-    await changeAddress(userId, addressData);
+    await updateAddress(userId, addressData);
     return NextResponse.json(
       { message: "주소가 성공적으로 변경되었습니다." },
       { status: 200 }

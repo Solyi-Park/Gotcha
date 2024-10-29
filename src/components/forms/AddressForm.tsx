@@ -18,9 +18,10 @@ export default function AddressForm({
   addDetail,
   handleInputChange,
 }: Props) {
+  console.log("addDetail몬데", addDetail);
   const [addressDetail, setAddressDetail] = useState(addDetail);
   useEffect(() => {
-    if (addDetail) {
+    if (addDetail !== null) {
       setAddressDetail(addDetail);
     }
   }, [addDetail]);
