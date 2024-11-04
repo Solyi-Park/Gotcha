@@ -1,4 +1,8 @@
-import { deleteOrderInfo, getOrderData, getOrderItems } from "@/services/order";
+import {
+  deleteOrderInfo,
+  getOrderDataByOrderId,
+  getOrderItems,
+} from "@/services/order";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest) {
@@ -35,7 +39,7 @@ export async function GET(req: NextRequest) {
   }
   if (type === "orders") {
     try {
-      const response = await getOrderData(orderId);
+      const response = await getOrderDataByOrderId(orderId);
       return NextResponse.json(response, { status: 200 });
     } catch (error: any) {
       return NextResponse.json(

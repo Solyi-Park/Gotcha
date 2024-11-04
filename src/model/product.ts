@@ -1,3 +1,5 @@
+import { CartItemOption } from "./cart";
+
 export type ProductOption = {
   name: string;
   items: { value: string }[];
@@ -17,7 +19,7 @@ export type FullProduct = {
   stockQuantity: number;
   thumbnailUrls: string[];
   updatedAt: string;
-  options: ProductOption[];
+  options: CartItemOption[];
   tags: string[];
   likeCount: number;
   likes: string[];

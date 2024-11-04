@@ -1,0 +1,107 @@
+import { authOptions } from "@/app/lib/auth";
+import Button from "@/components/Button";
+import MyOrderButtonGroup from "@/components/MyOrderButtonGroup";
+import OrderDetailLink from "@/components/OrderDetailLink";
+import OrderProductDetail from "@/components/OrderProductDetail";
+import { OrderItem, OrderStatus } from "@/model/order";
+import { getOrderDataByUserId } from "@/services/order";
+import { getFormattedDate } from "@/utils/date";
+import { getServerSession } from "next-auth";
+
+//진행상태: 입금대기>결제완료(취소접수, 문의)>배송준비중>배송시작>배송중>배송완료
+
+export default async function OrderListPage() {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  const orderList = await getOrderDataByUserId(user?.id);
+  console.log("orderList", orderList);
+
+  return (
+    <div>
+      <h3>주문배송조회</h3>
+      <section className="flex w-full border-black border-t-[3px] border-b-[1px] py-3 font-semibold">
+        <div className="flex-[0.5] border-r-2 text-center">상품정보</div>
+        <div className="flex-[0.16] border-r-2">배송비</div>
+        <div className="flex-[0.16] border-r-2">진행상태</div>
+        <div className="flex-[0.18] text-center">리뷰</div>
+      </section>
+      <ol>
+        {orderList?.map((order) => (
+          <li key={order.id}>
+            <div className="py-3 border-b-2 border-black">
+              <OrderDetailLink order={order} />
+              {/* 해당날짜로 주문한 아이템리스트 */}
+              <ul>
+                {order.items.map((item) => (
+                  <li key={item.id} className="flex ">
+                    <div>
+                      <OrderProductDetail
+                        product={item.products}
+                        options={item.options}
+                      />
+                    </div>
+                    <div>
+                      <span>
+                        {order.shippingCost > 0
+                          ? `${order.shippingCost}원`
+                          : "무료배송"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-2xl font-bold">
+                        {formatOrderStatus(order.status)}
+                      </span>
+                    </div>
+                    <div>
+                      <MyOrderButtonGroup status={order.status} />
+                    </div>
+                    <div>
+                      <Button
+                        text="리뷰작성"
+                        color="black"
+                        isVisible={
+                          order.status === "Delivered" ||
+                          order.status === "InTransit" ||
+                          order.status === "ExchangeRequested" ||
+                          order.status === "ExchangeCompleted"
+                        }
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {/* 주문일짜별로 리스트 */}
+    </div>
+  );
+}
+
+function formatOrderStatus(status: OrderStatus) {
+  switch (status) {
+    case "Pending":
+      return "입금대기";
+    case "Paid":
+      return "결제완료";
+    case "Preparing":
+      return "배송준비중";
+    case "InTransit":
+      return "배송중";
+    case "Delivered":
+      return "배송완료";
+    case "ExchangeRequested":
+      return "교환접수";
+    case "ExchangeCompleted":
+      return "교환완료";
+    case "ReturnRequested":
+      return "반품접수";
+    case "ReturnCompleted":
+      return "반품완료";
+    case "Confirmed":
+      return "구매확정";
+    case "Cancelled":
+      return "취소완료";
+  }
+}

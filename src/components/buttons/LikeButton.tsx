@@ -30,7 +30,7 @@ export default function LikeButton({ product, isForDetail }: Props) {
   const { data: session } = useSession();
 
   const user = session?.user;
-  console.log("클라-", user);
+  console.log("user!", user);
   const liked = likes?.includes(user?.id);
 
   const queryClient = useQueryClient();

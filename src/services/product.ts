@@ -243,7 +243,7 @@ export async function getLikedProductsOfUser(
     console.error("Error fetching liked products.", error);
   }
   if (data) {
-    console.log("좋아요 data", data);
+    // console.log("좋아요 data", data);
     return data;
   }
   return null;

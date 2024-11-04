@@ -1,5 +1,5 @@
 import { supabase } from "@/app/lib/supabaseClient";
-import { getOrderData, updateOrderInfo } from "./order";
+import { getOrderDataByOrderId, updateOrderInfo } from "./order";
 import { Payment } from "@/model/payment";
 
 function getAuthHeader() {
@@ -53,7 +53,7 @@ export async function confirmPayment(
   const paymentSaveResult = await savePaymentResult(payment);
   console.log("paymentSave 결과", paymentSaveResult);
 
-  const updatedOrderinfo = await updateOrderInfo(orderId, paymentKey, "PAID");
+  const updatedOrderinfo = await updateOrderInfo(orderId, paymentKey, "Paid");
   console.log("updatedOrderinfo", updatedOrderinfo);
 
   return paymentSaveResult;
@@ -128,16 +128,16 @@ export async function validatePayment(
   paymentKey: string,
   amount: number
 ) {
-  const data = await getOrderData(orderId);
+  const data = await getOrderDataByOrderId(orderId);
 
   if (data && data.orderId !== orderId) {
-    await updateOrderInfo(orderId, paymentKey, "FAILED");
+    await updateOrderInfo(orderId, paymentKey, "Failed");
     throw new Error("Order not found");
     // console.error("Order not found");
   }
 
   if (data && data?.totalAmount !== amount) {
-    await updateOrderInfo(orderId, paymentKey, "FAILED");
+    await updateOrderInfo(orderId, paymentKey, "Failed");
     throw new Error("Payment amount mismatch");
     // console.error("Payment amount mismatch");
   }
