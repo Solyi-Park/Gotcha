@@ -12,7 +12,7 @@ const MYPAGE_SECTIONS = [
   {
     title: "나의 쇼핑 정보",
     items: [
-      { name: "주문배송조회", path: "/my-order" },
+      { name: "주문배송조회", path: "/my-order/list" },
       { name: "취소/교환/반품내역", path: "/my-order/cancel-list" },
       { name: "상품 리뷰", path: "/my-order/review" },
     ],

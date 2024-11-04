@@ -70,20 +70,11 @@ export default function SuccessPage() {
 
   const {
     data: order,
-    isLoading: isOrderLoading,
-    isError: isOrderError,
+    isLoading: isOrderDataLoading,
+    isError: isOrderDataError,
   } = useQuery({
     queryKey: ["confirmed", "order", orderId],
     queryFn: async () => fetchOrderData(paymentResult?.orderId!),
-    enabled: !!paymentResult?.orderId,
-  });
-  const {
-    data: items,
-    isLoading: isItemsLoading,
-    isError: isItemsError,
-  } = useQuery({
-    queryKey: ["confirmed", "items", orderId],
-    queryFn: async () => fetchOrderItems(paymentResult?.orderId!),
     enabled: !!paymentResult?.orderId,
   });
 
@@ -111,8 +102,8 @@ export default function SuccessPage() {
     <>
       {paymentResult && (
         <div>
-          {isItemsLoading && <LoadingSpinner />}
-          {!isItemsLoading && !isItemsError && items && (
+          {isOrderDataLoading && <LoadingSpinner />}
+          {!isOrderDataLoading && !isOrderDataError && order && (
             <div>
               <section>
                 <h2>주문이 완료되었습니다.</h2>
@@ -125,7 +116,7 @@ export default function SuccessPage() {
               </section>
               <section>
                 <h3 className="font-semibold">
-                  주문상품정보 / {items.length}개 상품
+                  주문상품정보 / {order.items.length}개 상품
                 </h3>
                 <ul>
                   <li>
@@ -136,13 +127,10 @@ export default function SuccessPage() {
                     <div>수량</div>
                     <div>진행상태</div>
                   </li>
-                  {items &&
-                    items.map((item: OrderItem) => (
+                  {order.items &&
+                    order.items.map((item: OrderItem) => (
                       <li key={`${item.productId}-${item.options}`}>
-                        <OrderProductDetail
-                          productId={item.productId}
-                          order={order}
-                        />
+                        {/* <OrderProductDetail product={item.product} /> */}
                       </li>
                     ))}
                 </ul>
@@ -223,21 +211,6 @@ export default function SuccessPage() {
       )}
     </>
   );
-}
-
-async function fetchOrderItems(orderId: string) {
-  try {
-    const res = await fetch(`/api/order/${orderId}?type=items`, {
-      method: "GET",
-    });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch order items with orderId:${orderId}`);
-    }
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
 }
 
 async function fetchOrderData(orderId: string) {

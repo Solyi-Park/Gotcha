@@ -1,6 +1,12 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { CartItemRowType } from "@/model/cart";
-import { OrderDetails, OrderItem, ShippingDetails } from "@/model/order";
+import {
+  OrderDataReturnType,
+  OrderDetails,
+  OrderItem,
+  OrderStatus,
+  ShippingDetails,
+} from "@/model/order";
 import { updateAddress } from "./address";
 
 export async function saveOrderInfo(
@@ -13,7 +19,7 @@ export async function saveOrderInfo(
   console.log("shippingDetails", shippingDetails);
   //주소정보 저장
   if (shippingDetails.isDefault) {
-    const updateAddressResult = await updateAddress(userId, {
+    await updateAddress(userId, {
       postCode: shippingDetails.postCode ?? "",
       address: shippingDetails.address ?? "",
       addDetail: shippingDetails.addDetail ?? "",
@@ -46,7 +52,7 @@ export async function saveOrderInfo(
     displayOrderNumber: generateDisplayOrderNumber(new Date()),
   };
   // console.log("newOrder", newOrder);
-  // TODO: 똑같은 상품정보가 있는경우 저장하지 않아야함.
+  // TODO: 똑같은 상품정보가 있는경우 저장하지 않아야함. ==>
   const { data: orderResult, error } = await supabase
     .from("orders")
     .insert(newOrder)
@@ -151,7 +157,7 @@ export async function deleteOrderInfo(orderId: string) {
 export async function updateOrderInfo(
   orderId: string,
   paymentKey: string,
-  status: "PAID" | "FAILED"
+  status: OrderStatus
 ) {
   const { data, error } = await supabase
     .from("orders")
@@ -174,10 +180,10 @@ export async function updateOrderInfo(
   return data[0];
 }
 
-export async function getOrderData(orderId: string) {
+export async function getOrderDataByOrderId(orderId: string) {
   const { data, error } = await supabase
     .from("orders")
-    .select()
+    .select("*")
     .eq("orderId", orderId);
 
   if (error) {
@@ -192,13 +198,14 @@ export async function getOrderData(orderId: string) {
     return null;
   }
 
-  return data[0] as OrderDetails;
+  return data[0];
 }
 
+//TODO: productId로 다시 product 데이터 받는 부분 찾아서 수정
 export async function getOrderItems(orderId: string) {
   const { data, error } = await supabase
     .from("orderItems")
-    .select()
+    .select("*, products(*)")
     .eq("orderId", orderId);
 
   console.log("data가 있나유", data);
@@ -219,9 +226,42 @@ export async function getOrderItems(orderId: string) {
   return data as OrderItem[];
 }
 
+//TODO: Error를 throw해야하는 곳과 console.error처리하는 부분 구분
+//TODO: 비즈니스 로직들의 Return Type 정의
+export async function getOrderDataByUserId(userId: string) {
+  const { data: orders, error } = await supabase
+    .from("orders")
+    .select()
+    .eq("userId", userId)
+    .order("createdAt", { ascending: false });
+
+  if (error) {
+    // throw new Error(`Error fetching an order with user ID: ${userId}`);
+    console.error(error);
+  }
+
+  // 데이터가 없거나 배열이 비어 있으면 null 반환
+  if (!orders || orders.length === 0) {
+    console.error(`No order found with  userID: ${userId}`);
+    return [];
+  }
+
+  const ordersWithItems = await Promise.all(
+    orders.map(async (order) => {
+      const items = await getOrderItems(order.orderId);
+      return {
+        ...order,
+        items: items || [],
+      } as OrderDataReturnType;
+    })
+  );
+  console.log("test", ordersWithItems[0].items);
+  return ordersWithItems;
+}
+
 export function generateDisplayOrderNumber(date: Date) {
   const year = date.getFullYear();
-  const month = String(date.getMonth()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
 
   const randomPart = String(Math.floor(10000000 + Math.random() * 90000000));

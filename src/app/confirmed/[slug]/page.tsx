@@ -89,10 +89,10 @@ export default function ConfirmedPage() {
               {items &&
                 items.map((item: OrderItem) => (
                   <li key={item.productId}>
-                    <OrderProductDetail
+                    {/* <OrderProductDetail
                       productId={item.productId}
                       order={order}
-                    />
+                    /> */}
                   </li>
                 ))}
             </ul>
