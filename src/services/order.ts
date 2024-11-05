@@ -1,13 +1,15 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { CartItemRowType } from "@/model/cart";
 import {
-  OrderDataReturnType,
+  OrderData,
   OrderDetails,
+  OrderInput,
   OrderItem,
   OrderStatus,
   ShippingDetails,
 } from "@/model/order";
 import { updateAddress } from "./address";
+import { FullProduct } from "@/model/product";
 
 export async function saveOrderInfo(
   userId: string,
@@ -37,8 +39,9 @@ export async function saveOrderInfo(
     return (acc += item.quantity);
   }, 0);
   //TODO: 주소부분을 분리해야하나
-  const newOrder: OrderDetails = {
+  const newOrder: OrderInput = {
     userId,
+    status: "Pending",
     totalAmount: amount + shippingCost, // 배송비 분리?
     recipient: shippingDetails.recipient,
     fullAddress,
@@ -181,10 +184,11 @@ export async function updateOrderInfo(
 }
 
 export async function getOrderDataByOrderId(orderId: string) {
-  const { data, error } = await supabase
+  const { data: order, error } = await supabase
     .from("orders")
     .select("*")
-    .eq("orderId", orderId);
+    .eq("id", orderId)
+    .returns<OrderDetails[]>();
 
   if (error) {
     console.error(
@@ -192,17 +196,58 @@ export async function getOrderDataByOrderId(orderId: string) {
       error
     );
   }
-  // 데이터가 없거나 배열이 비어 있으면 null 반환
-  if (!data || data.length === 0) {
+
+  if (!order || order.length === 0) {
     console.error(`No order found with ID: ${orderId}`);
     return null;
   }
 
-  return data[0];
+  const items = await getOrderItemsByOrderId(orderId);
+  return {
+    ...order,
+    items,
+  };
+
+  console.log("order", order);
+  return order;
 }
 
+export async function getOrderDataByUserId(userId: string) {
+  const { data: orders, error } = await supabase
+    .from("orders")
+    .select()
+    .eq("userId", userId)
+    .order("createdAt", { ascending: false });
+
+  if (error) {
+    // throw new Error(`Error fetching an order with user ID: ${userId}`);
+    console.error(error);
+  }
+
+  if (!orders || orders.length === 0) {
+    console.error(`No order found with  userID: ${userId}`);
+    return [];
+  }
+
+  const ordersWithItems = await Promise.all(
+    orders.map(async (order) => {
+      const items = await getOrderItemsByOrderId(order.id);
+      return {
+        ...order,
+        items,
+      } as OrderData;
+    })
+  );
+
+  return ordersWithItems && ordersWithItems;
+}
+
+export type ItemData = OrderItem & {
+  products: FullProduct;
+};
+
 //TODO: productId로 다시 product 데이터 받는 부분 찾아서 수정
-export async function getOrderItems(orderId: string) {
+export async function getOrderItemsByOrderId(orderId: string) {
   const { data, error } = await supabase
     .from("orderItems")
     .select("*, products(*)")
@@ -222,42 +267,16 @@ export async function getOrderItems(orderId: string) {
     console.error(`No order found with ID: ${orderId}`);
     return null;
   }
-
-  return data as OrderItem[];
+  const items: ItemData[] = data.map((item) => ({
+    ...item,
+    productData: item.products,
+  }));
+  console.log("items", items);
+  return items;
 }
 
 //TODO: Error를 throw해야하는 곳과 console.error처리하는 부분 구분
 //TODO: 비즈니스 로직들의 Return Type 정의
-export async function getOrderDataByUserId(userId: string) {
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select()
-    .eq("userId", userId)
-    .order("createdAt", { ascending: false });
-
-  if (error) {
-    // throw new Error(`Error fetching an order with user ID: ${userId}`);
-    console.error(error);
-  }
-
-  // 데이터가 없거나 배열이 비어 있으면 null 반환
-  if (!orders || orders.length === 0) {
-    console.error(`No order found with  userID: ${userId}`);
-    return [];
-  }
-
-  const ordersWithItems = await Promise.all(
-    orders.map(async (order) => {
-      const items = await getOrderItems(order.orderId);
-      return {
-        ...order,
-        items: items || [],
-      } as OrderDataReturnType;
-    })
-  );
-  console.log("test", ordersWithItems[0].items);
-  return ordersWithItems;
-}
 
 export function generateDisplayOrderNumber(date: Date) {
   const year = date.getFullYear();

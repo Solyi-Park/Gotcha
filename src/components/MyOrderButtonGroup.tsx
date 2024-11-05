@@ -1,11 +1,14 @@
+"use client";
 import { OrderStatus } from "@/model/order";
 import Button from "./Button";
+import { useRouter } from "next/navigation";
 
-export default function MyOrderButtonGroup({
-  status,
-}: {
+type Props = {
   status: OrderStatus;
-}) {
+  orderId: string;
+};
+
+export default function MyOrderButtonGroup({ status, orderId }: Props) {
   return (
     <div className="grid grid-cols-2 grid-rows-2 h-16 gap-2">
       <Button
@@ -14,6 +17,7 @@ export default function MyOrderButtonGroup({
         isVisible={
           status === "Pending" || status === "Paid" || status === "Preparing"
         }
+        href={`/mypage/my-order/cancel/id?=${orderId}&funnel-step=취소상품+선택`}
       />
       <Button
         text="교환접수"
@@ -23,6 +27,7 @@ export default function MyOrderButtonGroup({
           status === "Delivered" ||
           status === "ExchangeCompleted"
         }
+        href={""}
       />
       <Button
         text="반품접수"
@@ -32,15 +37,17 @@ export default function MyOrderButtonGroup({
           status === "ExchangeRequested" ||
           status === "ExchangeCompleted"
         }
+        href={""}
       />
 
       <Button
         text="취소상세"
         color="black"
         isVisible={status === "Cancelled"}
+        href={""}
       />
 
-      <Button text="1:1문의" />
+      <Button text="1:1문의" href={""} />
     </div>
   );
 }

@@ -1,20 +1,36 @@
+"use client";
 import { authOptions } from "@/app/lib/auth";
 import Button from "@/components/Button";
 import MyOrderButtonGroup from "@/components/MyOrderButtonGroup";
 import OrderDetailLink from "@/components/OrderDetailLink";
 import OrderProductDetail from "@/components/OrderProductDetail";
-import { OrderItem, OrderStatus } from "@/model/order";
+import { OrderData, OrderItemWithProduct, OrderStatus } from "@/model/order";
 import { getOrderDataByUserId } from "@/services/order";
 import { getFormattedDate } from "@/utils/date";
+import { useQuery } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 
 //진행상태: 입금대기>결제완료(취소접수, 문의)>배송준비중>배송시작>배송중>배송완료
+async function fetchOrderData(userId: string): Promise<OrderData[]> {
+  return await fetch(`/api/order/list`, {
+    method: "GET",
+  }).then((res) => res.json());
+}
 
-export default async function OrderListPage() {
-  const session = await getServerSession(authOptions);
+export default function OrderListPage() {
+  const { data: session } = useSession();
   const user = session?.user;
-  const orderList = await getOrderDataByUserId(user?.id);
-  console.log("orderList", orderList);
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["orders", user?.id],
+    queryFn: async () => fetchOrderData(user?.id),
+  });
+
+  console.log("orders", orders);
 
   return (
     <div>
@@ -26,53 +42,60 @@ export default async function OrderListPage() {
         <div className="flex-[0.18] text-center">리뷰</div>
       </section>
       <ol>
-        {orderList?.map((order) => (
-          <li key={order.id}>
-            <div className="py-3 border-b-2 border-black">
-              <OrderDetailLink order={order} />
-              {/* 해당날짜로 주문한 아이템리스트 */}
-              <ul>
-                {order.items.map((item) => (
-                  <li key={item.id} className="flex ">
-                    <div>
-                      <OrderProductDetail
-                        product={item.products}
-                        options={item.options}
-                      />
-                    </div>
-                    <div>
-                      <span>
-                        {order.shippingCost > 0
-                          ? `${order.shippingCost}원`
-                          : "무료배송"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-2xl font-bold">
-                        {formatOrderStatus(order.status)}
-                      </span>
-                    </div>
-                    <div>
-                      <MyOrderButtonGroup status={order.status} />
-                    </div>
-                    <div>
-                      <Button
-                        text="리뷰작성"
-                        color="black"
-                        isVisible={
-                          order.status === "Delivered" ||
-                          order.status === "InTransit" ||
-                          order.status === "ExchangeRequested" ||
-                          order.status === "ExchangeCompleted"
-                        }
-                      />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </li>
-        ))}
+        {!isLoading &&
+          !error &&
+          orders &&
+          orders.map((order) => (
+            <li key={order.id}>
+              <div className="py-3 border-b-2 border-black">
+                <OrderDetailLink order={order} />
+                {/* 해당날짜로 주문한 아이템리스트 */}
+                <ul>
+                  {order.items?.map((item) => (
+                    <li key={item.id} className="flex ">
+                      <div>
+                        <OrderProductDetail
+                          item={item}
+                          options={item.options}
+                        />
+                      </div>
+                      <div>
+                        <span>
+                          {order.shippingCost > 0
+                            ? `${order.shippingCost}원`
+                            : "무료배송"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-2xl font-bold">
+                          {formatOrderStatus(order.status)}
+                        </span>
+                      </div>
+                      <div>
+                        <MyOrderButtonGroup
+                          status={order.status}
+                          orderId={order.id}
+                        />
+                      </div>
+                      <div>
+                        <Button
+                          text="리뷰작성"
+                          color="black"
+                          isVisible={
+                            order.status === "Delivered" ||
+                            order.status === "InTransit" ||
+                            order.status === "ExchangeRequested" ||
+                            order.status === "ExchangeCompleted"
+                          }
+                          href={""}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
       </ol>
       {/* 주문일짜별로 리스트 */}
     </div>
