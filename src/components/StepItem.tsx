@@ -7,8 +7,7 @@ type Props = {
 export default function StepItem({ step, title }: Props) {
   const params = useSearchParams();
   const funnelStep = params.get("funnel-step");
-  console.log("title", title);
-  console.log("funnelStep", funnelStep);
+
   return (
     <div
       className={`flex flex-col items-center justify-center w-36 h-36 rounded-full ${getStyle(

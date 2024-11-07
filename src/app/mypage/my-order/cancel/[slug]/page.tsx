@@ -1,9 +1,11 @@
 "use client";
+import CancelList from "@/components/CancelList";
 import CancelProgress from "@/components/CancelProgress";
-import OrderProductDetail from "@/components/OrderProductDetail";
+import CancelReason from "@/components/CancelReason";
+import ConfirmCancelDetail from "@/components/ConfirmCancelDetail";
 import { OrderData } from "@/model/order";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 async function fetchOrderData(orderId: string): Promise<OrderData> {
   return await fetch(`/api/order?orderId=${orderId}`, {
@@ -11,11 +13,14 @@ async function fetchOrderData(orderId: string): Promise<OrderData> {
   }).then((res) => res.json());
 }
 
-export default function cancelDetailPage() {
+export default function CancelDetailPage() {
+  const searchParams = useSearchParams();
   const params = useParams();
   const orderId = params.slug as string;
-  console.log("orderId?", orderId);
+  const step = searchParams.get("funnel-step") as string;
+  console.log("step", step);
 
+  // 주문 데이터 가져오기
   const {
     data: order,
     isLoading,
@@ -23,27 +28,36 @@ export default function cancelDetailPage() {
   } = useQuery({
     queryKey: ["order", orderId],
     queryFn: async () => fetchOrderData(orderId),
+    staleTime: 6000 * 15,
   });
   console.log("order data", order);
 
   return (
-    <div>
+    <div className="w-full">
       <CancelProgress />
-      <div>
-        <h3>취소 상품 선택</h3>
-        <section className="flex w-full border-black border-t-[3px] border-b-[1px] py-3 font-semibold text-center">
-          <div className="flex-[0.5] border-r-2 ">상품정보</div>
-
-          <div className="flex-[0.16] border-r-2 ">진행상태</div>
-          <div className="flex-[0.18] ">수량선택</div>
-        </section>
-      </div>
-      <div>
-        {order &&
-          order.items?.map((item) => (
-            <OrderProductDetail item={item} options={item.options} />
-          ))}
-      </div>
+      <h3 className="text-lg font-bold border-b-[3px] border-black py-2">
+        {getTitle(step)}
+      </h3>
+      {!isLoading && order && step === "취소상품 선택" && (
+        <CancelList order={order} isLoading={isLoading} />
+      )}
+      {!isLoading && order && step === "취소사유 작성" && (
+        <CancelReason orderId={order?.id} />
+      )}
+      {!isLoading && order && step === "취소정보 확인" && (
+        <ConfirmCancelDetail />
+      )}
     </div>
   );
 }
+
+const getTitle = (step: string) => {
+  switch (step) {
+    case "취소상품 선택":
+      return "취소 상품 선택";
+    case "취소사유 작성":
+      return "취소 사유 작성";
+    case "취소정보 확인":
+      return "취소 정보 확인";
+  }
+};

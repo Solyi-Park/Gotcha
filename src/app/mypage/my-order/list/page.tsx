@@ -7,6 +7,7 @@ import OrderProductDetail from "@/components/OrderProductDetail";
 import { OrderData, OrderItemWithProduct, OrderStatus } from "@/model/order";
 import { getOrderDataByUserId } from "@/services/order";
 import { getFormattedDate } from "@/utils/date";
+import { formatOrderStatus } from "@/utils/orderStatus";
 import { useQuery } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -100,31 +101,4 @@ export default function OrderListPage() {
       {/* 주문일짜별로 리스트 */}
     </div>
   );
-}
-
-function formatOrderStatus(status: OrderStatus) {
-  switch (status) {
-    case "Pending":
-      return "입금대기";
-    case "Paid":
-      return "결제완료";
-    case "Preparing":
-      return "배송준비중";
-    case "InTransit":
-      return "배송중";
-    case "Delivered":
-      return "배송완료";
-    case "ExchangeRequested":
-      return "교환접수";
-    case "ExchangeCompleted":
-      return "교환완료";
-    case "ReturnRequested":
-      return "반품접수";
-    case "ReturnCompleted":
-      return "반품완료";
-    case "Confirmed":
-      return "구매확정";
-    case "Cancelled":
-      return "취소완료";
-  }
 }

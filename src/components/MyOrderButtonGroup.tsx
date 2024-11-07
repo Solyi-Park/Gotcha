@@ -17,7 +17,7 @@ export default function MyOrderButtonGroup({ status, orderId }: Props) {
         isVisible={
           status === "Pending" || status === "Paid" || status === "Preparing"
         }
-        href={`/mypage/my-order/cancel/id?=${orderId}&funnel-step=취소상품+선택`}
+        href={`/mypage/my-order/cancel/${orderId}?funnel-step=취소상품+선택`}
       />
       <Button
         text="교환접수"

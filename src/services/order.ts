@@ -203,13 +203,13 @@ export async function getOrderDataByOrderId(orderId: string) {
   }
 
   const items = await getOrderItemsByOrderId(orderId);
-  return {
-    ...order,
-    items,
-  };
+  if (items)
+    return {
+      ...order[0],
+      items,
+    };
 
-  console.log("order", order);
-  return order;
+  return null;
 }
 
 export async function getOrderDataByUserId(userId: string) {
