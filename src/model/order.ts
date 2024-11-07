@@ -3,7 +3,7 @@ import { FullProduct } from "./product";
 
 export type OrderItem = {
   id: string;
-  userId: string;
+  orderId: string;
   productId: string;
   price: number;
   quantity: number;
@@ -25,12 +25,18 @@ export type OrderStatus =
   | "ReturnCompleted"
   | "Cancelled";
 
+//TODO: 다른 타입도 입력용과 DB에서 받아오는 타입 분리하기.
+export type OrderInput = Omit<
+  OrderDetails,
+  "id" | "createdAt" | "updatedAt" | "paymentKey" | "method"
+>;
+
 export type OrderDetails = {
-  id?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
   userId: string;
-  paymentKey?: string | null;
+  paymentKey: string | null;
   totalAmount: number;
   fullAddress: string;
   status: OrderStatus;
@@ -38,7 +44,7 @@ export type OrderDetails = {
   refundReason?: string | null;
   shippingCost: number;
   displayOrderNumber: string;
-  method?: string;
+  method: string;
 } & ShippingDetails;
 
 // 타입수정
@@ -55,13 +61,15 @@ export type ShippingDetails = {
   isDefault: boolean;
 };
 
-export type OrderDataReturnType = OrderDetails & {
+export type OrderItemWithProduct = OrderItem & {
+  products: FullProduct;
+};
+
+export type OrderData = OrderDetails & {
   userId: string;
   productId: string;
   price: number;
   quantity: number;
   options: CartItemOption[];
-  items: (OrderItem & {
-    products: FullProduct;
-  })[];
+  items: OrderItemWithProduct[];
 };
