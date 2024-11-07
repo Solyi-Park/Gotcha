@@ -5,6 +5,7 @@ import NaverProvider from "next-auth/providers/naver";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { addUser, findUser } from "@/services/user";
 import { verifyPassword } from "@/utils/password";
+import { v4 as uuidv4 } from "uuid";
 
 export const authOptions: NextAuthOptions = {
   providers: [

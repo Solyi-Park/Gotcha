@@ -1,7 +1,7 @@
 import {
   deleteOrderInfo,
   getOrderDataByOrderId,
-  getOrderItemsByOrderId,
+  getOrderItems,
 } from "@/services/order";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
   }
   if (type === "items") {
     try {
-      const response = await getOrderItemsByOrderId(orderId);
+      const response = await getOrderItems(orderId);
       return NextResponse.json(response, { status: 200 });
     } catch (error: any) {
       return NextResponse.json(

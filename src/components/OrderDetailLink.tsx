@@ -1,8 +1,8 @@
-import { OrderData } from "@/model/order";
+import { OrderDataReturnType } from "@/model/order";
 import { getFormattedDate } from "@/utils/date";
 
 type Props = {
-  order: OrderData;
+  order: OrderDataReturnType;
 };
 export default function OrderDetailLink({ order }: Props) {
   return (

@@ -1,20 +1,14 @@
-"use client";
-
-import Link from "next/link";
-
 type Color = "black" | "white";
 type Props = {
   color?: Color;
   text: string;
   isVisible?: boolean;
-  href: string;
 };
 
 export default function Button({
   color = "white",
   text,
   isVisible = true,
-  href,
 }: Props) {
   return (
     <button
@@ -23,7 +17,7 @@ export default function Button({
       }`}
       type="button"
     >
-      <Link href={href}>{text}</Link>
+      {text}
     </button>
   );
 }
