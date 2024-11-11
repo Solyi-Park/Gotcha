@@ -4,6 +4,7 @@ import OrderProductDetail from "./OrderProductDetail";
 import { formatOrderStatus } from "@/utils/orderStatus";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "./LoadingSpinner";
+import { useEffect } from "react";
 
 type Props = {
   order: OrderData | undefined;
@@ -13,8 +14,24 @@ export default function CancelList({ order, isLoading }: Props) {
   console.log("order정보", order, isLoading);
   const router = useRouter();
 
-  const { selectedItems, addItem, removeItem, updateQuantity } =
-    useCancelStore();
+  const {
+    selectedItems,
+    setSelectedItems,
+    addItem,
+    removeItem,
+    updateQuantity,
+  } = useCancelStore();
+
+  useEffect(() => {
+    if (order?.items) {
+      const items = order.items.reduce((acc, item) => {
+        acc[item.id] = item.quantity;
+        return acc;
+      }, {} as Record<string, number>);
+
+      setSelectedItems(items);
+    }
+  }, [order]);
 
   const handleCheckboxChange = (itemId: string, quantity: number) => {
     if (selectedItems[itemId]) {

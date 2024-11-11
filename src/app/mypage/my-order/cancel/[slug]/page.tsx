@@ -18,7 +18,7 @@ export default function CancelDetailPage() {
   const params = useParams();
   const orderId = params.slug as string;
   const step = searchParams.get("funnel-step") as string;
-  console.log("step", step);
+  // console.log("step", step);
 
   // 주문 데이터 가져오기
   const {
@@ -30,7 +30,7 @@ export default function CancelDetailPage() {
     queryFn: async () => fetchOrderData(orderId),
     staleTime: 6000 * 15,
   });
-  console.log("order data", order);
+  // console.log("order data", order);
 
   return (
     <div className="w-full">
@@ -45,7 +45,7 @@ export default function CancelDetailPage() {
         <CancelReason orderId={order?.id} />
       )}
       {!isLoading && order && step === "취소정보 확인" && (
-        <ConfirmCancelDetail />
+        <ConfirmCancelDetail items={order?.items} />
       )}
     </div>
   );

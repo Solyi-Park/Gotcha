@@ -63,6 +63,7 @@ export type ShippingDetails = {
 
 export type OrderItemWithProduct = OrderItem & {
   products: FullProduct;
+  selectedQuantity?: number; //OrderProductDetail 재사용여부에따라 분리
 };
 
 export type OrderData = OrderDetails & {

@@ -10,10 +10,11 @@ import Link from "next/link";
 type Props = {
   item: OrderItemWithProduct;
   options: CartItemOption[];
+  cancel?: boolean;
 };
 
 //TODO: 타입수정해야함. item.products <-- product 정보(+service 로직)
-export default function OrderProductDetail({ item, options }: Props) {
+export default function OrderProductDetail({ item, options, cancel }: Props) {
   // console.log("item", item);
   //TODO: 장바구니와 컴포넌트 UI구조 유사함
   return (
@@ -62,7 +63,7 @@ export default function OrderProductDetail({ item, options }: Props) {
               원
             </span>
             <span className="mx-1">/</span>
-            <span>{item.quantity}개</span>
+            <span>{cancel ? item.selectedQuantity : item.quantity}개</span>
           </p>
         </div>
       </div>

@@ -1,13 +1,16 @@
 import { cancelReasons } from "@/components/CancelReason";
 import { create } from "zustand";
-
+interface SelectedItems {
+  [itemId: string]: number;
+}
 interface CancelState {
-  selectedItems: { [productId: string]: number };
+  selectedItems: SelectedItems;
   cancelReason: string;
   cancelReasonDetail: string;
 
-  addItem: (productId: string, initialQuantity: number) => void;
-  removeItem: (productId: string) => void;
+  setSelectedItems: (selectedItems: SelectedItems) => void;
+  addItem: (itemId: string, initialQuantity: number) => void;
+  removeItem: (itemId: string) => void;
   updateQuantity: (
     productId: string,
     delta: number,
@@ -23,19 +26,20 @@ const useCancelStore = create<CancelState>((set) => ({
   selectedItems: {},
   cancelReason: cancelReasons[0],
   cancelReasonDetail: "",
-  addItem: (productId, initialQuantity) =>
+  setSelectedItems: (selectedItems) => set({ selectedItems }),
+  addItem: (itemId, initialQuantity) =>
     set((state) => ({
       selectedItems: {
         ...state.selectedItems,
-        [productId]: state.selectedItems[productId]
-          ? state.selectedItems[productId]
+        [itemId]: state.selectedItems[itemId]
+          ? state.selectedItems[itemId]
           : initialQuantity,
       },
     })),
-  removeItem: (productId) =>
+  removeItem: (itemId) =>
     set((state) => {
       const updatedItems = { ...state.selectedItems };
-      delete updatedItems[productId];
+      delete updatedItems[itemId];
       return { selectedItems: updatedItems };
     }),
 
