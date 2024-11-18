@@ -313,7 +313,7 @@ export async function getOrderDataByUserId(userId: string) {
     return [];
   }
 
-  const ordersWithItems = await Promise.all(
+  const orderWithItems = await Promise.all(
     orders.map(async (order) => {
       const items = await getOrderItemsByOrderId(order.id);
       return {
@@ -323,7 +323,7 @@ export async function getOrderDataByUserId(userId: string) {
     })
   );
 
-  return ordersWithItems && ordersWithItems;
+  return orderWithItems && orderWithItems;
 }
 
 export type ItemData = OrderItem & {
