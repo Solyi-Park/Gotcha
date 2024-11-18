@@ -31,10 +31,10 @@ export default function CartPage() {
   });
 
   return (
-    <div>
+    <div className="my-10">
       {/* isLoading일때 로딩스피너 */}
       {!isLoading && userCartData && userCartData.length === 0 && (
-        <div>
+        <div className="flex flex-col items-center justify-center h-full">
           <p className="text-4xl">장바구니에 담은 상품이 없습니다.</p>
           <ContinueShoppingButton />
         </div>

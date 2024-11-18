@@ -93,14 +93,18 @@ export default function CartItemRow({ item }: Props) {
             {product?.price.toLocaleString() || 0}원
           </span>
           <p className="text-rose-400 text-sm">
-            <span className="mr-1">[{product?.discountRate}%]</span>
-            <span>
-              {getDiscountedPrice(
-                product?.price,
-                product?.discountRate
-              ).toLocaleString() || 0}
-              원
-            </span>
+            {product?.discountRate && (
+              <>
+                <span className="mr-1">[{product.discountRate}%]</span>
+                <span>
+                  {getDiscountedPrice(
+                    product?.price,
+                    product?.discountRate
+                  ).toLocaleString() || 0}
+                  원
+                </span>
+              </>
+            )}
           </p>
           <ul className="flex gap-2 text-xs text-gray-700">
             {option &&

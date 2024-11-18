@@ -3,6 +3,7 @@ import CancelList from "@/components/CancelList";
 import CancelProgress from "@/components/CancelProgress";
 import CancelReason from "@/components/CancelReason";
 import ConfirmCancelDetail from "@/components/ConfirmCancelDetail";
+import OrderCancelConfirmation from "@/components/OrderCancelConfirmation.";
 import { OrderData } from "@/model/order";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "next/navigation";
@@ -45,8 +46,9 @@ export default function CancelDetailPage() {
         <CancelReason orderId={order?.id} />
       )}
       {!isLoading && order && step === "취소정보 확인" && (
-        <ConfirmCancelDetail items={order?.items} />
+        <ConfirmCancelDetail order={order} />
       )}
+      {!isLoading && order && step === "완료" && <OrderCancelConfirmation />}
     </div>
   );
 }

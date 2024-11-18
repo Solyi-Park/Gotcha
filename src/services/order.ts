@@ -38,10 +38,10 @@ export async function saveOrderInfo(
   const orderQuantity = products.reduce((acc, item) => {
     return (acc += item.quantity);
   }, 0);
-  //TODO: 주소부분을 분리해야하나
+  //TODO:input 타입들 분리하기, Pick OR Omit
   const newOrder: OrderInput = {
     userId,
-    status: "Pending",
+    status: "PENDING",
     totalAmount: amount + shippingCost, // 배송비 분리?
     recipient: shippingDetails.recipient,
     fullAddress,
@@ -68,11 +68,8 @@ export async function saveOrderInfo(
     return null;
   }
   //나중에 리턴값 없애기
-  console.log("product의 옵션", products[0].option);
-  const orderItemsResult = await saveOrderItems(
-    orderResult[0].orderId,
-    products
-  );
+  // console.log("product의 옵션", products[0].option);
+  const orderItemsResult = await saveOrderItems(orderResult[0].id, products);
 
   if (orderResult && orderItemsResult) {
     const response = {
@@ -84,6 +81,7 @@ export async function saveOrderInfo(
   }
   return null;
 }
+
 export async function saveOrderItems(
   orderId: string,
   items: CartItemRowType[]
@@ -140,7 +138,7 @@ export async function deleteOrderInfo(orderId: string) {
     const { data, error } = await supabase
       .from("orders")
       .delete()
-      .eq("orderId", orderId)
+      .eq("id", orderId)
       .select();
 
     if (error) {
@@ -165,11 +163,11 @@ export async function updateOrderInfo(
   const { data, error } = await supabase
     .from("orders")
     .update({ status, paymentKey })
-    .eq("orderId", orderId)
+    .eq("id", orderId)
     .select();
 
   if (error) {
-    console.error(`Error updating order:`, error);
+    console.error(`Error updating order:`, error.message);
     return null;
   }
 
@@ -181,6 +179,92 @@ export async function updateOrderInfo(
   console.log("업데이트된 주문 정보 =>", data);
 
   return data[0];
+}
+
+export async function cancelOrderItem(
+  itemId: string,
+  orderId: string,
+  cancelQuantity: number
+) {
+  const { data: orderItem, error: itemError } = await supabase
+    .from("orderItems")
+    .select()
+    .eq("id", itemId)
+    .eq("orderId", orderId)
+    .single();
+
+  if (itemError) throw new Error(itemError.message);
+  if (!orderItem) throw new Error("주문 상품을 찾을 수 없습니다.");
+
+  const remainingQuantity = orderItem.quantity - orderItem.canceluantity;
+  if (cancelQuantity > remainingQuantity) {
+    throw new Error("취소 수량이 남은 수량보다 많습니다.");
+  }
+
+  const newCanceledQuantity = orderItem.canceledQuantity + cancelQuantity;
+  const newStatus =
+    newCanceledQuantity === orderItem.quantity
+      ? "CANCELED"
+      : "PARTICIALLY_CANCELED";
+
+  const { error: updateError } = await supabase
+    .from("orderItems")
+    .update({
+      canceledQuantity: newCanceledQuantity,
+      status: newStatus,
+    })
+    .eq("id", itemId);
+
+  if (updateError) throw new Error(updateError.message);
+
+  const res = await updateOrderStatus(orderId);
+  // if (res) console.log("오더상태 수정 결과:", res);
+  return res;
+}
+//여기: 취소수량 업데이트가 이상함.
+export async function updateOrderStatus(orderId: string) {
+  const { data: items, error: itemsError } = await supabase
+    .from("orderItems")
+    .select("status")
+    .eq("orderId", orderId);
+
+  if (itemsError) throw itemsError;
+
+  type Order = {
+    status: string;
+  };
+
+  console.log("요아이템들 중에 업데이트 할겨, items:", items);
+  const allCanceled = items.every((item) => item.status === "CANCELED");
+  const partiallyCanceled = items.some(
+    (item) =>
+      item.status === "PARTICIALLY_CANCELED" || item.status === "CANCELED"
+  );
+
+  let newCancellationStatus = "NONE";
+
+  if (allCanceled) {
+    newCancellationStatus = "CANCELED";
+  } else if (partiallyCanceled) {
+    newCancellationStatus = "PARTIALLY_CANCELED";
+  }
+
+  const { data: updatedOrder, error: updateError } = await supabase
+    .from("orders")
+    .update({
+      cancellationStatus: newCancellationStatus,
+    })
+    .eq("id", orderId)
+    .select();
+
+  if (updateError) throw updateError;
+
+  if (!updatedOrder) {
+    console.error(`No updated order found with ID: ${orderId}`);
+    return null;
+  }
+  console.log("updatedOrder", updatedOrder);
+  return updatedOrder;
 }
 
 export async function getOrderDataByOrderId(orderId: string) {
@@ -253,7 +337,7 @@ export async function getOrderItemsByOrderId(orderId: string) {
     .select("*, products(*)")
     .eq("orderId", orderId);
 
-  console.log("data가 있나유", data);
+  // console.log("data가 있나유", data);
   if (error) {
     // throw new Error(`Error fetching an order items: ${orderId}`);
     console.error(error);
@@ -271,7 +355,7 @@ export async function getOrderItemsByOrderId(orderId: string) {
     ...item,
     productData: item.products,
   }));
-  console.log("items", items);
+  // console.log("items", items);
   return items;
 }
 

@@ -13,7 +13,7 @@ const MYPAGE_SECTIONS = [
     title: "나의 쇼핑 정보",
     items: [
       { name: "주문배송조회", path: "/my-order/list" },
-      { name: "취소/교환/반품내역", path: "/my-order/cancel-list" },
+      // { name: "취소/교환/반품내역", path: "/my-order/cancel-list" },
       { name: "상품 리뷰", path: "/my-order/review" },
     ],
   },
@@ -66,7 +66,7 @@ export default function UserNavBar() {
   };
 
   return (
-    <div className="">
+    <div className="w-40">
       <section>
         <h2 className="text-4xl font-bold">
           {/* 글자수 길어지면 사이즈 줄이기 */}

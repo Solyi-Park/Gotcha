@@ -70,7 +70,7 @@ export default function PaymentButton({
       const orderResponse = await saveOrderData(requestData);
       const data = await orderResponse.json();
       console.log("주문 정보 저장: ", data);
-      const orderId: string = data?.orderId; //타입
+      const orderId: string = data?.id; //타입
       setOrderId(orderId);
 
       // if (!orderResponse.ok) {
@@ -88,7 +88,7 @@ export default function PaymentButton({
 
       if (orderResponse.ok && orderId && widgets && checkoutItems)
         await widgets.requestPayment({
-          orderId: data.orderId,
+          orderId: data.id,
           orderName:
             checkoutItems.length > 1
               ? `${checkoutItems[0].product?.name} 외 ${
