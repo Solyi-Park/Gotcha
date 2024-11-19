@@ -2,8 +2,11 @@
 import BuyerInfo from "@/components/BuyerInfo";
 import CancelInfo from "@/components/CancelInfo";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import Order from "@/components/Order";
 import OrderInfo from "@/components/OrderInfo";
+import OrderListHeader from "@/components/OrderListHeader";
 import PaymentInfo from "@/components/PaymentInfo";
+import SectionTitle from "@/components/SectionTitle";
 import ShippingInfo from "@/components/ShippingInfo";
 import { OrderData } from "@/model/order";
 import { useQuery } from "@tanstack/react-query";
@@ -40,6 +43,11 @@ export default function MyOrderDetailPage() {
       {!isLoading && order && (
         <div>
           <OrderInfo order={order} />
+          <div>
+            <SectionTitle title="주문상품정보" />
+            <OrderListHeader />
+            <Order order={order} />
+          </div>
           <BuyerInfo />
           <PaymentInfo />
           {order.cancellationStatus === "CANCELED" ||

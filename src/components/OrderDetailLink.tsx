@@ -1,6 +1,6 @@
 import { OrderData } from "@/model/order";
 import { getFormattedDate } from "@/utils/date";
-import { BsChevronRight } from "@react-icons/all-files/bs/BsChevronRight";
+import AngleRightIcon from "./icons/AngleRightIcon";
 
 type Props = {
   order: OrderData;
@@ -45,7 +45,7 @@ export default function OrderDetailLink({
         </p>
       )}
 
-      {isClickable && <BsChevronRight />}
+      {isClickable && <AngleRightIcon />}
     </div>
   );
 }

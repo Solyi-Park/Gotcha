@@ -2,6 +2,7 @@ import { OrderData } from "@/model/order";
 import OrderDetailLink from "./OrderDetailLink";
 import OrderProgress from "./OrderProgress";
 import SectionTitle from "./SectionTitle";
+import OrderItem from "./OrderItem";
 
 type Props = {
   order: OrderData;
