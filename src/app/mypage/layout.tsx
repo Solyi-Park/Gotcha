@@ -18,7 +18,7 @@ export default async function MyPageLayout({
   return (
     <div className="flex">
       <UserNavBar />
-      <section className="w-full">{children}</section>
+      <section className="w-full p-5">{children}</section>
     </div>
   );
 }

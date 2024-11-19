@@ -18,25 +18,25 @@ export default function OrderProductDetail({ item, options, cancel }: Props) {
   // console.log("item", item);
   //TODO: 장바구니와 컴포넌트 UI구조 유사함
   return (
-    <div className="flex gap-2">
-      <div className="flex">
+    <div className="flex">
+      <div className="flex gap-4">
         {item && (
-          <Link href={`/products/${item.products.id}`}>
-            <Image
-              src={item.products?.thumbnailUrls[0]}
-              alt="cart item thumbnail"
-              width={120}
-              height={120}
-              className="aspect-square object-cover"
-              priority
-            />
-          </Link>
+          <div className="min-w-20 min-h-20 w-24 h-24 relative">
+            <Link href={`/products/${item.products.id}`}>
+              <Image
+                src={item.products?.thumbnailUrls[0]}
+                alt="cart item thumbnail"
+                priority
+                fill
+              />
+            </Link>
+          </div>
         )}
 
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
           <div>
             <Link href={`/products/${item.products?.id}`}>
-              <span className="font-bold">{item.products?.name}</span>
+              <span className="text-lg font-bold">{item.products?.name}</span>
             </Link>
             {/* TODO: button icon 변경, 반응형구현 */}
           </div>
@@ -53,7 +53,6 @@ export default function OrderProductDetail({ item, options, cancel }: Props) {
               </ul>
             </div>
           )}
-
           <p className=" text-sm">
             <span>
               {getDiscountedPrice(
