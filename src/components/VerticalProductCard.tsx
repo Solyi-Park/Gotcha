@@ -10,7 +10,7 @@ type Props = {
 export default function VerticalProductCard({ product }: Props) {
   return (
     <div className="flex flex-col my-2">
-      <div className="relative aspect-square">
+      <div className="relative  aspect-square">
         <Image
           src={product.thumbnailUrls![0]}
           alt={product.name}

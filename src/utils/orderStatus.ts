@@ -8,6 +8,8 @@ export function formatOrderStatus(status: string) {
       return "결제완료";
     case "PREPARING":
       return "배송준비중";
+    case "SHIPPED":
+      return "배송시작";
     case "IN_TRANSIT":
       return "배송중";
     case "DELIVERED":

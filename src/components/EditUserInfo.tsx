@@ -327,7 +327,7 @@ export default function EditUserInfo() {
                       <div className="relative w-10 h-10 rounded-full">
                         <img
                           src={
-                            logo.name === user?.provider?.toUpperCase()
+                            logo.name === user?.provider?.toLowerCase()
                               ? logo.activeImage
                               : logo.inactiveImage
                           }

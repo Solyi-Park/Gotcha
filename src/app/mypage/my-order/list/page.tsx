@@ -102,6 +102,15 @@ export default function OrderListPage() {
                           href={`/mypage/my-order/cancel/${order.id}?funnel-step=취소상품+선택`}
                         />
                         <Button
+                          text="교환접수"
+                          isVisible={isVisibleButton(
+                            item.status,
+                            order.status,
+                            "exchange"
+                          )}
+                          href={""}
+                        />
+                        <Button
                           text="반품접수"
                           isVisible={isVisibleButton(
                             item.status,
@@ -151,20 +160,39 @@ function isVisibleButton(
   orderStatus: string,
   type: string
 ): boolean {
-  const visibilityRules: Record<string, boolean> = {
-    cancel:
+  const visibilityRules: Record<string, () => boolean> = {
+    cancel: () =>
       itemStatus !== "CANCELED" &&
       itemStatus !== "PARTIALLY_CANCELED" &&
       ["PENDING", "PAID", "PREPARING"].includes(orderStatus),
 
-    return: ["DELIVERED", "EXCHANGE_REQUESTED", "EXCHANGE_COMPLETED"].includes(
-      orderStatus
-    ),
+    exchange: () =>
+      itemStatus !== "CANCELED" &&
+      !["EXCHANGE_REQUESTED"].includes(itemStatus) &&
+      [
+        "SHIPPED",
+        "IN_TRANSIT",
+        "DELIVERED",
+        "EXCHANGE_COMPLETED",
+        "PARTICIALLY_CANCELED",
+      ].includes(orderStatus),
 
-    cancelDetail: ["CANCELED", "PARTIALLY_CANCELED"].includes(itemStatus),
+    return: () =>
+      itemStatus !== "CANCELED" &&
+      !["RETURN_REQUESTED"].includes(itemStatus) &&
+      [
+        "SHIPPED",
+        "IN_TRANSIT",
+        "DELIVERED",
+        "EXCHANGE_REQUESTED",
+        "EXCHANGE_COMPLETED",
+        "PARTICIALLY_CANCELED",
+      ].includes(orderStatus),
 
-    review: ["DELIVERED", "EXCHANGE_COMPLETED"].includes(orderStatus),
+    cancelDetail: () => ["CANCELED", "PARTIALLY_CANCELED"].includes(itemStatus),
+
+    review: () => ["DELIVERED", "EXCHANGE_COMPLETED"].includes(orderStatus),
   };
 
-  return visibilityRules[type] || false;
+  return visibilityRules[type]?.() || false;
 }

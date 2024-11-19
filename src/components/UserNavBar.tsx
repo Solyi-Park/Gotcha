@@ -8,12 +8,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+// 유틸리티 함수로 분리
+export function isActivePath(pathname: string, basePath: string): boolean {
+  return pathname === basePath || pathname.startsWith(`${basePath}/`);
+}
+
+async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
+  return await fetch(`/api/likes?userId=${userId}`, {
+    method: "GET",
+  }).then((res) => res.json());
+}
+
 const MYPAGE_SECTIONS = [
   {
     title: "나의 쇼핑 정보",
     items: [
       { name: "주문배송조회", path: "/my-order/list" },
-      // { name: "취소/교환/반품내역", path: "/my-order/cancel-list" },
       { name: "상품 리뷰", path: "/my-order/review" },
     ],
   },
@@ -27,20 +37,12 @@ const MYPAGE_SECTIONS = [
   },
 ];
 
-async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
-  return await fetch(`/api/likes?userId=${userId}`, {
-    method: "GET",
-  }).then((res) => res.json());
-}
-
 export default function UserNavBar() {
   const { data: session } = useSession();
   const user = session?.user;
-  //TODO: 로그인한 유저정보 캐싱
-
   const pathname = usePathname();
-  const path = pathname.split("mypage")[1];
   const { setProducts } = useLikedProductsStore();
+
   const { data: likedProducts } = useQuery({
     queryKey: ["likedProducts", user?.id],
     queryFn: async () => {
@@ -57,41 +59,33 @@ export default function UserNavBar() {
     }
   }, [likedProducts]);
 
-  const isActive = (itemPath: string) => {
-    if (path.startsWith("/edit")) {
-      return itemPath.startsWith("/edit");
-    }
-
-    return path === itemPath;
-  };
-
   return (
-    <div className="w-40">
+    <div className="w-48">
       <section>
-        <h2 className="text-4xl font-bold">
-          {/* 글자수 길어지면 사이즈 줄이기 */}
+        <h2 className="text-5xl font-semibold mb-7">
           {maskName(user?.name ?? "") || "회원님"}
         </h2>
-        <div>
+        <div className="text-sm font-semibold mb-7">
           <Link href="/mypage/like">
-            좋아요 <span>{likedProducts?.length || 0}</span>
+            좋아요
+            <span className="font-bold ml-1">{likedProducts?.length || 0}</span>
           </Link>
         </div>
       </section>
       {MYPAGE_SECTIONS.map((section) => (
-        <section key={section.title}>
-          <h3 className="font-bold text-lg">{section.title}</h3>
+        <section key={section.title} className="mb-6">
+          <h3 className="font-bold text-lg mb-2">{section.title}</h3>
           <ul>
             {section.items.map((item) => (
               <li
                 key={item.name}
-                className={`${
-                  isActive(item.path)
-                    ? "text-black font-semibold"
-                    : "text-gray-400"
+                className={`mb-2 ${
+                  isActivePath(pathname, `/mypage${item.path}`)
+                    ? "text-black"
+                    : "text-neutral-600 font-light"
                 }`}
               >
-                <Link href={`/mypage/${item.path}`}>{item.name}</Link>
+                <Link href={`/mypage${item.path}`}>{item.name}</Link>
               </li>
             ))}
           </ul>
