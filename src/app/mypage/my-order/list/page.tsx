@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import MyOrderButtonGroup from "@/components/MyOrderButtonGroup";
 import OrderDetailLink from "@/components/OrderDetailLink";
 import OrderProductDetail from "@/components/OrderProductDetail";
+import SectionTitle from "@/components/SectionTitle";
 import { OrderData, OrderItemWithProduct, OrderStatus } from "@/model/order";
 import { getOrderDataByUserId } from "@/services/order";
 import { getFormattedDate } from "@/utils/date";
@@ -37,8 +38,8 @@ export default function OrderListPage() {
 
   return (
     <div className="min-w-[640px]">
-      <h3 className="pb-8 text-lg font-semibold">주문배송조회</h3>
-      <section className="flex w-full border-black border-t-[3px] border-b-[1px] py-3 font-semibold">
+      <SectionTitle title="주문배송조회" />
+      <section className="flex w-full border-black border-b-[1px] py-3 font-semibold">
         <div className="flex-[0.4] text-center">상품정보</div>
         <div className="flex-[0.1] text-center">배송비</div>
         <div className="flex-[0.3] text-center">진행상태</div>
@@ -67,7 +68,7 @@ export default function OrderListPage() {
           orders.map((order) => (
             <li key={order.id}>
               <div className="py-3 border-b-2 border-black">
-                <OrderDetailLink order={order} />
+                <OrderDetailLink order={order} underline isClickable />
                 {/* 해당날짜로 주문한 아이템리스트 */}
                 <ul>
                   {order.items?.map((item) => (

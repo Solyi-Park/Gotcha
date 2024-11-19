@@ -220,7 +220,7 @@ export default function SuccessPage() {
 
 async function fetchOrderData(orderId: string) {
   try {
-    const res = await fetch(`/api/order/${orderId}?type=orders`, {
+    const res = await fetch(`/api/order/${orderId}?type=order`, {
       method: "GET",
     });
     if (!res.ok) {
