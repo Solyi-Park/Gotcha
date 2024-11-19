@@ -18,7 +18,7 @@ export default function OrderInfo({ order }: Props) {
           <OrderDetailLink order={order} />
         </div>
         <div className="flex justify-center py-10">
-          <OrderProgress />
+          <OrderProgress status={order.status} />
         </div>
       </div>
     </div>
