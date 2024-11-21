@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
   if (!orderId) {
     return new Response("Bad Request", { status: 400 });
   }
-  if (type === "orders") {
+  if (type === "order") {
     try {
       const response = await getOrderDataByOrderId(orderId);
       return NextResponse.json(response, { status: 200 });

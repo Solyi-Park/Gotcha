@@ -1,3 +1,5 @@
+import AngleRightIcon from "./icons/AngleRightIcon";
+
 type Props = {
   large: string | null;
   medium: string | null;
@@ -9,13 +11,13 @@ export default function CategoryPath({ large, medium, small }: Props) {
       {large && <span>{large}</span>}
       {medium && (
         <span>
-          {" > "}
+          <AngleRightIcon />
           {medium}
         </span>
       )}
       {small && (
         <span>
-          {" > "}
+          <AngleRightIcon />
           {small}
         </span>
       )}

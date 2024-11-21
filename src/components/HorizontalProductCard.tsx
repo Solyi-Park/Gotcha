@@ -2,6 +2,7 @@ import Image from "next/image";
 import { SimpleProduct } from "@/model/product";
 import LikeButton from "./buttons/LikeButton";
 import { useQuery } from "@tanstack/react-query";
+import { getDiscountedPrice } from "@/utils/calculate";
 
 type Props = {
   product: SimpleProduct;
@@ -23,8 +24,30 @@ export default function HorizontalProductCard({ product }: Props) {
           <p className="font-semibold">{product.name}</p>
           <p>{product.description}</p>
           <p className="font-semibold">
-            {product.discountRate && <span>{product.discountRate}</span>}
-            {product.price.toLocaleString()}원
+            {/* {product.discountRate && <span>{product.discountRate}</span>}
+            {product.price.toLocaleString()}원 */}
+            <p className="flex items-center font-semibold text-xs sm:text-sm">
+              {product.discountRate && (
+                <>
+                  <span className="mr-2 text-rose-500">
+                    {product.discountRate}%
+                  </span>
+                  <span className=" text-gray-400  text-[10px] sm:text-xs font-normal line-through mr-2">
+                    {product.price.toLocaleString()}원
+                  </span>
+                </>
+              )}
+
+              <span>
+                {product.discountRate
+                  ? getDiscountedPrice(
+                      product.price,
+                      product.discountRate
+                    ).toLocaleString()
+                  : product.price.toLocaleString()}
+                원
+              </span>
+            </p>
           </p>
         </div>
         <div className="sm:hidden md:flex flex-col justify-center p-5 gap-1">

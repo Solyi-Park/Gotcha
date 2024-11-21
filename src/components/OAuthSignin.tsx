@@ -10,7 +10,7 @@ type Props = {
 
 export function getProviderIcon(providerName: string) {
   const provider = PROVIDER_LOGOS.find(
-    (item) => item.name === providerName.toUpperCase()
+    (item) => item.name === providerName.toLowerCase()
   );
 
   return provider?.activeImage;

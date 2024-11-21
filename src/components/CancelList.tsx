@@ -1,20 +1,39 @@
+"use client";
 import { OrderData } from "@/model/order";
 import useCancelStore from "@/store/cancel";
 import OrderProductDetail from "./OrderProductDetail";
 import { formatOrderStatus } from "@/utils/orderStatus";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "./LoadingSpinner";
+import { useEffect } from "react";
 
 type Props = {
   order: OrderData | undefined;
   isLoading: boolean;
 };
 export default function CancelList({ order, isLoading }: Props) {
-  console.log("order정보", order, isLoading);
+  console.log("order정보", order?.items);
+
   const router = useRouter();
 
-  const { selectedItems, addItem, removeItem, updateQuantity } =
-    useCancelStore();
+  const {
+    selectedItems,
+    setSelectedItems,
+    addItem,
+    removeItem,
+    updateQuantity,
+  } = useCancelStore();
+
+  // useEffect(() => {
+  //   if (order?.items) {
+  //     const items = order.items.reduce((acc, item) => {
+  //       acc[item.id] = item.quantity - item.canceledQuantity;
+  //       return acc;
+  //     }, {} as Record<string, number>);
+
+  //     setSelectedItems(items);
+  //   }
+  // }, [order]);
 
   const handleCheckboxChange = (itemId: string, quantity: number) => {
     if (selectedItems[itemId]) {
@@ -43,38 +62,54 @@ export default function CancelList({ order, isLoading }: Props) {
       </section>
 
       {order &&
-        order.items?.map((item) => (
-          <div key={item.id} className="flex w-full h-40">
-            <div className="flex flex-[0.5] border border-l-0 h-full justify-start items-center">
-              <input
-                type="checkbox"
-                checked={!!selectedItems[item.id]}
-                onChange={() => handleCheckboxChange(item.id, item.quantity)}
-              />
-              <OrderProductDetail item={item} options={item.options} />
+        order.items
+          ?.filter((i) => i.quantity - i.canceledQuantity > 0)
+          .map((item) => (
+            <div key={item.id} className="flex w-full h-40">
+              <div className="flex flex-[0.5] border border-l-0 h-full justify-start items-center">
+                <input
+                  type="checkbox"
+                  checked={!!selectedItems[item.id]}
+                  onChange={() =>
+                    handleCheckboxChange(
+                      item.id,
+                      item.quantity - item.canceledQuantity
+                    )
+                  }
+                />
+                <OrderProductDetail item={item} options={item.options} />
+              </div>
+              <div className="flex flex-[0.25] border border-l- h-full justify-center items-center">
+                <span>{order && formatOrderStatus(order.status)}</span>
+              </div>
+              <div className="flex flex-[0.25] border border-l-0 h-full justify-center items-center">
+                <button
+                  className="px-2 py-1 bg-gray-200"
+                  onClick={() =>
+                    handleQuantityChange(item.id, -1, item.quantity)
+                  }
+                >
+                  -
+                </button>
+                <span className="border px-2 py-1">
+                  {selectedItems[item.id] ||
+                    item.quantity - item.canceledQuantity}
+                </span>
+                <button
+                  className="px-2 py-1 bg-gray-200"
+                  onClick={() =>
+                    handleQuantityChange(
+                      item.id,
+                      +1,
+                      item.quantity - item.canceledQuantity
+                    )
+                  }
+                >
+                  +
+                </button>
+              </div>
             </div>
-            <div className="flex flex-[0.25] border border-l- h-full justify-center items-center">
-              <span>{order && formatOrderStatus(order.status)}</span>
-            </div>
-            <div className="flex flex-[0.25] border border-l-0 h-full justify-center items-center">
-              <button
-                className="px-2 py-1 bg-gray-200"
-                onClick={() => handleQuantityChange(item.id, -1, item.quantity)}
-              >
-                -
-              </button>
-              <span className="border px-2 py-1">
-                {selectedItems[item.id] || item.quantity}
-              </span>
-              <button
-                className="px-2 py-1 bg-gray-200"
-                onClick={() => handleQuantityChange(item.id, +1, item.quantity)}
-              >
-                +
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
 
       {/* TODO: Button 컴포넌트에 size 프롭스추가해서, 취소 프로세스에 재사용 */}
       <div className="flex justify-end">

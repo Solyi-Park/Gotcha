@@ -6,18 +6,20 @@ type Provider = {
 
 export const PROVIDER_LOGOS: Provider[] = [
   {
-    name: "GOOGLE",
+    name: "google",
     activeImage: "/images/googleLogo.webp",
     inactiveImage: "/images/googleGray.png",
   },
   {
-    name: "KAKAO",
+    name: "kakao",
     activeImage: "/images/kakaoLogo.webp",
     inactiveImage: "/images/kakaoGray.png",
   },
   {
-    name: "NAVER",
+    name: "naver",
     activeImage: "/images/naverLogo.webp",
     inactiveImage: "/images/naverGray.png",
   },
 ];
+
+export const PROVIDERS_NAME = PROVIDER_LOGOS.map((provider) => provider.name);

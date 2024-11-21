@@ -1,3 +1,5 @@
+import LikePage from "./like/page";
+
 export default function MyPage() {
-  return <div>MyPage</div>;
+  return <LikePage />;
 }

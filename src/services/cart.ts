@@ -1,7 +1,6 @@
 import { supabase } from "@/app/lib/supabaseClient";
-
 import { CartItem, NewCartItem } from "@/model/cart";
-import { getOrderItems } from "./order";
+import { getOrderItemsByOrderId } from "./order";
 
 type CartResponse = {
   id: string;
@@ -112,7 +111,7 @@ export async function deleteCartItem(itemId: string) {
 }
 
 export async function clearCart(orderId: string) {
-  const items = await getOrderItems(orderId);
+  const items = await getOrderItemsByOrderId(orderId);
 
   if (items && items.length > 0) {
     for (const item of items) {

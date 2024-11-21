@@ -2,15 +2,19 @@
 import { authOptions } from "@/app/lib/auth";
 import Button from "@/components/Button";
 import MyOrderButtonGroup from "@/components/MyOrderButtonGroup";
+import Order from "@/components/Order";
 import OrderDetailLink from "@/components/OrderDetailLink";
+import OrderListHeader from "@/components/OrderListHeader";
 import OrderProductDetail from "@/components/OrderProductDetail";
+import SectionTitle from "@/components/SectionTitle";
 import { OrderData, OrderItemWithProduct, OrderStatus } from "@/model/order";
 import { getOrderDataByUserId } from "@/services/order";
 import { getFormattedDate } from "@/utils/date";
-import { formatOrderStatus } from "@/utils/orderStatus";
+import { formatOrderItemStatus, formatOrderStatus } from "@/utils/orderStatus";
 import { useQuery } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 //진행상태: 입금대기>결제완료(취소접수, 문의)>배송준비중>배송시작>배송중>배송완료
 async function fetchOrderData(userId: string): Promise<OrderData[]> {
@@ -20,6 +24,7 @@ async function fetchOrderData(userId: string): Promise<OrderData[]> {
 }
 
 export default function OrderListPage() {
+  const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
   const {
@@ -34,67 +39,41 @@ export default function OrderListPage() {
   console.log("orders", orders);
 
   return (
-    <div>
-      <h3>주문배송조회</h3>
-      <section className="flex w-full border-black border-t-[3px] border-b-[1px] py-3 font-semibold">
-        <div className="flex-[0.5] border-r-2 text-center">상품정보</div>
-        <div className="flex-[0.16] border-r-2">배송비</div>
-        <div className="flex-[0.16] border-r-2">진행상태</div>
-        <div className="flex-[0.18] text-center">리뷰</div>
-      </section>
+    <div className="min-w-[640px]">
+      <SectionTitle title="주문배송조회" />
+      <OrderListHeader />
+      {orders?.length === 0 && (
+        <div className="text-center my-10">
+          <p className="text-lg font-semibold">
+            아직 주문하신 내역이 없습니다.
+          </p>
+          <p className="text-sm text-gray-500">
+            원하시는 상품을 찾아 지금 바로 주문해보세요!
+          </p>
+          <button
+            className="mt-4 px-6 py-2 bg-black text-white rounded-md hover:bg-gray-700"
+            onClick={() => router.push("/")}
+          >
+            상품 보러 가기
+          </button>
+        </div>
+      )}
       <ol>
         {!isLoading &&
           !error &&
           orders &&
           orders.map((order) => (
             <li key={order.id}>
-              <div className="py-3 border-b-2 border-black">
-                <OrderDetailLink order={order} />
-                {/* 해당날짜로 주문한 아이템리스트 */}
-                <ul>
-                  {order.items?.map((item) => (
-                    <li key={item.id} className="flex ">
-                      <div>
-                        <OrderProductDetail
-                          item={item}
-                          options={item.options}
-                        />
-                      </div>
-                      <div>
-                        <span>
-                          {order.shippingCost > 0
-                            ? `${order.shippingCost}원`
-                            : "무료배송"}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-2xl font-bold">
-                          {formatOrderStatus(order.status)}
-                        </span>
-                      </div>
-                      <div>
-                        <MyOrderButtonGroup
-                          status={order.status}
-                          orderId={order.id}
-                        />
-                      </div>
-                      <div>
-                        <Button
-                          text="리뷰작성"
-                          color="black"
-                          isVisible={
-                            order.status === "Delivered" ||
-                            order.status === "InTransit" ||
-                            order.status === "ExchangeRequested" ||
-                            order.status === "ExchangeCompleted"
-                          }
-                          href={""}
-                        />
-                      </div>
+              <ol>
+                {orders.map((order) => (
+                  <div className="py-3 border-b-2 border-black">
+                    <OrderDetailLink order={order} underline isClickable />
+                    <li key={order.id}>
+                      <Order key={order.id} order={order} />
                     </li>
-                  ))}
-                </ul>
-              </div>
+                  </div>
+                ))}
+              </ol>
             </li>
           ))}
       </ol>

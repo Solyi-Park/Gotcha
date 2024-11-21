@@ -1,6 +1,5 @@
 import { BANKS } from "@/constants/banks";
 import { CARD_COMPANIES } from "@/constants/cardCompanies";
-import { Payment } from "@/services/tossPayment";
 
 export function getEasypayCompany(code: string) {
   const bank = BANKS.find((bank) => bank.code === code);

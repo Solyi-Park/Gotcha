@@ -2,7 +2,7 @@
 import LoadingSpinner from "@/components/LoadingSpinner";
 import OrderProductDetail from "@/components/OrderProductDetail";
 import { CARD_COMPANIES } from "@/constants/cardCompanies";
-import { OrderItem } from "@/model/order";
+import { OrderItem, OrderItemWithProduct } from "@/model/order";
 import { Payment } from "@/model/payment";
 import useOrderStore from "@/store/ortder";
 import {
@@ -78,6 +78,8 @@ export default function SuccessPage() {
     enabled: !!paymentResult?.orderId,
   });
 
+  console.log("주문정보:", order);
+
   function getPaymentMethod(payment: Payment) {
     switch (payment.method) {
       case "간편결제":
@@ -128,9 +130,12 @@ export default function SuccessPage() {
                     <div>진행상태</div>
                   </li>
                   {order.items &&
-                    order.items.map((item: OrderItem) => (
-                      <li key={`${item.productId}-${item.options}`}>
-                        {/* <OrderProductDetail product={item.product} /> */}
+                    order.items.map((item: OrderItemWithProduct) => (
+                      <li key={`${item.id}`}>
+                        <OrderProductDetail
+                          item={item}
+                          options={item.options}
+                        />
                       </li>
                     ))}
                 </ul>
@@ -215,7 +220,7 @@ export default function SuccessPage() {
 
 async function fetchOrderData(orderId: string) {
   try {
-    const res = await fetch(`/api/order/${orderId}?type=orders`, {
+    const res = await fetch(`/api/order/${orderId}?type=order`, {
       method: "GET",
     });
     if (!res.ok) {

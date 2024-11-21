@@ -9,6 +9,7 @@ export type Payment = {
   orderName: string;
   totalAmount: number;
   receipt: string;
+  createdAt: string;
   status:
     | "READY"
     | "IN_PROGRESS"
@@ -19,3 +20,24 @@ export type Payment = {
     | "ABORTED"
     | "EXPIRED";
 };
+
+export type PaymentInput = Omit<Payment, "createdAt">;
+
+export type Cancels = {};
+
+export type Cancel = {
+  paymentKey: string;
+  transactionKey: string;
+  cancelReason: string;
+  canceledAt: string;
+  cancelStatus: string;
+  cancelAmount: number;
+  refundableAmount: number;
+  taxExemptionAmount: number;
+  easyPayDiscountAmount: number;
+  receiptKey: string;
+  cancelRequestId: string;
+  taxFreeAmount: number;
+};
+
+export type CancelResult = Omit<Cancel, "paymentKey">;
