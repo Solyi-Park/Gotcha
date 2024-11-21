@@ -1,5 +1,4 @@
 "use client";
-import BuyerInfo from "@/components/BuyerInfo";
 import CancelInfo from "@/components/CancelInfo";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Order from "@/components/Order";
@@ -41,15 +40,14 @@ export default function MyOrderDetailPage() {
     <>
       {isLoading && <LoadingSpinner />}
       {!isLoading && order && (
-        <div>
+        <div className="flex flex-col gap-14">
           <OrderInfo order={order} />
           <div>
             <SectionTitle title="주문상품정보" />
             <OrderListHeader />
             <Order order={order} />
           </div>
-          <BuyerInfo />
-          <PaymentInfo />
+          <PaymentInfo order={order} />
           {order.cancellationStatus === "CANCELED" ||
             (order.cancellationStatus === "PARTIALLY_CANCELED" && (
               <CancelInfo />

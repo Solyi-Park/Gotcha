@@ -1,6 +1,6 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { getOrderDataByOrderId, updateOrderInfo } from "./order";
-import { Cancel, CancelResult, Payment } from "@/model/payment";
+import { Cancel, CancelResult, Payment, PaymentInput } from "@/model/payment";
 
 function getAuthHeader() {
   return `Basic ${Buffer.from(`${process.env.WIDGET_SECRET_KEY}:`).toString(
@@ -36,7 +36,7 @@ export async function confirmPayment(
   const data = await validatePayment(orderId, paymentKey, amount);
   console.log("validatePayment 결과:", data); // 추가 로그
 
-  const payment: Payment = {
+  const payment: PaymentInput = {
     paymentKey: result.paymentKey,
     orderId: result.orderId,
     method: result.method,
@@ -81,7 +81,7 @@ export const getPaymentDetails = async (paymentKey: string) => {
 };
 
 export const savePaymentResult = async (
-  payment: Payment
+  payment: PaymentInput
 ): Promise<Payment | null> => {
   const { data, error } = await supabase
     .from("payments")
@@ -210,4 +210,21 @@ export async function getCancelDataByPaymentKey(paymentKey: string) {
     throw new Error(`Error fetching cancel data: ${error.message}`);
   }
   return data;
+}
+
+export async function getPayment(paymentKey: string): Promise<Payment | null> {
+  console.log("결제키", paymentKey);
+  const { data, error } = await supabase
+    .from("payments")
+    .select()
+    .eq("paymentKey", paymentKey)
+    .single();
+  if (error) {
+    throw new Error(error.message);
+  }
+  if (data) {
+    console.log("결제정보>>>", data);
+    return data;
+  }
+  return null;
 }
