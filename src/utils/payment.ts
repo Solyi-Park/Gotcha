@@ -8,10 +8,10 @@ export function getEasypayCompany(code: string) {
 
 export function getCardCompanyName(code: string) {
   const cardCompany = CARD_COMPANIES.find((company) => company.code === code);
-  return cardCompany?.koreanName;
+  return cardCompany?.company;
 }
 
 export function getBankName(code: string) {
   const bank = BANKS.find((bank) => bank.code === code);
-  return bank?.koreanName;
+  return bank?.bankName;
 }
