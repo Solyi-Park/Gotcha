@@ -1,4 +1,5 @@
 import { CartItemOption } from "./cart";
+import { Payment } from "./payment";
 import { FullProduct } from "./product";
 
 export type OrderItem = {
@@ -48,6 +49,8 @@ export type OrderDetails = {
   userId: string;
   paymentKey: string | null;
   totalAmount: number;
+  // address: string;
+  // addDetail: string;
   fullAddress: string;
   status: OrderStatus;
   orderQuantity: number;
@@ -86,3 +89,5 @@ export type OrderData = OrderDetails & {
   options: CartItemOption[];
   items: OrderItemWithProduct[];
 };
+
+export type OrderOutputForOrderDetail = OrderData & { payments: Payment };

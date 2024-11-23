@@ -44,6 +44,8 @@ export async function saveOrderInfo(
     status: "PENDING",
     totalAmount: amount + shippingCost, // 배송비 분리?
     recipient: shippingDetails.recipient,
+    // address: shippingDetails.address ?? "",
+    // addDetail: shippingDetails.addDetail ?? "",
     fullAddress,
     contact1: shippingDetails.contact1,
     orderQuantity,
@@ -270,9 +272,8 @@ export async function updateOrderStatus(orderId: string) {
 export async function getOrderDataByOrderId(orderId: string) {
   const { data: order, error } = await supabase
     .from("orders")
-    .select("*")
-    .eq("id", orderId)
-    .returns<OrderDetails[]>();
+    .select("*, payments(*)")
+    .eq("id", orderId);
 
   if (error) {
     console.error(

@@ -1,28 +1,15 @@
-import { OrderData } from "@/model/order";
+import { OrderData, OrderOutputForOrderDetail } from "@/model/order";
 import SectionTitle from "./SectionTitle";
 import { Payment } from "@/model/payment";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedDate } from "@/utils/date";
+import { getBankName, getCardCompanyName } from "@/utils/payment";
 
 type Props = {
-  order: OrderData;
+  order: OrderOutputForOrderDetail;
 };
 
 export default function PaymentInfo({ order }: Props) {
-  console.log("페이>order: ", order);
-
-  const {
-    data: payment,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["payment", order.id],
-    queryFn: async () =>
-      await fetch(`/api/payment/${order.paymentKey}`, {
-        method: "GET",
-      }).then((res) => res.json()),
-  });
-
   const paymentInfo = [
     {
       label: "주문금액",
@@ -47,7 +34,7 @@ export default function PaymentInfo({ order }: Props) {
       value: order.totalAmount,
       details: [
         {
-          label: payment && getPaymentMethod(payment),
+          label: order.payments && getPaymentMethod(order.payments),
           value: `${order.totalAmount.toLocaleString()}원`, // TODO: 결제 금액 계산
         },
         { label: "결제일시", value: getFormattedDate(order.createdAt, true) },
@@ -62,7 +49,7 @@ export default function PaymentInfo({ order }: Props) {
       <ol className="flex">
         {paymentInfo.map((info, infoIndex) => (
           <li
-            className="w-full min-w-52 last:border-l-2 first:border-r-2 border-l-0 last:text-rose-500"
+            className="w-full min-w-52 last:border-l-[1px] first:border-r-[1px] border-l-0 last:text-rose-500"
             key={info.label}
           >
             <div className="flex justify-between p-5 min-h-16 ">
@@ -71,7 +58,7 @@ export default function PaymentInfo({ order }: Props) {
                 {info.value.toLocaleString()}원
               </span>
             </div>
-            <ul className="flex flex-col gap-3 justify-start min-h-28 p-5 border-y-2">
+            <ul className="flex flex-col gap-3 justify-start min-h-28 p-5 border-y-[1px]">
               {info.details.map((detail, detailIndex) => (
                 <li
                   key={detail.label}
@@ -99,8 +86,8 @@ function getPaymentMethod(payment: Payment) {
     case "간편결제":
       return easyPay || null;
     case "계좌이체":
-      return transfer || null;
+      return getBankName(transfer || "");
     case "카드":
-      return card || null;
+      return getCardCompanyName(card || "");
   }
 }

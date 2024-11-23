@@ -7,12 +7,14 @@ import OrderListHeader from "@/components/OrderListHeader";
 import PaymentInfo from "@/components/PaymentInfo";
 import SectionTitle from "@/components/SectionTitle";
 import ShippingInfo from "@/components/ShippingInfo";
-import { OrderData } from "@/model/order";
+import { OrderData, OrderOutputForOrderDetail } from "@/model/order";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 //TODO: 반복로직 분리
-async function fetchOrderData(orderId: string): Promise<OrderData> {
+async function fetchOrderData(
+  orderId: string
+): Promise<OrderOutputForOrderDetail> {
   const res = await fetch(`/api/order/${orderId}?type=order`, {
     method: "GET",
   });
@@ -52,8 +54,7 @@ export default function MyOrderDetailPage() {
             (order.cancellationStatus === "PARTIALLY_CANCELED" && (
               <CancelInfo />
             ))}
-
-          <ShippingInfo />
+          <ShippingInfo order={order} />
         </div>
       )}
     </>

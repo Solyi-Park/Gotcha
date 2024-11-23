@@ -24,8 +24,14 @@ export function maskPhoneNumber(phoneNumber: string) {
   if (phoneNumber.length >= 10) {
     return (
       phoneNumber.slice(0, 3) +
+      "-" +
       "*".repeat(phoneNumber.length - 7) +
+      "-" +
       phoneNumber.slice(-4)
     );
   }
+}
+export function maskAddress(address: string, addDetail: string) {
+  if (!address) return "";
+  return addDetail ? address + "*****" : address;
 }
