@@ -3,10 +3,11 @@ import {
   getOrderDataByOrderId,
   getOrderItemsByOrderId,
 } from "@/services/order";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(req: NextRequest) {
-  const orderId = req.nextUrl.pathname.split("/").pop();
+export async function DELETE(req: NextRequest, context: { params: Params }) {
+  const orderId = context.params.id;
 
   if (!orderId) {
     return new Response("Bad Request", { status: 400 });
@@ -22,8 +23,8 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
-  const orderId = req.nextUrl.pathname.split("/").pop()?.split("?")[0];
+export async function GET(req: NextRequest, context: { params: Params }) {
+  const orderId = context.params.id;
 
   const params = req.nextUrl.searchParams;
   const type = params.get("type");

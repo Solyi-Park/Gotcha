@@ -361,7 +361,6 @@ export async function getOrderItemsByOrderId(orderId: string) {
 }
 
 export async function getCancelData(paymentKey: string) {
-  console.log("페먼키", paymentKey);
   const { data: cancelData, error: cancelError } = await supabase
     .from("cancels")
     .select()
