@@ -38,6 +38,10 @@ export default function MyOrderDetailPage() {
   });
   console.log("data", order);
 
+  const isCanceled =
+    order?.cancellationStatus === "CANCELED" ||
+    order?.cancellationStatus === "PARTIALLY_CANCELED";
+
   return (
     <>
       {isLoading && <LoadingSpinner />}
@@ -50,10 +54,7 @@ export default function MyOrderDetailPage() {
             <Order order={order} />
           </div>
           <PaymentInfo order={order} />
-          {order.cancellationStatus === "CANCELED" ||
-            (order.cancellationStatus === "PARTIALLY_CANCELED" && (
-              <CancelInfo />
-            ))}
+          {isCanceled && <CancelInfo order={order} />}
           <ShippingInfo order={order} />
         </div>
       )}

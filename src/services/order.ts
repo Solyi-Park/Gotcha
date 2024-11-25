@@ -220,7 +220,7 @@ export async function cancelOrderItem(
   if (updateError) throw new Error(updateError.message);
 
   const res = await updateOrderStatus(orderId);
-  // if (res) console.log("오더상태 수정 결과:", res);
+  if (res) console.log("오더상태 수정 결과:", res);
   return res;
 }
 //여기: 취소수량 업데이트가 이상함.
@@ -358,6 +358,19 @@ export async function getOrderItemsByOrderId(orderId: string) {
   }));
   // console.log("items", items);
   return items;
+}
+
+export async function getCancelData(paymentKey: string) {
+  console.log("페먼키", paymentKey);
+  const { data: cancelData, error: cancelError } = await supabase
+    .from("cancels")
+    .select()
+    .eq("paymentKey", paymentKey);
+
+  if (cancelError) throw cancelError;
+  if (cancelData) return cancelData;
+
+  return null;
 }
 
 //TODO: Error를 throw해야하는 곳과 console.error처리하는 부분 구분

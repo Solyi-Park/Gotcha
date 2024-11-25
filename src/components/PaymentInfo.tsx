@@ -3,7 +3,11 @@ import SectionTitle from "./SectionTitle";
 import { Payment } from "@/model/payment";
 import { useQuery } from "@tanstack/react-query";
 import { getFormattedDate } from "@/utils/date";
-import { getBankName, getCardCompanyName } from "@/utils/payment";
+import {
+  getBankName,
+  getCardCompanyName,
+  getPaymentMethod,
+} from "@/utils/payment";
 
 type Props = {
   order: OrderOutputForOrderDetail;
@@ -45,7 +49,6 @@ export default function PaymentInfo({ order }: Props) {
   return (
     <div className="flex flex-col">
       <SectionTitle title="결제정보" />
-
       <ol className="flex">
         {paymentInfo.map((info, infoIndex) => (
           <li
@@ -78,16 +81,4 @@ export default function PaymentInfo({ order }: Props) {
       </ol>
     </div>
   );
-}
-
-function getPaymentMethod(payment: Payment) {
-  const { method, easyPay, transfer, card } = payment;
-  switch (method) {
-    case "간편결제":
-      return easyPay || null;
-    case "계좌이체":
-      return getBankName(transfer || "");
-    case "카드":
-      return getCardCompanyName(card || "");
-  }
 }

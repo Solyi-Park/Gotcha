@@ -47,7 +47,8 @@ export default function OrderItem({
               orderStatus,
               "cancelDetail"
             )}
-            href={`/mypage/my-order/cancel-detail/${item.id}`}
+            href={``} //TODO: cancel data 사용하여 라우팅
+            onClick={() => alert("서비스 준비중입니다!")}
           />
           <Button
             text="교환접수"
@@ -59,7 +60,11 @@ export default function OrderItem({
             isVisible={isVisibleButton(item.status, orderStatus, "return")}
             href=""
           />
-          <Button text="1:1문의" href="" />
+          <Button
+            text="1:1문의"
+            href=""
+            onClick={() => alert("서비스 준비중입니다!")}
+          />
         </div>
         <div className="mr-2">
           {isVisibleButton(item.status, orderStatus, "review") ? (

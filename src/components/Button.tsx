@@ -8,6 +8,7 @@ type Props = {
   text: string;
   isVisible?: boolean;
   href: string;
+  onClick?: () => void;
 };
 
 export default function Button({
@@ -15,6 +16,7 @@ export default function Button({
   text,
   isVisible = true,
   href,
+  onClick,
 }: Props) {
   return (
     <button
@@ -22,6 +24,7 @@ export default function Button({
         isVisible ? "block" : "hidden"
       }`}
       type="button"
+      onClick={onClick}
     >
       <Link href={href}>{text}</Link>
     </button>
