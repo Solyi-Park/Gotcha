@@ -16,7 +16,7 @@ export default function ServiceUnavailable() {
         className="mt-4 px-6 py-2 bg-black text-white rounded-md hover:bg-gray-700"
         onClick={() => router.push("/")}
       >
-        홈으로 돌아가기
+        홈으로 가기
       </button>
     </div>
   );

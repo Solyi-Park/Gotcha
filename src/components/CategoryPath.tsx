@@ -7,20 +7,20 @@ type Props = {
 };
 export default function CategoryPath({ large, medium, small }: Props) {
   return (
-    <p>
+    <div className="flex">
       {large && <span>{large}</span>}
       {medium && (
-        <span>
+        <div className="flex items-center">
           <AngleRightIcon />
           {medium}
-        </span>
+        </div>
       )}
       {small && (
-        <span>
+        <div className="flex items-center">
           <AngleRightIcon />
           {small}
-        </span>
+        </div>
       )}
-    </p>
+    </div>
   );
 }

@@ -112,12 +112,12 @@ export default function ProductDetailHeader({ product }: Props) {
   };
 
   const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log("바로구매하기!");
+    console.log("서비스 준비중입니다!");
   };
 
   return (
-    <section className="flex flex-col sm:flex-row">
-      <div className="relative w-96 h-96 object-cover">
+    <section className="flex flex-col sm:flex-row items-center min-h-96 justify-center">
+      <div className="relative w-96 object-cover aspect-square">
         {thumbnailUrls && thumbnailUrls !== null && (
           <Image
             src={thumbnailUrls[0] || ""}
@@ -127,54 +127,57 @@ export default function ProductDetailHeader({ product }: Props) {
           />
         )}
       </div>
-      <div>
+      <div className="bg-red-200 h-full mx-7">
         <div>
-          <div className="flex justify-between">
+          <div className="flex flex-col py-5 border-t-2 border-t-black border-b gap-5">
             <CategoryPath large={large} medium={medium} small={small} />
-            <LikeButton product={product} isForDetail />
-          </div>
-          <h2 className="text-lg font-semibold">{name}</h2>
-        </div>
-        <div>
-          {/* TODO: 리뷰보기 클릭시 해당위치로 스크롤 이동 */}
-          <button className="underline">164개 리뷰 보기</button>
-          <div className="flex justify-between">
-            <div>
-              {discountRate && (
-                <span className="line-through text-sm">
-                  {price.toLocaleString()}원
-                </span>
-              )}
+            <div className="flex justify-between">
+              <h2 className="text-lg font-semibold">{name}</h2>
+              <LikeButton product={product} isForDetail />
+            </div>
+            <button className="underline text-start">164개 리뷰 보기</button>
+            <div className="flex justify-between">
               <div>
-                {discountRate && <span>{discountRate}%</span>}
-                <span className="font-bold text-xl">
-                  {getDiscountedPrice(price, discountRate).toLocaleString()}원
-                </span>
+                {discountRate && (
+                  <span className="line-through text-sm">
+                    {price.toLocaleString()}원
+                  </span>
+                )}
+                <div>
+                  {discountRate && <span>{discountRate}%</span>}
+                  <span className="font-bold text-xl">
+                    {getDiscountedPrice(price, discountRate).toLocaleString()}원
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <ProductOptionsSelector product={product} />
-        {!options && (
-          <QuantityAdjuster
-            onClick={handleUpdateQuantity}
-            id={id}
-            quantity={quantity}
-          />
-        )}
-        <div className="flex gap-1">
-          <ActionButton
-            product={product}
-            type="cart"
-            title="cart"
-            onClick={() => handleAddToCart()}
-          />
-          <ActionButton
-            product={product}
-            type="buyNow"
-            title="buyNow"
-            onClick={(e) => handleBuyNow(e)}
-          />
+        <div>
+          {/* TODO: 리뷰보기 클릭시 해당위치로 스크롤 이동 */}
+
+          <ProductOptionsSelector product={product} />
+          {!options && (
+            <QuantityAdjuster
+              onClick={handleUpdateQuantity}
+              id={id}
+              quantity={quantity}
+            />
+          )}
+          <div className="flex gap-1">
+            <ActionButton
+              product={product}
+              type="cart"
+              title="cart"
+              onClick={() => handleAddToCart()}
+            />
+            <ActionButton
+              product={product}
+              type="buyNow"
+              title="buyNow"
+              onClick={(e) => handleBuyNow(e)}
+            />
+          </div>
         </div>
       </div>
     </section>

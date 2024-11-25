@@ -2,7 +2,7 @@
 import SectionTitle from "@/components/SectionTitle";
 import VerticalProductCard from "@/components/VerticalProductCard";
 import { useLikedProductsStore } from "@/store/likedProducts";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function LikePage() {
   const { products } = useLikedProductsStore();
@@ -13,7 +13,9 @@ export default function LikePage() {
       <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         {products.map((product) => (
           <li key={product.id}>
-            <VerticalProductCard product={product} />
+            <Link href={`/products/${product.id}`}>
+              <VerticalProductCard product={product} />
+            </Link>
           </li>
         ))}
       </ul>

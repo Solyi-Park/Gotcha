@@ -17,7 +17,7 @@ export default function FailPage() {
       <p>에러코드: {code}</p>
       <p>실패사유: {message}</p>
       <p>문제가 계속되면 고객 지원에 문의하세요.</p>
-      <button onClick={() => router.push("/")}>홈으로 돌아가기</button>
+      <button onClick={() => router.push("/")}>홈으로 가기</button>
     </div>
   );
 }
