@@ -39,7 +39,7 @@ export default function OrderListPage() {
   console.log("orders", orders);
 
   return (
-    <div className="min-w-[640px]">
+    <div className="sm:min-w-[640px]">
       <SectionTitle title="주문배송조회" />
       <OrderListHeader />
       {orders?.length === 0 && (

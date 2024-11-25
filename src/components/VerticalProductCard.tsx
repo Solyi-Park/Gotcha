@@ -6,10 +6,13 @@ import HeartFillIcon from "./icons/HeartFillIcon";
 
 type Props = {
   product: SimpleProduct;
-  likeCount: boolean;
+  likeCount?: boolean;
 };
 
-export default function VerticalProductCard({ product, likeCount }: Props) {
+export default function VerticalProductCard({
+  product,
+  likeCount = false,
+}: Props) {
   return (
     <div className="flex flex-col">
       <div className="relative  aspect-square">
