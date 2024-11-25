@@ -2,9 +2,6 @@ import { getProductsBySearchKeyword } from "@/services/product";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  if (req.method !== "GET") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
   const params = req.nextUrl.searchParams;
   const keyword = params.get("keyword");
 

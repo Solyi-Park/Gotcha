@@ -4,7 +4,6 @@ import { authOptions } from "@/app/lib/auth";
 import { updateAddress } from "@/services/address";
 
 export async function POST(req: NextRequest) {
-  //TODO: 사용자 정보 인증하기
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -12,7 +11,6 @@ export async function POST(req: NextRequest) {
   }
 
   const addressData = await req.json();
-  console.log("addressData?", addressData);
 
   if (!addressData) {
     return new Response("Bad.", { status: 400 });

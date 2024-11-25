@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 
 export async function POST(req: NextRequest) {
-  //TODO: 사용자 정보 인증하기
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -12,7 +11,6 @@ export async function POST(req: NextRequest) {
   }
 
   const { newEmail } = await req.json();
-  console.log("newEmail?", newEmail);
 
   if (!newEmail) {
     return new Response("변경할 이메일을 입력해주세요.", { status: 400 });

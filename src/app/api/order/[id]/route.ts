@@ -6,9 +6,6 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest) {
-  if (req.method !== "DELETE") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
   const orderId = req.nextUrl.pathname.split("/").pop();
 
   if (!orderId) {
@@ -26,9 +23,6 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (req.method !== "GET") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
   const orderId = req.nextUrl.pathname.split("/").pop()?.split("?")[0];
 
   const params = req.nextUrl.searchParams;

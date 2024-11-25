@@ -3,9 +3,6 @@ import { addUser } from "@/services/user";
 import { hashPassword } from "@/utils/password";
 
 export async function POST(req: NextRequest) {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
   const formData = await req.formData();
 
   const name = formData.get("name") as string;
