@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import AddressForm from "./forms/AddressForm";
 import { useShippingDetailStore } from "@/store/shippingDetail";
 import { useDebouncedSync } from "@/hooks/debouncedSync";
+import SectionTitle from "./SectionTitle";
 
 async function changePassword(newPassword: string) {
   try {
@@ -216,32 +217,43 @@ export default function EditUserInfo() {
   //TODO: 핸들러함수들도 커스텀 훅으로 넣기
 
   return (
-    <section>
-      <h2 className="text-xl">회원정보 수정</h2>
+    <section className="text-sm">
+      <SectionTitle title="회원정보 수정" />
       <fieldset>
         <legend className="hidden">회원정보 수정 양식 작성</legend>
         <ul>
           <li>
-            <h3 className="font-bold">로그인 정보</h3>
-            {user?.provider && (
+            <h3 className="font-bold mt-3">로그인 정보</h3>
+            {user?.provider == null && (
               <div>
-                <div>
+                <div className="my-5">
                   <p>아이디(이메일)</p>
-                  <p>{maskEmail(user?.email || "")}</p>
+                  <p className="font-semibold">
+                    {maskEmail(user?.email || "")}
+                  </p>
                 </div>
-                <div className="relative">
-                  <p>비밀번호</p>
-                  <div className={`${isPasswordEditing ? "hidden" : "block"}`}>
-                    <p>*********</p>
-                    <button
-                      onClick={() => setPasswordIsEditing(!isPasswordEditing)}
-                      className="absolute right-0  top-0 py-2 px-5 border"
-                    >
-                      변경
-                    </button>
+                <div
+                  className={`${
+                    isPasswordEditing && "flex-col"
+                  } flex  w-full sm:w-80 justify-between mb-5`}
+                >
+                  <div>
+                    <p>비밀번호</p>
+                    <p className={`${isPasswordEditing ? "hidden" : "block"}`}>
+                      *********
+                    </p>
                   </div>
+                  <button
+                    onClick={() => setPasswordIsEditing(!isPasswordEditing)}
+                    className={`${
+                      isPasswordEditing ? "hidden" : "block"
+                    } py-2 px-5 border bg-white`}
+                  >
+                    변경
+                  </button>
+
                   <div className={`${isPasswordEditing ? "block" : "hidden"}`}>
-                    <form className="flex flex-col" onSubmit={() => {}}>
+                    <form className="flex flex-col gap-2 w-72 py-2">
                       <div>
                         <label className="hidden" htmlFor="userPassword">
                           기존 비밀번호
@@ -249,7 +261,7 @@ export default function EditUserInfo() {
                         <input
                           onChange={(e) => setCurrentPassword(e.target.value)}
                           value={currentPassword}
-                          className="border"
+                          className="border p-2 w-full placeholder:text-neutral-300 placeholder:text-xs"
                           placeholder="현재 비밀번호를 입력하세요."
                           type="password"
                           id="userPassword"
@@ -264,7 +276,7 @@ export default function EditUserInfo() {
                         <input
                           onChange={(e) => setNewPassword(e.target.value)}
                           value={newPassword}
-                          className="border"
+                          className="border p-2 w-full placeholder:text-neutral-300 placeholder:text-xs"
                           placeholder="새 비밀번호를 입력하세요."
                           type="password"
                           id="newPassword"
@@ -282,7 +294,7 @@ export default function EditUserInfo() {
                         <input
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           value={confirmPassword}
-                          className="border"
+                          className="border p-2 w-full placeholder:text-neutral-300 placeholder:text-xs"
                           placeholder="새 비밀번호를 한 번 더 확인하세요."
                           type="password"
                           id="confirmPassword"
@@ -296,7 +308,7 @@ export default function EditUserInfo() {
                           onClick={() =>
                             setPasswordIsEditing(!isPasswordEditing)
                           }
-                          className="py-2 w-[50%] border"
+                          className="py-2 w-[50%] border text-xs bg-white"
                           type="button"
                         >
                           변경취소
@@ -304,7 +316,7 @@ export default function EditUserInfo() {
                         <button
                           onClick={handleChangePassword}
                           type="button"
-                          className="py-2 w-[50%] text-white bg-black"
+                          className="py-2 w-[50%] text-white bg-black text-xs"
                         >
                           확인
                         </button>
@@ -315,13 +327,15 @@ export default function EditUserInfo() {
               </div>
             )}
 
-            {user?.provider && (
-              <div>
+            {user && (
+              <div className="border-t pt-6 pb-2 my-5">
                 <div>
                   <div>SNS 연결</div>
-                  <p>연결된 SNS 계정으로 로그인할 수 있습니다.</p>
+                  <p className="my-3 text-neutral-400">
+                    연결된 SNS 계정으로 로그인할 수 있습니다.
+                  </p>
                 </div>
-                <ul className="flex">
+                <ul className="flex gap-3">
                   {PROVIDER_LOGOS.map((logo) => (
                     <li key={logo.name}>
                       <div className="relative w-10 h-10 rounded-full">
@@ -342,37 +356,50 @@ export default function EditUserInfo() {
             )}
           </li>
           <li>
-            <div className="relative">
-              <h3 className="font-semibold">회원 정보</h3>
+            <div className="flex flex-col  relative border-y-2 border-y-black py-5">
+              <h3 className="font-semibold mb-5">회원 정보</h3>
               <div>
-                <div>
-                  <span>성명</span>
+                <div className="flex mb-5">
+                  <span className="w-20">성명</span>
                   <span>{maskName(user?.name || "")}</span>
                 </div>
-                <div>
-                  <span>연락처</span>
-                  <div className={`${isPhoneNumberEditing && "hidden"}`}>
-                    <span>{maskPhoneNumber(user?.phone ?? "")}</span>
+                <div
+                  className={`flex mb-5 ${
+                    isPhoneNumberEditing ? "items-start" : "items-center"
+                  }`}
+                >
+                  <span className="w-20">연락처</span>
+                  <div
+                    className={`${
+                      isPhoneNumberEditing && "hidden"
+                    } flex items-center justify-between w-full sm:w-60`}
+                  >
+                    {user?.phone ? (
+                      <span>{maskPhoneNumber(user.phone)}</span>
+                    ) : (
+                      <span className="text-xs text-neutral-500">
+                        등록된 연락처가 없습니다.
+                      </span>
+                    )}
                     {/* TODO:변경버튼 분리하기 */}
                     <button
                       onClick={() =>
                         setPhoneNumberIsEditing(!isPhoneNumberEditing)
                       }
                       className={`${
-                        isPhoneNumberEditing
-                          ? "hidden"
-                          : "absolute right-0 top-2 py-2 px-5 border"
-                      }`}
+                        isPhoneNumberEditing ? "hidden" : "py-2 px-5 border"
+                      } bg-white`}
                       type="button"
                     >
                       변경
                     </button>
                   </div>
+
                   {isPhoneNumberEditing && (
                     // TODO: 이메일 변경과 동일한 형식
                     <div>
                       <input
-                        className="border"
+                        className="border p-2 mb-3 w-60"
                         type="text"
                         value={newPhoneNumber}
                         onChange={(e) => setNewPhoneNumber(e.target.value)}
@@ -383,7 +410,7 @@ export default function EditUserInfo() {
                           onClick={() =>
                             setPhoneNumberIsEditing(!isPhoneNumberEditing)
                           }
-                          className="py-2 w-[50%] border"
+                          className="py-2 w-[50%] border bg-white"
                           type="button"
                         >
                           변경취소
@@ -391,7 +418,7 @@ export default function EditUserInfo() {
                         <button
                           onClick={handleChangePhoneNumber}
                           type="button"
-                          className="py-2 w-[50%] text-white bg-black"
+                          className="py-2 text-white bg-black"
                         >
                           확인
                         </button>
@@ -401,24 +428,28 @@ export default function EditUserInfo() {
                 </div>
               </div>
 
-              <div className="flex flex-col relative">
+              <div className="flex flex-col border-t pt-5 ">
                 <span>이메일</span>
-                {user?.email ? (
-                  <span>{user?.email}</span>
-                ) : (
-                  <span>이메일을 등록해주세요.</span>
-                )}
-                <button
-                  onClick={() => setIsEmailEditing(!isEmailEditing)}
+                <div
                   className={`${
-                    isEmailEditing
-                      ? "hidden"
-                      : "absolute right-0 top-2 py-2 px-5 border"
-                  }`}
-                  type="button"
+                    isEmailEditing ? "hidden" : "block"
+                  } flex justify-between w-full items-center sm:w-80`}
                 >
-                  변경
-                </button>
+                  {user?.email ? (
+                    <span className="font-semibold">{user?.email}</span>
+                  ) : (
+                    <span>이메일을 등록해주세요.</span>
+                  )}
+                  <button
+                    onClick={() => setIsEmailEditing(!isEmailEditing)}
+                    className={`${
+                      isEmailEditing ? "hidden" : "py-2 px-5 border"
+                    } bg-white`}
+                    type="button"
+                  >
+                    변경
+                  </button>
+                </div>
                 {isEmailEditing && (
                   <div>
                     <input
@@ -432,7 +463,7 @@ export default function EditUserInfo() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => setIsEmailEditing(!isEmailEditing)}
-                        className="py-2 w-[50%] border"
+                        className="py-2 w-[50%] border bg-white"
                         type="button"
                       >
                         변경취소
@@ -449,7 +480,7 @@ export default function EditUserInfo() {
                 )}
               </div>
 
-              <div>
+              <div className="flex flex-col gap-3 mt-6 w-full sm:w-[360px]">
                 <span>주소정보</span>
                 <AddressForm
                   postCode={postCode ?? ""}
@@ -459,7 +490,7 @@ export default function EditUserInfo() {
                 <button
                   onClick={handleSaveDefaultAddress}
                   type="button"
-                  className="py-2 w-[50%] text-white bg-black"
+                  className="w-full py-2 text-white bg-black"
                 >
                   저장하기
                 </button>

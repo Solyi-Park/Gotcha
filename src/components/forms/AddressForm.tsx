@@ -26,12 +26,18 @@ export default function AddressForm({
     }
   }, [addDetail]);
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex w-96 ">
-        <div className="min-w-64 h-10 border mr-2">{postCode}</div>
-        <PostcodePopup />
+    <div className="flex flex-col gap-2 w-full">
+      <div className="flex w-full h-10 items-center justify-between">
+        <div className="min-w-64 h-full border mr-2 w-full flex items-center px-2">
+          {postCode}
+        </div>
+        <div className="w-full h-full">
+          <PostcodePopup />
+        </div>
       </div>
-      <div className="min-w-[460px] h-10 border">{address}</div>
+      <div className="min-w-64 h-10 border flex items-center px-2 text-xs">
+        {address}
+      </div>
       <div>
         <InputField
           name="addDetail"
@@ -43,7 +49,7 @@ export default function AddressForm({
           }
           type="text"
           placeholder="상세주소 입력"
-          style="min-w-[460px] h-10 focus:border-[1px] focus:border-black  focus:outline-none border  "
+          style="min-w-64 w-full h-10 focus:border-[1px] focus:border-black  focus:outline-none border"
         />
       </div>
     </div>

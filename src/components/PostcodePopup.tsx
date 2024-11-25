@@ -38,7 +38,7 @@ const PostcodePopup = () => {
     <button
       type="button"
       onClick={handleClick}
-      className="text-xs bg-neutral-100 px-3 py-2"
+      className="text-xs bg-neutral-100 px-3 py-2 h-full w-full"
     >
       우편번호 검색
     </button>
