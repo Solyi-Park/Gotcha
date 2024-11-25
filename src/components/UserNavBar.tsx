@@ -60,7 +60,7 @@ export default function UserNavBar() {
   }, [likedProducts]);
 
   return (
-    <div className="min-w-44">
+    <div className="hidden sm:block min-w-44">
       <section>
         <h2 className="text-5xl font-semibold mb-7">
           {maskName(user?.name ?? "") || "회원님"}

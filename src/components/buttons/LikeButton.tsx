@@ -25,7 +25,7 @@ async function updateLike(productId: string, userId: string) {
 
 export default function LikeButton({ product, isForDetail }: Props) {
   const router = useRouter();
-  const { id: productId, likes, likeCount } = product;
+  const { id: productId, likes } = product;
 
   const { data: session } = useSession();
 
@@ -61,6 +61,7 @@ export default function LikeButton({ product, isForDetail }: Props) {
       queryClient.invalidateQueries({ queryKey: ["product", productId] });
       queryClient.invalidateQueries({ queryKey: ["saleProducts"] });
       queryClient.invalidateQueries({ queryKey: ["newProducts"] });
+      queryClient.invalidateQueries({ queryKey: ["likedProducts", user?.id] });
     },
   });
 

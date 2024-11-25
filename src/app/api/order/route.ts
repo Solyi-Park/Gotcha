@@ -6,9 +6,6 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
   const { userId, products, amount, shippingCost, shippingDetails } =
     await req.json();
   if (!userId && !products && !amount && !shippingCost && !shippingDetails) {
@@ -32,10 +29,6 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (req.method !== "GET") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
   const params = req.nextUrl.searchParams;
   const orderId = params.get("orderId");
 

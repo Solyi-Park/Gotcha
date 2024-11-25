@@ -16,7 +16,7 @@ export default function SaleProductList({ products }: Props) {
   );
 
   return (
-    <ul className="grid grid-cols-2 lg:grid-cols-3 sm:gap-y-2">
+    <ul className="grid grid-cols-2 lg:grid-cols-3 gap-y-10 ">
       {selectedList?.length === 1
         ? selectedList[0]?.products.map((product) => (
             <li key={product.name}>

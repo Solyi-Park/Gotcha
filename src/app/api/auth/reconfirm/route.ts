@@ -1,9 +1,7 @@
-// /app/api/auth/reconfirm/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { checkUserPassword } from "@/services/user";
 
 export async function POST(req: NextRequest) {
-  // TODO: 다른 라우트 핸들러도 업데이트 하기.
   const { email, password } = await req.json();
 
   if (!email || !password) {

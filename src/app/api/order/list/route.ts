@@ -1,11 +1,9 @@
 import { authOptions } from "@/app/lib/auth";
 import { getOrderDataByUserId } from "@/services/order";
-import { getProductById } from "@/services/product";
 import { getServerSession } from "next-auth";
-import { useSearchParams } from "next/navigation";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {

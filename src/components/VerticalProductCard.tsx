@@ -2,14 +2,19 @@ import Image from "next/image";
 import { getDiscountedPrice } from "@/utils/calculate";
 import { SimpleProduct } from "@/model/product";
 import LikeButton from "./buttons/LikeButton";
+import HeartFillIcon from "./icons/HeartFillIcon";
 
 type Props = {
   product: SimpleProduct;
+  likeCount?: boolean;
 };
 
-export default function VerticalProductCard({ product }: Props) {
+export default function VerticalProductCard({
+  product,
+  likeCount = false,
+}: Props) {
   return (
-    <div className="flex flex-col my-2">
+    <div className="flex flex-col">
       <div className="relative  aspect-square">
         <Image
           src={product.thumbnailUrls![0]}
@@ -30,7 +35,7 @@ export default function VerticalProductCard({ product }: Props) {
                 <span className="mr-2 text-rose-500">
                   {product.discountRate}%
                 </span>
-                <span className=" text-gray-400  text-[10px] sm:text-xs font-normal line-through mr-2">
+                <span className=" text-gray-400 text-[10px] sm:text-xs font-normal line-through mr-2">
                   {product.price.toLocaleString()}원
                 </span>
               </>
@@ -46,6 +51,14 @@ export default function VerticalProductCard({ product }: Props) {
             </span>
           </p>
         </div>
+        {likeCount && (
+          <div className="items-end gap-1 hidden sm:flex">
+            <HeartFillIcon size="small" color="neutral" />
+            <span className="text-neutral-400 text-xs">
+              {product.likeCount.toLocaleString()}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,10 +2,6 @@ import { confirmPayment } from "@/services/payment";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
   const { paymentKey, orderId, amount } = await req.json();
 
   if (!paymentKey && !orderId && !amount) {

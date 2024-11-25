@@ -80,6 +80,31 @@ export default function ShippingDetailForm() {
         setField("contact1", user.addresses.contact ?? "");
         setField("addressTitle", user.addresses.title ?? "");
         setField("isDefault", true);
+        // setShippingDetails((prev) => ({ ...prev, address }));
+        // setShippingDetails((prev) => ({
+        //   ...prev,
+        //   addDetail: user.addresses?.addDetail ?? "",
+        // }));
+        // setShippingDetails((prev) => ({
+        //   ...prev,
+        //   recipient: user.addresses?.name ?? "",
+        // }));
+        // setShippingDetails((prev) => ({
+        //   ...prev,
+        //   contact1: user.addresses?.contact ?? "",
+        // }));
+        // setShippingDetails((prev) => ({
+        //   ...prev,
+        //   addDetail: user.addresses?.addDetail ?? "",
+        // }));
+        // setShippingDetails((prev) => ({
+        //   ...prev,
+        //   addressTitle: user.addresses?.title ?? "",
+        // }));
+        // setShippingDetails((prev) => ({
+        //   ...prev,
+        //   isDefault: user.addresses?.default ?? false,
+        // }));
       }
     }
   }, [user, activeTab]);

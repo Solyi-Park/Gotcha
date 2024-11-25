@@ -1,12 +1,7 @@
 import { getLikedProductsOfUser, updateLikes } from "@/services/product";
-
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest, res: NextResponse) {
-  if (req.method !== "PUT") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
   const { userId, productId } = await req.json();
 
   if (!userId || !productId === undefined) {
@@ -20,10 +15,6 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 }
 
 export async function GET(req: NextRequest) {
-  if (req.method !== "GET") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
   const params = req.nextUrl.searchParams;
   const userId = params.get("userId");
 

@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getUser } from "@/services/user";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 
 export async function GET() {
-  //TODO: 사용자 정보 인증하기
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {

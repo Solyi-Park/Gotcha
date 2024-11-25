@@ -1,6 +1,7 @@
 import { supabase } from "@/app/lib/supabaseClient";
 import { getOrderDataByOrderId, updateOrderInfo } from "./order";
-import { Cancel, CancelResult, Payment, PaymentInput } from "@/model/payment";
+import { Payment, PaymentInput } from "@/model/payment";
+import { CancelInput, DatabaseCancel } from "@/model/cancel";
 
 function getAuthHeader() {
   return `Basic ${Buffer.from(`${process.env.WIDGET_SECRET_KEY}:`).toString(
@@ -155,8 +156,8 @@ export const cancelPayment = async (
   if (!result.cancels || result.cancels.length === 0) {
     throw new Error("Invalid response: 'cancels' data is missing.");
   }
-  const cancels: Cancel[] = result.cancels.map(
-    (canceledItem: CancelResult) => ({
+  const cancels: CancelInput[] = result.cancels.map(
+    (canceledItem: CancelInput) => ({
       ...canceledItem,
       paymentKey: result.paymentKey,
     })
@@ -168,8 +169,8 @@ export const cancelPayment = async (
 
 export async function saveCancelResult(
   paymentKey: string,
-  cancelResults: Cancel[]
-) {
+  cancelResults: CancelInput[]
+): Promise<DatabaseCancel[]> {
   console.log("저장할 취소 데이터:", cancelResults);
   const cancelData = await getCancelDataByPaymentKey(paymentKey);
 

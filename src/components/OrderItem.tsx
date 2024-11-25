@@ -17,22 +17,28 @@ export default function OrderItem({
   orderId,
 }: OrderItemProps) {
   return (
-    <div className="flex py-4 min-h-40 w-full h-full border-b">
+    <div className="flex flex-col sm:flex-row py-4 min-h-40 w-full h-full">
+      <div className="sm:hidden flex-[0.3] justify-center items-center mb-3 sm:mb-0">
+        <span className="sm:text-2xl font-semibold sm:font-bold p-1 sm:p-0 text-sm bg-blue-100 sm:bg-inherit rounded-sm sm:rounded-none">
+          {formatOrderItemStatus(orderStatus, item.status)}
+        </span>
+      </div>
       <div className="flex flex-[0.4] items-center">
         <OrderProductDetail item={item} options={item.options} />
       </div>
-      <div className="flex-[0.1] text-center my-auto">
+      <div className="hidden sm:block flex-[0.1] text-center sm:my-auto my-3 py-2 sm:py-0 border-y border-b-black sm:border-0">
+        <span className="mr-1 sm:hidden ">배송비:</span>
         <span>
           {shippingCost > 0 ? `${shippingCost.toLocaleString()}원` : "무료배송"}
         </span>
       </div>
-      <div className="flex flex-[0.3] justify-center items-center">
+      <div className="hidden sm:flex flex-[0.3] justify-center items-center">
         <span className="text-2xl font-bold">
           {formatOrderItemStatus(orderStatus, item.status)}
         </span>
       </div>
       <div className="flex gap-4 p-1 flex-[0.2] items-center justify-between">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-row sm:flex-col gap-1">
           <Button
             text="취소접수"
             color="black"
@@ -47,7 +53,8 @@ export default function OrderItem({
               orderStatus,
               "cancelDetail"
             )}
-            href={`/mypage/my-order/cancel-detail/${item.id}`}
+            href={``} //TODO: cancel data 사용하여 라우팅
+            onClick={() => alert("서비스 준비중입니다!")}
           />
           <Button
             text="교환접수"
@@ -59,15 +66,25 @@ export default function OrderItem({
             isVisible={isVisibleButton(item.status, orderStatus, "return")}
             href=""
           />
-          <Button text="1:1문의" href="" />
+          <Button
+            text="1:1문의"
+            href=""
+            onClick={() => alert("서비스 준비중입니다!")}
+          />
         </div>
-        <div className="mr-2">
+        <div className="mr-2 hidden sm:block">
           {isVisibleButton(item.status, orderStatus, "review") ? (
             <Button text="리뷰작성" color="black" isVisible href="" />
           ) : (
             <span className="font-extrabold">-</span>
           )}
         </div>
+      </div>
+      <div className="flex-[0.1] text-center sm:my-auto my-3 py-2 sm:py-0 border-y border-b-black sm:border-0">
+        <span className="mr-1 sm:hidden ">배송비:</span>
+        <span>
+          {shippingCost > 0 ? `${shippingCost.toLocaleString()}원` : "무료배송"}
+        </span>
       </div>
     </div>
   );

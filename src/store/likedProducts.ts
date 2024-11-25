@@ -9,6 +9,6 @@ interface LikedProductsState {
 
 export const useLikedProductsStore = create<LikedProductsState>((set) => ({
   products: [],
-  setProducts: (products) => set({ products: products }),
+  setProducts: (products) => set({ products }),
   clearProducts: () => set({ products: [] }),
 }));

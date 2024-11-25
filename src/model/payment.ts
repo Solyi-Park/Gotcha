@@ -22,22 +22,3 @@ export type Payment = {
 };
 
 export type PaymentInput = Omit<Payment, "createdAt">;
-
-export type Cancels = {};
-
-export type Cancel = {
-  paymentKey: string;
-  transactionKey: string;
-  cancelReason: string;
-  canceledAt: string;
-  cancelStatus: string;
-  cancelAmount: number;
-  refundableAmount: number;
-  taxExemptionAmount: number;
-  easyPayDiscountAmount: number;
-  receiptKey: string;
-  cancelRequestId: string;
-  taxFreeAmount: number;
-};
-
-export type CancelResult = Omit<Cancel, "paymentKey">;

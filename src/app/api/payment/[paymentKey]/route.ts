@@ -1,10 +1,9 @@
 import { getPayment } from "@/services/payment";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-
-  const paymentKey = pathname.split("/").pop();
+export async function GET(req: NextRequest, context: { params: Params }) {
+  const paymentKey = context.params.paymentKey;
 
   if (!paymentKey) {
     return new Response("Bad Request", { status: 400 });

@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 export default function CategoryPage() {
   const { largeCode, mediumCode, smallCode } = useCategoryParams();
   return (
-    <div className="flex">
+    <div className="flex my-6">
       <CategorySideBar
         largeCode={largeCode}
         mediumCode={mediumCode}

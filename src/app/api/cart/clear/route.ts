@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest) {
-  //TODO: 사용자 정보 인증하기
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -12,7 +11,6 @@ export async function DELETE(req: NextRequest) {
   }
 
   const { orderId } = await req.json();
-  console.log("orderId?", orderId);
 
   if (!orderId) {
     return new Response("Bad Request", { status: 400 });

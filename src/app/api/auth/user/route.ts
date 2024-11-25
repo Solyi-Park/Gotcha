@@ -1,4 +1,3 @@
-// /app/api/auth/reconfirm/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { checkUserPassword, getUser } from "@/services/user";
 import { getServerSession } from "next-auth";

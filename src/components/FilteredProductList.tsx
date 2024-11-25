@@ -27,14 +27,20 @@ export default function FilteredProductList({
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
+  const productList = products && [
+    ...products,
+    ...products,
+    ...products,
+    ...products,
+  ];
   console.log("products data???", products);
   return (
-    <div className="bg-blue-100 flex w-full">
-      <ul className="grid grid-cols-3">
-        {products?.map((product: FullProduct) => (
+    <div className="flex w-full mt-9">
+      <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 w-full gap-y-16 gap-x-4 ml-10">
+        {productList?.map((product: FullProduct) => (
           <li key={product.id}>
             <Link href={`/products/${product.id}`}>
-              <VerticalProductCard product={product} />
+              <VerticalProductCard product={product} likeCount />
             </Link>
           </li>
         ))}
