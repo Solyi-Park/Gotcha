@@ -1,17 +1,14 @@
 "use client";
 import { FullProduct } from "@/model/product";
 import { useLikedProductsStore } from "@/store/likedProducts";
+import { isActivePath } from "@/utils/currentPath";
 import { maskName } from "@/utils/maskPersonalInfo";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-
-// 유틸리티 함수로 분리
-export function isActivePath(pathname: string, basePath: string): boolean {
-  return pathname === basePath || pathname.startsWith(`${basePath}/`);
-}
+import MypageNavMenu from "./MypageNavMenu";
 
 async function fetchLikedProducts(userId: string): Promise<FullProduct[]> {
   return await fetch(`/api/likes?userId=${userId}`, {
@@ -72,25 +69,7 @@ export default function UserNavBar() {
           </Link>
         </div>
       </section>
-      {MYPAGE_SECTIONS.map((section) => (
-        <section key={section.title} className="mb-6">
-          <h3 className="font-bold text-lg mb-2">{section.title}</h3>
-          <ul>
-            {section.items.map((item) => (
-              <li
-                key={item.name}
-                className={`mb-2 ${
-                  isActivePath(pathname, `/mypage${item.path}`)
-                    ? "text-black"
-                    : "text-neutral-600 font-light"
-                }`}
-              >
-                <Link href={`/mypage${item.path}`}>{item.name}</Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      <MypageNavMenu pathname={pathname} />
     </div>
   );
 }
