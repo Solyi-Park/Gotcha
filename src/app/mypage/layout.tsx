@@ -16,7 +16,7 @@ export default async function MyPageLayout({
   }
 
   return (
-    <div className="flex">
+    <div className="flex mt-6">
       <UserNavBar />
       <section className="w-full py-5">{children}</section>
     </div>

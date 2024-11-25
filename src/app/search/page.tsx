@@ -1,4 +1,7 @@
 "use client";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import ProductListGrid from "@/components/ProductListGrid";
+import SearchBar from "@/components/SearchBar";
 import VerticalProductCard from "@/components/VerticalProductCard";
 import { FullProduct } from "@/model/product";
 import { SearchResults } from "@/services/product";
@@ -37,49 +40,54 @@ export default function SearchResultPage() {
 
   return (
     <div>
-      {!keyword && keyword?.length === 0 && (
-        <div>
-          <p>검색 결과가 없습니다.</p>
-          <p>다른 검색어를 입력하시거나 철자와 띄어쓰기를 확인해보세요.</p>
+      <div className="sm:m-4">
+        {keyword && (
+          <h1 className="text-xl font-bold">
+            "<span className="text-rose-600">{keyword}</span>" 검색 결과
+          </h1>
+        )}
+      </div>
+      {isLoading && (
+        <div className="flex justify-center">
+          <LoadingSpinner />
         </div>
       )}
-      {isLoading && <p>Loading...</p>}
       {isError && (
-        <p className="text-rose-500 font-sm">
-          검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
-        </p>
+        <div className="flex flex-col items-center py-10">
+          <p className="text-rose-500 font-sm">
+            검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+          </p>
+        </div>
       )}
-      {keyword && searchResult && (
-        <>
-          <div className="flex justify-between">
-            <p className="text-sm">
-              총 <span className="font-bold">{searchResult?.totalCount}</span>
-              개의 상품
-            </p>
 
-            {/* TODO:커스텀 드롭다운만들기 */}
-            <select name="filter" id="">
-              <option value="">신상품순</option>
-              <option value="">리뷰많은순</option>
-              <option value="">낮은가격순</option>
-              <option value="">높은가격순</option>
-              <option value="">높은할인순</option>
-              <option value="">좋아요많은순</option>
-              <option value="">판매순</option>
-            </select>
-          </div>
+      <div className="flex justify-between items-center sm:px-4 my-5">
+        <p>
+          총<span className="font-bold ml-1">{searchResult?.totalCount}</span>
+          개의 상품
+        </p>
 
-          <ul className="grid grid-cols-4">
-            {searchResult.totalCount > 0 &&
-              searchResult.products.map((result: FullProduct) => (
-                <li key={result.id}>
-                  <Link href={`products/${result.id}`}>
-                    <VerticalProductCard product={result} />
-                  </Link>
-                </li>
-              ))}
-          </ul>
-        </>
+        {/* TODO:커스텀 드롭다운 */}
+        <select
+          name="filter"
+          className="text-sm bg-neutral-100 px-3 py-2 rounded-2xl"
+        >
+          <option value="">신상품순</option>
+          <option value="">리뷰많은순</option>
+          <option value="">낮은가격순</option>
+          <option value="">높은가격순</option>
+          <option value="">높은할인순</option>
+          <option value="">좋아요많은순</option>
+          <option value="">판매순</option>
+        </select>
+      </div>
+      {keyword && searchResult?.totalCount > 0 && (
+        <ProductListGrid products={searchResult.products} />
+      )}
+      {keyword && searchResult?.totalCount === 0 && (
+        <div className="flex flex-col items-center py-10 gap-5">
+          <p className="text-2xl">검색 결과가 없습니다.</p>
+          <p>다른 검색어를 입력하시거나 철자와 띄어쓰기를 확인해보세요.</p>
+        </div>
       )}
     </div>
   );

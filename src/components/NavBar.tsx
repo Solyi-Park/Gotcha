@@ -19,7 +19,9 @@ export default function NavBar() {
         <div className="flex sm:flex-col gap-5 items-center">
           {/* {user.role === "admin" ? <AdminPage /> : <UserMenu user={user} />} */}
           <UserMenu user={user} />
-          <SearchBar />
+          <div className="w-[360px] hidden sm:block">
+            <SearchBar />
+          </div>
           <Link href="/cart" className="sm:hidden">
             <ShoppingBagIcon size="medium" />
           </Link>

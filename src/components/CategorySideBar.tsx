@@ -39,7 +39,7 @@ export default function CategorySideBar({
   };
 
   return (
-    <div className="w-48">
+    <div className="w-48 sm:block hidden">
       <h2
         className={`${largeCode && "font-bold border-b-4 border-black pb-3"}`}
       >
