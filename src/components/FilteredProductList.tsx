@@ -35,8 +35,8 @@ export default function FilteredProductList({
   ];
   console.log("products data???", products);
   return (
-    <div className="flex w-full">
-      <ul className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 w-full gap-4 ml-10">
+    <div className="flex w-full mt-9">
+      <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 w-full gap-y-16 gap-x-4 ml-10">
         {productList?.map((product: FullProduct) => (
           <li key={product.id}>
             <Link href={`/products/${product.id}`}>

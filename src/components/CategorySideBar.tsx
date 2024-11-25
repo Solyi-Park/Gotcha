@@ -39,13 +39,15 @@ export default function CategorySideBar({
   };
 
   return (
-    <div className="w-48 bg-red-200">
-      <h2 className={`${largeCode && "font-bold border-b-4 border-black"}`}>
+    <div className="w-48">
+      <h2
+        className={`${largeCode && "font-bold border-b-4 border-black pb-3"}`}
+      >
         {largeCategory?.name === "women" && <span>여성</span>}
         {largeCategory?.name === "men" && <span>남성</span>}
         {mediumCategory?.name}
       </h2>
-      <ul>
+      <ul className="flex flex-col gap-2 py-5">
         {mediumCategory?.subcategories?.map((small) => (
           <li
             key={small.name}
