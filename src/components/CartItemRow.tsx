@@ -7,7 +7,6 @@ import { useCartStore } from "@/store/cart";
 import QuantityAdjuster from "./QuantityAdjuster";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useCheckout } from "@/hooks/checkout";
 
 type Props = {
   item: CartItemRowType;

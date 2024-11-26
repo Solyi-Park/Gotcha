@@ -1,7 +1,7 @@
 "use client";
 import PaymentButton from "@/components/buttons/PaymentButton";
-import { useCheckout } from "@/hooks/checkout";
-import { useCheckoutStore } from "@/store/checkout";
+import useCheckout from "@/hooks/checkout";
+
 import {
   loadTossPayments,
   ANONYMOUS,
@@ -85,21 +85,23 @@ export default function Payments() {
   }, [widgets]);
 
   return (
-    <div className="wrapper">
+    <div className=" wrapper py-3">
       <div className="box_section">
         {/* 결제 UI */}
         <div id="payment-method" />
         {/* 이용약관 UI */}
         <div id="agreement" />
         {/* 버튼은 나중에 다른데로 보낼거임. 그리고 loadTossPayments 로직 훅으로생성 */}
-        <PaymentButton
-          ready={ready}
-          widgets={widgets}
-          user={user}
-          checkoutItems={checkoutItems}
-          amount={getTotalPrice()}
-          shippingCost={getShippingCost()}
-        />
+        <div className="flex justify-center">
+          <PaymentButton
+            ready={ready}
+            widgets={widgets}
+            user={user}
+            checkoutItems={checkoutItems}
+            amount={getTotalPrice()}
+            shippingCost={getShippingCost()}
+          />
+        </div>
       </div>
     </div>
   );

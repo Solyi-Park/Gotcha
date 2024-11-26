@@ -4,9 +4,14 @@ import Link from "next/link";
 type Props = {
   onClick: () => void;
   disabled: boolean;
+  className: string;
 };
 
-export default function CheckOutButton({ onClick, disabled }: Props) {
+export default function CheckOutButton({
+  onClick,
+  disabled,
+  className,
+}: Props) {
   return (
     <button
       onClick={onClick}
@@ -15,7 +20,7 @@ export default function CheckOutButton({ onClick, disabled }: Props) {
         disabled
           ? "bg-gray-400 cursor-default"
           : "bg-black  hover:text-rose-600"
-      } `}
+      } ${className} `}
     >
       CHECK OUT
     </button>

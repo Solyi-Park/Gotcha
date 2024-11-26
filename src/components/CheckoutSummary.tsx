@@ -1,15 +1,18 @@
-"use clinet";
+"use client";
+import useCheckout from "@/hooks/checkout";
 import OrderItemSummary from "./OrderItemSummary";
 import PaymentSummary from "./PaymentSummary";
 
 export default function CheckoutSummary() {
-  console.log();
-  return (
-    <aside>
-      <OrderItemSummary />
-      <PaymentSummary />
+  const { checkoutItems, getTotalPrice, getShippingCost } = useCheckout();
 
-      <button>결제하기 </button>
+  console.log("checkoutItems:", checkoutItems);
+
+  return (
+    <aside className="flex flex-col w-full max-w-[640px]">
+      {/* TODO:상품정보 */}
+      {/* <OrderItemSummary /> */}
+      <PaymentSummary />
     </aside>
   );
 }

@@ -23,7 +23,7 @@ export default function InputField({
   ...props
 }: Props) {
   return (
-    <div className="flex">
+    <div className="flex items-center text-sm">
       {!name && label && (
         <label className="w-32" htmlFor={id}>
           {label}
@@ -38,7 +38,7 @@ export default function InputField({
         id={id}
         {...props}
         defaultValue={defaultValue}
-        className={`border px-2 ${style && style}`}
+        className={`border px-2 ${style && style} w-full text-sm`}
       />
     </div>
   );

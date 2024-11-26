@@ -13,7 +13,10 @@ export default function AddressTabs({ activeTab, handleActiveTab }: Props) {
     <ul className="flex">
       {ADDRESS_TAB.map((tab) => (
         <li
-          className={`${getActiveTabCSS(activeTab, tab)} hover:cursor-pointer`}
+          className={`${getActiveTabCSS(
+            activeTab,
+            tab
+          )} hover:cursor-pointer px-5 py-2 text-sm`}
           data-value={tab}
           onClick={(e) => handleActiveTab(e)}
           key={tab}

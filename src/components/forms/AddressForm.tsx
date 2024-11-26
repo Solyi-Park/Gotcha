@@ -26,7 +26,7 @@ export default function AddressForm({
     }
   }, [addDetail]);
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-2 min-w-[370px] w-[383px]">
       <div className="flex w-full h-10 items-center justify-between">
         <div className="min-w-64 h-full border mr-2 w-full flex items-center px-2">
           {postCode}
@@ -35,7 +35,7 @@ export default function AddressForm({
           <PostcodePopup />
         </div>
       </div>
-      <div className="min-w-64 h-10 border flex items-center px-2 text-xs">
+      <div className="min-w-72 h-10 border flex items-center px-2 text-sm">
         {address}
       </div>
       <div>

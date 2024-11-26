@@ -1,3 +1,4 @@
+"use client";
 import { CartItemRowType } from "@/model/cart";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

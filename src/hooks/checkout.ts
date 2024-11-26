@@ -1,8 +1,11 @@
+"use client";
+
 import { useCheckoutStore } from "@/store/checkout";
 import { getDiscountedPrice } from "@/utils/calculate";
 
-export const useCheckout = () => {
+export default function useCheckout() {
   const checkoutItems = useCheckoutStore((state) => state.checkoutItems);
+  console.log("checkoutItems 스토어", checkoutItems);
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {
@@ -16,7 +19,7 @@ export const useCheckout = () => {
 
   const getShippingCost = () => {
     const totalPrice = getTotalPrice();
-    return totalPrice >= 70000 ? 0 : 3500;
+    return totalPrice > 0 ? (totalPrice >= 70000 ? 0 : 3500) : 0;
   };
 
   const getTotalPaymentAmount = () => {
@@ -29,4 +32,4 @@ export const useCheckout = () => {
     getShippingCost,
     getTotalPaymentAmount,
   };
-};
+}

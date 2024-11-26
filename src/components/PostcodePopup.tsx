@@ -14,9 +14,9 @@ const PostcodePopup = () => {
     let postalCode = data.zonecode;
 
     if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
+      // if (data.bname !== "") {
+      //   extraAddress += data.bname;
+      // }
       if (data.buildingName !== "") {
         extraAddress +=
           extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
@@ -29,7 +29,6 @@ const PostcodePopup = () => {
   };
 
   const handleClick = () => {
-    console.log("클릭");
     open({ onComplete: handleComplete });
     resetAddress();
   };
