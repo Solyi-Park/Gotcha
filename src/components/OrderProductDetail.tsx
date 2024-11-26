@@ -61,8 +61,8 @@ export default function OrderProductDetail({ item, options, cancel }: Props) {
               ).toLocaleString() || 0}
               원
             </span>
-            <span className="mx-1">/</span>
-            <span>{cancel ? item.selectedQuantity : item.quantity}개</span>
+            {/* <span className="mx-1">/</span> */}
+            {/* <span>{cancel ? item.selectedQuantity : item.quantity}개</span> */}
           </p>
         </div>
       </div>

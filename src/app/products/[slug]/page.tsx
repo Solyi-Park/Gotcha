@@ -1,4 +1,5 @@
 "use client";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import ProductDetailHeader from "@/components/ProductDetailHeader";
 import ProductInfo from "@/components/ProductInfo";
 import ProductQnA from "@/components/ProductQnA";
@@ -33,20 +34,21 @@ export default function ProductDetailPage({
     staleTime: 1000 * 60 * 15,
   });
 
-  if (isLoading) {
-    return <p>로딩중..</p>;
-  }
-  if (!product) {
-    redirect("/");
-  }
-  const { imageUrls } = product;
-
   return (
-    <>
-      <ProductDetailHeader product={product && product} />
-      <ProductInfo imageUrls={imageUrls} />
-      <ProductReviews />
-      <ProductQnA />
-    </>
+    <section className="">
+      {isLoading && (
+        <div className="flex justify-center my-10">
+          <LoadingSpinner />
+        </div>
+      )}
+      {product && (
+        <div className="flex flex-col items-center">
+          <ProductDetailHeader product={product} />
+          <ProductInfo imageUrls={product.imageUrls} />
+          <ProductReviews />
+          <ProductQnA />
+        </div>
+      )}
+    </section>
   );
 }

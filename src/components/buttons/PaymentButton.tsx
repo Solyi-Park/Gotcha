@@ -6,6 +6,7 @@ import { useShippingDetailStore } from "@/store/shippingDetail";
 import { TossPaymentsWidgets } from "@tosspayments/tosspayments-sdk";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import CheckOutButton from "./CheckOutButton";
 
 type Props = {
   ready: boolean;
@@ -111,14 +112,10 @@ export default function PaymentButton({
   };
 
   return (
-    <button
-      className={`px-5 py-2 bg-black text-white ${
-        !ready && "bg-gray-300"
-      } rounded`}
+    <CheckOutButton
       disabled={!ready}
       onClick={handler}
-    >
-      결제하기
-    </button>
+      className={`${!ready && "bg-gray-300"}`}
+    />
   );
 }

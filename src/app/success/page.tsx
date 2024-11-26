@@ -1,14 +1,19 @@
 "use client";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import OrderProductDetail from "@/components/OrderProductDetail";
+import ShippingInfo from "@/components/ShippingInfo";
 import { CARD_COMPANIES } from "@/constants/cardCompanies";
-import { OrderItem, OrderItemWithProduct } from "@/model/order";
+import { OrderItemWithProduct } from "@/model/order";
 import { Payment } from "@/model/payment";
-import useOrderStore from "@/store/ortder";
+import { getFormattedDate } from "@/utils/date";
+import { maskAddress, maskPhoneNumber } from "@/utils/maskPersonalInfo";
+import { formatOrderStatus } from "@/utils/orderStatus";
+
 import {
   getBankName,
   getCardCompanyName,
   getEasypayCompany,
+  getPaymentMethod,
 } from "@/utils/payment";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -58,7 +63,6 @@ export default function SuccessPage() {
       } catch (error) {
         console.error("결제 실패:", error);
         //TODO: 결제 실패 페이지
-
         // router.push(`/fail?message=${error}`);
       } finally {
         setLoading(false); // 로딩 중지
@@ -77,20 +81,7 @@ export default function SuccessPage() {
     queryFn: async () => fetchOrderData(paymentResult?.orderId!),
     enabled: !!paymentResult?.orderId,
   });
-
-  console.log("주문정보:", order);
-
-  function getPaymentMethod(payment: Payment) {
-    switch (payment.method) {
-      case "간편결제":
-        return getEasypayCompany(payment.easyPay!);
-      case "카드":
-        return getCardCompanyName(payment.card!);
-
-      case "계좌이체":
-        return getBankName(payment.transfer!);
-    }
-  }
+  console.log("order?", order.payments);
 
   if (loading) {
     return (
@@ -102,113 +93,183 @@ export default function SuccessPage() {
 
   return (
     <>
-      {paymentResult && (
-        <div>
-          {isOrderDataLoading && <LoadingSpinner />}
-          {!isOrderDataLoading && !isOrderDataError && order && (
+      {order && (
+        <div className="min-w-96">
+          {isOrderDataLoading && (
             <div>
-              <section>
-                <h2>주문이 완료되었습니다.</h2>
-                <p>
-                  주문번호
+              <LoadingSpinner />
+            </div>
+          )}
+          {!isOrderDataLoading && !isOrderDataError && order && (
+            <div className="flex flex-col gap-10 max-w-[1024px] items-center w-full mx-auto">
+              <section className="w-full text-center p-10 my-5">
+                <h2 className="text-3xl font-semibold mb-5">
+                  주문이 완료되었습니다.
+                </h2>
+                <div>
+                  <span>주문번호</span>
                   <span className="ml-1 font-bold text-rose-500">
                     {order?.displayOrderNumber}
                   </span>
-                </p>
+                </div>
               </section>
-              <section>
-                <h3 className="font-semibold">
+
+              <section className="w-full">
+                <h3 className="font-semibold pb-2 border-b-2 border-black">
                   주문상품정보 / {order.items.length}개 상품
                 </h3>
                 <ul>
                   <li>
-                    <div>
-                      <span>상품</span>
-                      <span>상품정보</span>
-                    </div>
-                    <div>수량</div>
-                    <div>진행상태</div>
+                    <section className="grid grid-cols-12 w-full border-black border-b-[1px] py-2 text-xs">
+                      <div className="col-span-4 ml-5">상품</div>
+                      <div className="col-span-4">상품정보</div>
+                      <div className="col-span-2">수량</div>
+                      <div className="col-span-2">진행상태</div>
+                    </section>
                   </li>
                   {order.items &&
                     order.items.map((item: OrderItemWithProduct) => (
                       <li key={`${item.id}`}>
-                        <OrderProductDetail
-                          item={item}
-                          options={item.options}
-                        />
+                        <div className="grid grid-cols-12 items-center py-3 border-b last:border-none">
+                          <div className="col-span-8">
+                            <OrderProductDetail
+                              item={item}
+                              options={item.options}
+                            />
+                          </div>
+                          <span className="col-span-2 text-lg font-bold">
+                            {order.orderQuantity}개
+                          </span>
+                          <span className="col-span-2 text-lg font-bold">
+                            {formatOrderStatus(order.status)}
+                          </span>
+                        </div>
                       </li>
                     ))}
                 </ul>
               </section>
-              <section>
-                <h3 className="font-semibold">결제정보</h3>
+
+              <section className="w-full">
+                <h3 className="text-lg font-semibold pb-2 border-b-2 border-black">
+                  결제정보
+                </h3>
                 <div>
-                  <table className="border">
+                  <table className="w-full text-sm">
                     <tbody>
-                      <tr>
-                        <th>결제방법</th>
-                        <td>{getPaymentMethod(paymentResult)}</td>
-                      </tr>
-                      <tr>
-                        <th>주문상태</th>
-                        <td>결제완료</td>
-                      </tr>
-                      <tr>
-                        <th>주문접수일시</th>
-                        <td>2024-10-10-12:22 PM</td>
-                      </tr>
-                      <tr>
-                        <th>결제완료일시</th>
-                        <td>2024-10-10-12:22 PM</td>
-                      </tr>
-                      <tr>
-                        <th>배송비</th>
-                        <td>3000원</td>
-                      </tr>
-                      {/* 마일리지썼으면 */}
-                      <tr>
-                        <th>마일리지 사용금액</th>
-                        <td>1600P</td>
-                      </tr>
-                      <tr>
-                        <th>결제금액</th>
-                        <td>29400원</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-              <section>
-                <h3>배송정보</h3>
-                <div>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <th>반으시는분</th>
-                        <td>박솔이</td>
-                      </tr>
-                      <tr>
-                        <th>휴대폰번호</th>
-                        <td>010-1234-1234</td>
-                      </tr>
-                      <tr>
-                        <th>주소</th>
-                        <td>
-                          서울특별시 성동구 아차산로 13길 11, 1층 (성수동2가,
-                          무신사캠퍼스 엔1)
+                      <tr className="border-b">
+                        <th className="w-1/4 border-r py-2 font-normal">
+                          결제방법
+                        </th>
+                        <td className="pl-5">
+                          {getPaymentMethod(order.payments)}
                         </td>
                       </tr>
-                      <tr>
-                        <th>배송요청사항</th>
-                        <td>부재시 문앞에 놓아주세요.</td>
+                      <tr className="border-b">
+                        <th className="w-1/4 border-r py-2 font-normal">
+                          주문상태
+                        </th>
+                        <td className="w-3/4 pl-5">
+                          {formatOrderStatus(order.status)}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <th className="w-1/4 border-r py-2 font-normal">
+                          주문접수일시
+                        </th>
+                        <td className="w-3/4 pl-5">
+                          {getFormattedDate(order.createdAt)}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <th className="w-1/4 border-r py-2 font-normal">
+                          결제완료일시
+                        </th>
+                        <td className="w-3/4 pl-5">
+                          {getFormattedDate(order.payments.approvedAt)}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <th className="w-1/4 border-r py-2 font-normal">
+                          배송비
+                        </th>
+                        <td className="w-3/4 pl-5">
+                          {order.shippingCost.toLocaleString()}원
+                        </td>
+                      </tr>
+                      {/* <tr className="border-b">
+                  <th className="w-1/4 border-r py-2 font-normal">
+                    마일리지 사용금액
+                  </th>
+                  <td className="w-3/4 pl-5">1600P</td>
+                </tr> */}
+                      <tr className="border-b">
+                        <th className="w-1/4 border-r py-2 font-normal">
+                          결제금액
+                        </th>
+                        <td className="w-3/4 pl-5">
+                          {order.totalAmount.toLocaleString()}원
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </section>
-              <div>
-                <Link href="/">계속 쇼핑하기</Link>
-                <Link href="/mypage">주문/배송조회하기</Link>
+
+              <section className="w-full">
+                <h3 className="text-lg font-semibold pb-2 border-b-2 border-black">
+                  배송정보
+                </h3>
+                <table className="w-full">
+                  <tbody>
+                    <tr className="border-b text-sm">
+                      <th className="border-r font-normal" scope="row">
+                        받는사람
+                      </th>
+                      <td className="py-3 px-5" colSpan={3}>
+                        {order.recipient}
+                      </td>
+                    </tr>
+                    <tr className="border-b text-sm">
+                      <th className="border-r font-normal" scope="row">
+                        휴대폰
+                      </th>
+                      <td className="py-3 px-5">{order.contact1}</td>
+                    </tr>
+                    <tr className="border-b text-sm">
+                      <th className="border-r font-normal" scope="row">
+                        주소
+                      </th>
+                      <td className="py-3 px-5" colSpan={3}>
+                        {order.fullAddress}
+                      </td>
+                    </tr>
+                    <tr className="border-b text-sm">
+                      <th className="border-r font-normal" scope="row">
+                        배송요청사항
+                      </th>
+                      <td className="py-3 px-5" colSpan={3}>
+                        {order.customDeliveryNote !== ""
+                          ? order.customDeliveryNote
+                          : order.deliveryNote || "-"}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+
+              <div className="flex items-center gap-2 mb-10">
+                <Link
+                  href="/"
+                  className="bg-white border border-neutral-400 w-60 py-2 text-center font-semibold"
+                >
+                  계속 쇼핑하기
+                </Link>
+                <Link
+                  href="/mypage/my-order/list"
+                  className="bg-black text-white w-60 py-2 border border-black text-center font-semibold"
+                >
+                  주문/배송조회하기
+                </Link>
               </div>
             </div>
           )}

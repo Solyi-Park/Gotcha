@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import VerticalProductCard from "./VerticalProductCard";
 import { FullProduct } from "@/model/product";
 import Link from "next/link";
+import ProductListGrid from "./ProductListGrid";
 
 type Props = {
   largeCode: string | null;
@@ -34,17 +35,5 @@ export default function FilteredProductList({
     ...products,
   ];
   console.log("products data???", products);
-  return (
-    <div className="flex w-full mt-9">
-      <ul className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 w-full gap-y-16 gap-x-4 ml-10">
-        {productList?.map((product: FullProduct) => (
-          <li key={product.id}>
-            <Link href={`/products/${product.id}`}>
-              <VerticalProductCard product={product} likeCount />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  return <ProductListGrid products={productList} />;
 }

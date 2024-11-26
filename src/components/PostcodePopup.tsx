@@ -14,9 +14,9 @@ const PostcodePopup = () => {
     let postalCode = data.zonecode;
 
     if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
+      // if (data.bname !== "") {
+      //   extraAddress += data.bname;
+      // }
       if (data.buildingName !== "") {
         extraAddress +=
           extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
@@ -29,7 +29,6 @@ const PostcodePopup = () => {
   };
 
   const handleClick = () => {
-    console.log("클릭");
     open({ onComplete: handleComplete });
     resetAddress();
   };
@@ -38,7 +37,7 @@ const PostcodePopup = () => {
     <button
       type="button"
       onClick={handleClick}
-      className="text-xs bg-neutral-100 px-3 py-2"
+      className="text-xs bg-neutral-100 px-3 py-2 h-full w-full"
     >
       우편번호 검색
     </button>
