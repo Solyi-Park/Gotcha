@@ -1,5 +1,6 @@
 "use client";
 import PaymentButton from "@/components/buttons/PaymentButton";
+import { useCheckout } from "@/hooks/checkout";
 import { useCheckoutStore } from "@/store/checkout";
 import {
   loadTossPayments,
@@ -19,7 +20,7 @@ type Amount = {
 
 export default function Payments() {
   const { data: session } = useSession();
-  const { checkoutItems, getTotalPrice, getShippingCost } = useCheckoutStore(); // 체크아웃할 아이템들
+  const { checkoutItems, getTotalPrice, getShippingCost } = useCheckout(); // 체크아웃할 아이템들
 
   const totalAmount = (): number => {
     const totalPrice = getTotalPrice();
