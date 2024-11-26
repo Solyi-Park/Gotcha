@@ -14,7 +14,10 @@ export default function ActionButton({ product, type, title, onClick }: Props) {
   return (
     <button
       aria-label={title}
-      className={`border px-10 py-3 ${getButtonStyle(type, stockQuantity)}`}
+      className={`border px-10 py-3 w-full ${getButtonStyle(
+        type,
+        stockQuantity
+      )}`}
       onClick={onClick}
       disabled={stockQuantity === 0}
     >

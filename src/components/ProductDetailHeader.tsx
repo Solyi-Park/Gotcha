@@ -116,20 +116,15 @@ export default function ProductDetailHeader({ product }: Props) {
   };
 
   return (
-    <section className="flex flex-col sm:flex-row items-center min-h-96 justify-center">
-      <div className="relative w-96 object-cover aspect-square">
+    <section className="my-10 flex flex-col sm:flex-row min-w-96 items-start min-h-96 justify-center">
+      <div className="relative min-w-96 h-96 object-cover aspect-square">
         {thumbnailUrls && thumbnailUrls !== null && (
-          <Image
-            src={thumbnailUrls[0] || ""}
-            fill
-            alt="product thumbnail"
-            className="w-96 h-96 object-fill"
-          />
+          <Image src={thumbnailUrls[0] || ""} fill alt="product thumbnail" />
         )}
       </div>
-      <div className="bg-red-200 h-full mx-7">
+      <div className="h-full sm:mx-7 w-full">
         <div>
-          <div className="flex flex-col py-5 border-t-2 border-t-black border-b gap-5">
+          <div className="flex flex-col py-3 sm:border-t-2 sm:border-t-black gap-5">
             <CategoryPath large={large} medium={medium} small={small} />
             <div className="flex justify-between">
               <h2 className="text-lg font-semibold">{name}</h2>
@@ -138,24 +133,25 @@ export default function ProductDetailHeader({ product }: Props) {
             <button className="underline text-start">164개 리뷰 보기</button>
             <div className="flex justify-between">
               <div>
-                {discountRate && (
-                  <span className="line-through text-sm">
-                    {price.toLocaleString()}원
-                  </span>
-                )}
-                <div>
-                  {discountRate && <span>{discountRate}%</span>}
-                  <span className="font-bold text-xl">
+                <div className="font-bold text-xl">
+                  {discountRate && (
+                    <span className="text-rose-500 mr-2">{discountRate}%</span>
+                  )}
+                  <span>
                     {getDiscountedPrice(price, discountRate).toLocaleString()}원
                   </span>
                 </div>
+                {discountRate && (
+                  <span className="line-through text-sm text-neutral-400 font-semibold">
+                    {price.toLocaleString()}원
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </div>
-        <div>
+        <div className="mt-5">
           {/* TODO: 리뷰보기 클릭시 해당위치로 스크롤 이동 */}
-
           <ProductOptionsSelector product={product} />
           {!options && (
             <QuantityAdjuster
@@ -164,7 +160,7 @@ export default function ProductDetailHeader({ product }: Props) {
               quantity={quantity}
             />
           )}
-          <div className="flex gap-1">
+          <div className="flex w-full gap-1 mt-5">
             <ActionButton
               product={product}
               type="cart"

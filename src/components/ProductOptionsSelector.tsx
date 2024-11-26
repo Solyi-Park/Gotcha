@@ -100,9 +100,8 @@ export default function ProductOptionsSelector({ product }: Props) {
         {options &&
           options.map((option) => (
             <li key={option.name}>
-              <label htmlFor={option.name}>{option.name}</label>
               <select
-                className="text-gray-500"
+                className="text-gray-500 bg-white border p-2 w-full outline-none"
                 id={option.name}
                 value={
                   selectedOptions.find((opt) => opt.name === option.name)
@@ -110,7 +109,9 @@ export default function ProductOptionsSelector({ product }: Props) {
                 }
                 onChange={(e) => onChangeOptions(e, option)}
               >
-                <option value="">{option.name}</option>
+                <option value="" className="">
+                  {option.name}
+                </option>
                 {option.items.map((item) => (
                   <option value={item.value} key={item.value || ""}>
                     {item.value}
@@ -121,10 +122,13 @@ export default function ProductOptionsSelector({ product }: Props) {
           ))}
       </ul>
 
-      <ul className="flex flex-col">
+      <ul className="flex flex-col justify-center w-full sm:min-w-96">
         {cartOptions.map((option) => (
-          <li className="flex items-center" key={option.id}>
-            <span>
+          <li
+            className="flex items-center justify-between py-3 border-b last:border-b-0"
+            key={option.id}
+          >
+            <span className="font-semibold">
               {option.items.map((item) => `${item.value}`).join(" - ")}
             </span>
             <QuantityAdjuster
@@ -132,22 +136,28 @@ export default function ProductOptionsSelector({ product }: Props) {
               id={option.id}
               quantity={option.quantity}
             />
-            <button
-              className="px-2 py-1 border"
-              onClick={() => handleDeleteOption(option.id)}
-            >
-              삭제
-            </button>
-            <span className="ml-4">
-              {`${getDiscountedPrice(price, discountRate).toLocaleString()}원`}
-            </span>
+            <div>
+              <span className="mr-2 font-semibold">
+                {`${getDiscountedPrice(
+                  price,
+                  discountRate
+                ).toLocaleString()}원`}
+              </span>
+              <button
+                className="text-neutral-400 text-2xl px-2 "
+                onClick={() => handleDeleteOption(option.id)}
+              >
+                x
+              </button>
+            </div>
           </li>
         ))}
       </ul>
-
-      <div>
-        <h3>총 가격: {totalPrice.toLocaleString()}원</h3>
-      </div>
+      {totalPrice > 0 && (
+        <h3 className="mt-5 text-end pt-3 border-t-2 border-black">
+          총 가격: {totalPrice.toLocaleString()}원
+        </h3>
+      )}
     </>
   );
 }
