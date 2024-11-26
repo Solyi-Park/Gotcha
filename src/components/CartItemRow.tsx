@@ -88,13 +88,14 @@ export default function CartItemRow({
         )}
 
         {/* 상품 정보 */}
-        <div className="col-span-4 flex flex-col sm:gap-1 w-[200px]">
+        {/* TODO: 이미지와 겹치는 부분 수정 */}
+        <div className="col-span-4 flex flex-col sm:gap-1">
           <div className="flex justify-between">
             <Link href={`/products/${product?.id}`}>
               <span className="font-bold text-xl">{product?.name}</span>
             </Link>
             <button
-              className="text-xs border rounded-sm bg-white px-3"
+              className="text-xs border rounded-sm bg-white py-1 px-4"
               onClick={() => handleDeleteItem(id)}
             >
               삭제

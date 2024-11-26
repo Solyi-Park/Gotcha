@@ -96,7 +96,7 @@ export default function ProductOptionsSelector({ product }: Props) {
 
   return (
     <>
-      <ul>
+      <ul className="flex flex-col gap-2">
         {options &&
           options.map((option) => (
             <li key={option.name}>

@@ -4,7 +4,7 @@ import Link from "next/link";
 type Props = {
   onClick: () => void;
   disabled: boolean;
-  className: string;
+  className?: string;
 };
 
 export default function CheckOutButton({
