@@ -22,4 +22,4 @@ export const PROVIDER_LOGOS: Provider[] = [
   },
 ];
 
-export const PROVIDERS_NAME = PROVIDER_LOGOS.map((provider) => provider.name);
+export const PROVIDERS_NAMES = PROVIDER_LOGOS.map((provider) => provider.name);

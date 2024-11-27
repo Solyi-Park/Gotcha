@@ -29,7 +29,7 @@ export default async function SignInPage() {
   const csrfToken = (await getCsrfToken()) ?? "";
 
   return (
-    <section className="flex flex-col items-center gap-6 h-full justify-center">
+    <section className="flex flex-col items-center gap-3 sm:gap-6 mt-5 sm:mt-0 sm:h-full justify-center">
       <SigninForm csrfToken={csrfToken} />
       <div>
         <p>

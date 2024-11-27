@@ -12,13 +12,15 @@ export function getProviderIcon(providerName: string) {
   const provider = PROVIDER_LOGOS.find(
     (item) => item.name === providerName.toLowerCase()
   );
+  if (!provider) {
+    console.error(`Provider logo not found for: ${providerName}`);
+  }
 
   return provider?.activeImage;
 }
-
 export default function OAuthSignin({ providers, type }: Props) {
   return (
-    <div className="flex flex-col w-full gap-5">
+    <div className="flex flex-col w-full gap-3 sm:gap-5">
       <div className="flex w-full items-center justify-center my-4">
         <hr className="border-t  border-gray-300 flex-grow" />
         <span className="mx-4 text-gray-500">OR</span>
