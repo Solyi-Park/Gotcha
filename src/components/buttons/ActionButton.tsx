@@ -6,39 +6,37 @@ type Props = {
   type: ActionType;
   title: string;
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  stockQuantity: number;
 };
+
 type ActionType = "cart" | "buyNow";
 
-export default function ActionButton({ product, type, title, onClick }: Props) {
-  const { stockQuantity } = product;
+export default function ActionButton({
+  type,
+  title,
+  onClick,
+  stockQuantity,
+}: Props) {
+  if (type === "cart" && stockQuantity === 0) {
+    return null;
+  }
+
+  const isDisabled = type === "buyNow" && stockQuantity === 0;
+
   return (
     <button
       aria-label={title}
-      className={`border px-10 py-3 w-full ${getButtonStyle(
-        type,
-        stockQuantity
-      )}`}
+      className={`border px-10 py-3 w-full ${getButtonStyle(type, isDisabled)}`}
       onClick={onClick}
-      disabled={stockQuantity === 0}
+      disabled={isDisabled}
     >
-      {getText(type, stockQuantity)}
+      {title}
     </button>
   );
 }
 
-function getButtonStyle(type: ActionType, stockQuantity: number) {
-  switch (type) {
-    case "cart":
-      return `bg-white ${stockQuantity > 0 ? "block" : "hidden"}`;
-    case "buyNow":
-      return `text-white ${stockQuantity === 0 ? "bg-gray-300 " : "bg-black "}`;
-  }
-}
-function getText(type: ActionType, stockQuantity: number) {
-  switch (type) {
-    case "cart":
-      return "장바구니 담기";
-    case "buyNow":
-      return stockQuantity > 0 ? "바로 구매하기" : "품절";
-  }
+function getButtonStyle(type: ActionType, isDisabled: boolean): string {
+  if (isDisabled) return "bg-gray-300 text-white";
+
+  return type === "buyNow" ? "bg-black text-white" : "bg-white text-black";
 }

@@ -33,7 +33,7 @@ export default function RootLayout({
             </ReactQueryProvider>
           </main>
           <BottomNavBar />
-          <footer>footer</footer>
+          {/* <footer>footer</footer> */}
         </AuthContext>
       </body>
     </html>
