@@ -63,7 +63,7 @@ export async function saveOrderInfo(
     .insert(newOrder)
     .select();
 
-  console.log("orderResult", orderResult);
+  // console.log("orderResult", orderResult);
 
   if (error) {
     console.error("Error saving order information for user:", userId, error);
@@ -78,7 +78,7 @@ export async function saveOrderInfo(
       ...orderResult[0],
       items: orderItemsResult,
     };
-    console.log("주문정보 저장 완료!");
+    // console.log("주문정보 저장 완료!");
     return response;
   }
   return null;
@@ -107,7 +107,7 @@ export async function saveOrderItems(
   }
 
   if (data) {
-    console.log("주문 상품 데이터 저장완료! 주문한상품들:", data);
+    // console.log("주문 상품 데이터 저장완료! 주문한상품들:", data);
     return data;
   }
   return null;
@@ -134,7 +134,7 @@ export async function deleteOrderItems(orderId: string) {
 }
 
 export async function deleteOrderInfo(orderId: string) {
-  console.log("order 삭제호출");
+  // console.log("order 삭제호출");
   const itemsRes = await deleteOrderItems(orderId);
   if (itemsRes) {
     const { data, error } = await supabase
@@ -178,7 +178,7 @@ export async function updateOrderInfo(
     console.error(`No order found with ID: ${orderId}`);
     return null;
   }
-  console.log("업데이트된 주문 정보 =>", data);
+  // console.log("업데이트된 주문 정보 =>", data);
 
   return data[0];
 }
@@ -220,7 +220,7 @@ export async function cancelOrderItem(
   if (updateError) throw new Error(updateError.message);
 
   const res = await updateOrderStatus(orderId);
-  if (res) console.log("오더상태 수정 결과:", res);
+  // if (res) console.log("오더상태 수정 결과:", res);
   return res;
 }
 //여기: 취소수량 업데이트가 이상함.
@@ -236,7 +236,7 @@ export async function updateOrderStatus(orderId: string) {
     status: string;
   };
 
-  console.log("요아이템들 중에 업데이트 할겨, items:", items);
+  // console.log("요아이템들 중에 업데이트 할겨, items:", items);
   const allCanceled = items.every((item) => item.status === "CANCELED");
   const partiallyCanceled = items.some(
     (item) =>
@@ -265,7 +265,7 @@ export async function updateOrderStatus(orderId: string) {
     console.error(`No updated order found with ID: ${orderId}`);
     return null;
   }
-  console.log("updatedOrder", updatedOrder);
+  // console.log("updatedOrder", updatedOrder);
   return updatedOrder;
 }
 

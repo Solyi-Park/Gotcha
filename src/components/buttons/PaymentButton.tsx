@@ -46,7 +46,7 @@ export default function PaymentButton({
   const { shippingDetails, resetAll } = useShippingDetailStore();
 
   const [orderId, setOrderId] = useState<string | null>(null);
-  console.log("주문번호", orderId);
+  // console.log("주문번호", orderId);
 
   const handler = async () => {
     if (checkoutItems.length === 0) {
@@ -70,7 +70,7 @@ export default function PaymentButton({
 
       const orderResponse = await saveOrderData(requestData);
       const data = await orderResponse.json();
-      console.log("주문 정보 저장: ", data);
+      // console.log("주문 정보 저장: ", data);
       const orderId: string = data?.id; //타입
       setOrderId(orderId);
 

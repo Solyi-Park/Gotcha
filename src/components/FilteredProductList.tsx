@@ -34,6 +34,6 @@ export default function FilteredProductList({
     ...products,
     ...products,
   ];
-  console.log("products data???", products);
+  // console.log("products data???", products);
   return <ProductListGrid products={productList} />;
 }

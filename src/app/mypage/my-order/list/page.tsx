@@ -36,7 +36,7 @@ export default function OrderListPage() {
     queryFn: async () => fetchOrderData(user?.id),
   });
 
-  console.log("orders", orders);
+  // console.log("orders", orders);
 
   return (
     <div className="sm:min-w-[640px]">

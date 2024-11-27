@@ -36,7 +36,7 @@ export default function MyOrderDetailPage() {
     queryKey: ["orderId", orderId],
     queryFn: async () => await fetchOrderData(orderId),
   });
-  console.log("data", order);
+  // console.log("data", order);
 
   const isCanceled =
     order?.cancellationStatus === "CANCELED" ||

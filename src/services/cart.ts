@@ -15,7 +15,7 @@ type CartResponse = {
 export async function addProductsToCart(
   newCartItems: NewCartItem[]
 ): Promise<CartResponse[]> {
-  console.log("newCartItems장바구니에 넣을거여", newCartItems);
+  // console.log("newCartItems장바구니에 넣을거여", newCartItems);
   const res = await Promise.all(
     newCartItems.map(async (opt) => {
       const { data: existingCart, error: selectError } = await supabase
@@ -34,7 +34,7 @@ export async function addProductsToCart(
       }
 
       if (existingCart) {
-        console.log("똑같은 거 있어!", existingCart);
+        // console.log("똑같은 거 있어!", existingCart);
         const { data: updatedCart, error: updateError } = await supabase
           .from("carts")
           .update({
@@ -72,7 +72,7 @@ export async function addProductsToCart(
       return data as CartResponse;
     })
   );
-  console.log("장바구니에 담았어", res);
+  // console.log("장바구니에 담았어", res);
 
   return res;
 }
@@ -116,7 +116,7 @@ export async function clearCart(orderId: string) {
   if (items && items.length > 0) {
     for (const item of items) {
       const { productId, options } = item;
-      console.log("item", item.productId, JSON.stringify(options));
+      // console.log("item", item.productId, JSON.stringify(options));
 
       const { error } = await supabase
         .from("carts")

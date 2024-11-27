@@ -12,7 +12,7 @@ type Props = {
   isLoading: boolean;
 };
 export default function CancelList({ order, isLoading }: Props) {
-  console.log("order정보", order?.items);
+  // console.log("order정보", order?.items);
 
   const router = useRouter();
 

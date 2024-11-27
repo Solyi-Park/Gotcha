@@ -5,7 +5,7 @@ import { getDiscountedPrice } from "@/utils/calculate";
 
 export default function useCheckout() {
   const checkoutItems = useCheckoutStore((state) => state.checkoutItems);
-  console.log("checkoutItems 스토어", checkoutItems);
+  // console.log("checkoutItems 스토어", checkoutItems);
 
   const getTotalPrice = () => {
     return checkoutItems.reduce((acc, item) => {

@@ -7,7 +7,7 @@ export default function PaymentSummary() {
     getShippingCost,
     getTotalPaymentAmount,
   } = useCheckout();
-  console.log("checkoutItems ?", checkoutItems);
+  // console.log("checkoutItems ?", checkoutItems);
   return (
     <section className="flex flex-col w-full border-y-2 mt-5 border-black px-3">
       <h2 className="font-bold py-5 border-b text-lg">결제금액</h2>

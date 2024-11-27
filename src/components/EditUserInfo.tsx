@@ -34,7 +34,7 @@ async function changePassword(newPassword: string) {
 
 export default function EditUserInfo() {
   const { user } = useMe();
-  console.log("me", user);
+  // console.log("me", user);
 
   const [isPasswordEditing, setPasswordIsEditing] = useState(false);
   const [isPhoneNumberEditing, setPhoneNumberIsEditing] = useState(false);
@@ -188,7 +188,7 @@ export default function EditUserInfo() {
       return;
     }
 
-    console.log("addressData", addressData);
+    // console.log("addressData", addressData);
     try {
       const res = await fetch("/api/auth/user/address", {
         method: "POST",

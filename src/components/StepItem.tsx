@@ -5,12 +5,12 @@ import { useSearchParams } from "next/navigation";
 type Props = {
   step?: string;
   title: string;
-  status: OrderStatus;
+  status?: OrderStatus | undefined;
 };
 export default function StepItem({ step, title, status }: Props) {
   const params = useSearchParams();
   const funnelStep = params.get("funnel-step") as string;
-  console.log(formatOrderStatus(status));
+
   const isCurrentStep = formatOrderStatus(status) === title;
   return (
     <div

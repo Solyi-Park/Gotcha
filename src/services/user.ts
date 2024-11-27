@@ -33,7 +33,7 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
   }
 
   if (existingUser) {
-    console.log("이미 존재하는 사용자:", existingUser);
+    // console.log("이미 존재하는 사용자:", existingUser);
     return existingUser;
   }
 
@@ -63,7 +63,7 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
   }
 
   if (data && data.length > 0) {
-    console.log("새 사용자:", data[0]);
+    // console.log("새 사용자:", data[0]);
     return data[0];
   }
 
@@ -71,8 +71,8 @@ export async function addUser(user: NewUser): Promise<FullUser | null> {
 }
 //TODO:이메일로 찾는 로직, id로 찾는로직 분리하기.
 export async function findUser(email: string | null | undefined, id?: string) {
-  console.log("email:", email);
-  console.log("id:", id);
+  // console.log("email:", email);
+  // console.log("id:", id);
 
   const { data, error } = await supabase
     .from("users")
@@ -96,14 +96,14 @@ export async function checkIfEmailExists(email: string) {
     throw new Error(error.message);
   }
   if (data && data.length > 0) {
-    console.log("checkIfEmailExists?", data);
+    // console.log("checkIfEmailExists?", data);
     return data[0];
   }
   return null;
 }
 
 export async function checkIfPhoneNumberExists(phoneNumber: string) {
-  console.log("phoneNumber", phoneNumber);
+  // console.log("phoneNumber", phoneNumber);
   const { data, error } = await supabase
     .from("users")
     .select()
@@ -113,14 +113,14 @@ export async function checkIfPhoneNumberExists(phoneNumber: string) {
     throw new Error(error.message);
   }
   if (data && data.length > 0) {
-    console.log("checkIfPhoneNumberExists?", data);
+    // console.log("checkIfPhoneNumberExists?", data);
     return data[0];
   }
   return null;
 }
 
 export async function getUser(userId: string) {
-  console.log("userId", userId);
+  // console.log("userId", userId);
   if (!userId) {
     console.error("userId가 필요합니다.");
     return null;
@@ -214,7 +214,7 @@ export async function changePhoneNumber(
 
 export async function changeEmail(userId: string, newEmail: string) {
   const userExists = await checkIfEmailExists(newEmail);
-  console.log("userExists", userExists);
+  // console.log("userExists", userExists);
   if (userExists) {
     throw new Error("이미 등록된 이메일입니다.");
   }

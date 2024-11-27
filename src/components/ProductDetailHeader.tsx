@@ -98,7 +98,7 @@ export default function ProductDetailHeader({ product }: Props) {
               },
             },
           ];
-      console.log("장바구니에 넣을라고", newCartItems);
+      // console.log("장바구니에 넣을라고", newCartItems);
       const res = await addProductToCart(newCartItems);
       if (res.ok) {
         // TODO: 커스텀 모달: 장바구니 바로가기 버튼
@@ -107,6 +107,7 @@ export default function ProductDetailHeader({ product }: Props) {
         queryClient.invalidateQueries({ queryKey: ["userCart", user?.id] });
         alert("장바구니에 상품이 담겼습니다.");
       }
+      //TODO: 페이지 이탈시 장바구니 리셋되도록 수정(현재 전역상태사용중)
       resetOption();
     }
   };

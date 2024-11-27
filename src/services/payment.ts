@@ -32,10 +32,10 @@ export async function confirmPayment(
     console.error("결제 확인 실패:", result);
     // throw new Error(result.message || "Payment confirmation failed");
   }
-  console.log("[payment result]", result);
+  // console.log("[payment result]", result);
 
   const data = await validatePayment(orderId, paymentKey, amount);
-  console.log("validatePayment 결과:", data); // 추가 로그
+  // console.log("validatePayment 결과:", data); // 추가 로그
 
   const payment: PaymentInput = {
     paymentKey: result.paymentKey,
@@ -52,10 +52,10 @@ export async function confirmPayment(
   };
 
   const paymentSaveResult = await savePaymentResult(payment);
-  console.log("paymentSave 결과", paymentSaveResult);
+  // console.log("paymentSave 결과", paymentSaveResult);
 
   const updatedOrderinfo = await updateOrderInfo(orderId, paymentKey, "PAID");
-  console.log("updatedOrderinfo", updatedOrderinfo);
+  // console.log("updatedOrderinfo", updatedOrderinfo);
 
   return paymentSaveResult;
 }
@@ -72,7 +72,7 @@ export const getPaymentDetails = async (paymentKey: string) => {
   );
 
   const result = await response.json();
-  console.log("getPaymentDetails", result);
+  // console.log("getPaymentDetails", result);
 
   if (!response.ok) {
     throw new Error(result.message || "Failed to retrieve payment details");
@@ -151,7 +151,7 @@ export const cancelPayment = async (
   }
 
   const result = await response.json();
-  console.log("결제취소결과:", result);
+  // console.log("결제취소결과:", result);
 
   if (!result.cancels || result.cancels.length === 0) {
     throw new Error("Invalid response: 'cancels' data is missing.");
@@ -194,7 +194,7 @@ export async function saveCancelResult(
       );
     }
 
-    console.log("업데이트된 취소 데이터:", updatedCancels);
+    // console.log("업데이트된 취소 데이터:", updatedCancels);
     return updatedCancels;
   } catch (error: any) {
     console.error("Error saving cancel result:", error.message);
@@ -214,7 +214,7 @@ export async function getCancelDataByPaymentKey(paymentKey: string) {
 }
 
 export async function getPayment(paymentKey: string): Promise<Payment | null> {
-  console.log("결제키", paymentKey);
+  // console.log("결제키", paymentKey);
   const { data, error } = await supabase
     .from("payments")
     .select()
@@ -224,7 +224,7 @@ export async function getPayment(paymentKey: string): Promise<Payment | null> {
     throw new Error(error.message);
   }
   if (data) {
-    console.log("결제정보>>>", data);
+    // console.log("결제정보>>>", data);
     return data;
   }
   return null;
