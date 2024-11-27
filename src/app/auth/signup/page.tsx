@@ -23,7 +23,7 @@ export default async function SignupPage() {
   const csrfToken = (await getCsrfToken()) ?? "";
 
   return (
-    <section className="flex flex-col gap-4 w-full items-center h-full justify-center">
+    <section className="flex flex-col gap-4 w-full items-center sm:h-full justify-center">
       <SignupForm csrfToken={csrfToken} />
       <div className="w-[320px]">
         <OAuthSignin providers={filteredProviders} type="signup" />

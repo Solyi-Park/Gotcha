@@ -1,4 +1,4 @@
-import { CartItemRowType } from "@/model/cart";
+import { CartItem, CartItemRowType } from "@/model/cart";
 import Image from "next/image";
 import { getDiscountedPrice } from "@/utils/calculate";
 import Link from "next/link";
@@ -13,61 +13,18 @@ type Props = {
   isChecked: boolean;
   onCheck: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onUpdateQuantity: (delta: number) => void;
+  onDelete: () => void;
 };
-
-async function updateCartItemQuantity(itemId: string, quantity: number) {
-  return await fetch("/api/cart", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ itemId, quantity }),
-  });
-}
-
-async function deleteCartItem(itemId: string) {
-  return await fetch(`/api/cart?itemId=${itemId}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-  });
-}
 
 export default function CartItemRow({
   item,
   isChecked,
   onCheck,
   onUpdateQuantity,
+  onDelete,
 }: Props) {
-  const { option, product, userId, id } = item;
-  const [localQuantity, setLocalQuantity] = useState(item.quantity);
+  const { product, option, quantity } = item;
 
-  const { updateQuantity, deleteItem } = useCartStore();
-  const queryClient = useQueryClient();
-  //로컬에 상태가 필요한가?
-
-  // TODO: 쓰로틀링
-  const handleUpdateQuantity = async (delta: number) => {
-    const newQuantity = localQuantity + delta;
-    if (newQuantity > 0) {
-      setLocalQuantity(newQuantity);
-      onUpdateQuantity(delta);
-
-      const res = await updateCartItemQuantity(item.id, newQuantity);
-      if (res.ok) {
-        updateQuantity(item.id, delta);
-        queryClient.invalidateQueries({ queryKey: ["cartItems", userId] });
-        queryClient.invalidateQueries({ queryKey: ["userCart", userId] });
-      }
-    }
-  };
-
-  const handleDeleteItem = async (itemId: string) => {
-    const res = await deleteCartItem(itemId);
-
-    if (res.ok) {
-      deleteItem(itemId);
-      queryClient.invalidateQueries({ queryKey: ["cartItems", userId] });
-      queryClient.invalidateQueries({ queryKey: ["userCart", userId] });
-    }
-  };
   return (
     <div className="w-full py-2">
       {/* sm 이상 레이아웃 */}
@@ -75,9 +32,9 @@ export default function CartItemRow({
         {/* 이미지 */}
         {product && (
           <div className="col-span-2 w-28 h-28 relative aspect-square">
-            <Link href={`/products/${product?.id}`}>
+            <Link href={`/products/${product.id}`}>
               <Image
-                src={product?.thumbnailUrls[0]}
+                src={product.thumbnailUrls[0]}
                 alt="cart item thumbnail"
                 fill
                 priority
@@ -88,63 +45,59 @@ export default function CartItemRow({
         )}
 
         {/* 상품 정보 */}
-        {/* TODO: 이미지와 겹치는 부분 수정 */}
         <div className="col-span-4 flex flex-col sm:gap-1">
           <div className="flex justify-between">
-            <Link href={`/products/${product?.id}`}>
-              <span className="font-bold text-xl">{product?.name}</span>
+            <Link href={`/products/${product.id}`}>
+              <span className="font-bold text-xl">{product.name}</span>
             </Link>
             <button
               className="text-xs border rounded-sm bg-white py-1 px-4"
-              onClick={() => handleDeleteItem(id)}
+              onClick={onDelete}
             >
               삭제
             </button>
           </div>
-          <span
-            className={`${product?.discountRate && "line-through"} text-sm`}
-          >
-            {product?.price.toLocaleString() || 0}원
+          <span className={`${product.discountRate && "line-through"} text-sm`}>
+            {product.price.toLocaleString()}원
           </span>
-          {product?.discountRate && (
+          {product.discountRate && (
             <p className="text-rose-500 text-sm">
               <span className="mr-1">[{product.discountRate}%]</span>
               <span>
                 {getDiscountedPrice(
-                  product?.price,
-                  product?.discountRate
-                ).toLocaleString() || 0}
+                  product.price,
+                  product.discountRate
+                ).toLocaleString()}
                 원
               </span>
             </p>
           )}
           <ul className="text-xs text-gray-700">
-            {option &&
-              "items" in option &&
-              option.items.map((opt) => (
-                <li className="flex " key={`${opt.name}${opt.value}`}>
-                  <span className="mr-1">옵션:</span>
-                  <span>{`[${opt.name}] ${opt.value}`}</span>
-                </li>
-              ))}
+            {option?.items.map((opt) => (
+              <li className="flex" key={`${opt.name}${opt.value}`}>
+                <span className="mr-1">옵션:</span>
+                <span>{`[${opt.name}] ${opt.value}`}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* 수량 */}
         <div className="col-span-3 flex items-center justify-center">
           <QuantityAdjuster
-            id={item.id}
-            quantity={localQuantity}
-            onClick={handleUpdateQuantity}
+            id={item.productId}
+            quantity={quantity}
+            onClick={(delta) => {
+              onUpdateQuantity(delta);
+            }}
           />
         </div>
 
         {/* 주문 금액 */}
         <div className="col-span-3 text-center font-bold text-lg">
           {(
-            localQuantity *
-            getDiscountedPrice(product?.price, product?.discountRate)
-          ).toLocaleString() || 0}
+            quantity * getDiscountedPrice(product.price, product.discountRate)
+          ).toLocaleString()}
           원
         </div>
       </div>
@@ -161,7 +114,7 @@ export default function CartItemRow({
           />
           <button
             className="text-xs border rounded-sm bg-white py-1 px-4"
-            onClick={() => handleDeleteItem(id)}
+            onClick={onDelete}
           >
             삭제
           </button>
@@ -169,25 +122,24 @@ export default function CartItemRow({
 
         {/* 두 번째 행: 상품 정보와 이미지 */}
         <div className="flex justify-between items-start">
-          {/* 상품 정보 */}
           <div className="flex-1 flex flex-col gap-1">
-            <Link href={`/products/${product?.id}`}>
-              <span className="font-bold text-lg">{product?.name}</span>
+            <Link href={`/products/${product.id}`}>
+              <span className="font-bold text-lg">{product.name}</span>
             </Link>
             <span
-              className={`${product?.discountRate && "line-through"} text-sm`}
+              className={`${product.discountRate && "line-through"} text-sm`}
             >
-              {product?.price.toLocaleString() || 0}원
+              {product.price.toLocaleString()}원
             </span>
             <p className="text-rose-500 text-sm">
-              {product?.discountRate && (
+              {product.discountRate && (
                 <>
                   <span className="mr-1">[{product.discountRate}%]</span>
                   <span>
                     {getDiscountedPrice(
-                      product?.price,
-                      product?.discountRate
-                    ).toLocaleString() || 0}
+                      product.price,
+                      product.discountRate
+                    ).toLocaleString()}
                     원
                   </span>
                 </>
@@ -202,11 +154,10 @@ export default function CartItemRow({
               ))}
             </ul>
           </div>
-          {/* 이미지 */}
           <div className="w-28 h-28 relative">
-            <Link href={`/products/${product?.id}`}>
+            <Link href={`/products/${product.id}`}>
               <Image
-                src={product?.thumbnailUrls[0]}
+                src={product.thumbnailUrls[0]}
                 alt="cart item thumbnail"
                 fill
                 className="object-cover"
@@ -219,9 +170,11 @@ export default function CartItemRow({
         {/* 세 번째 행: 수량 조절 */}
         <div className="flex sm:justify-center justify-start">
           <QuantityAdjuster
-            id={item.id}
-            quantity={localQuantity}
-            onClick={handleUpdateQuantity}
+            id={item.productId}
+            quantity={quantity}
+            onClick={(delta) => {
+              onUpdateQuantity(delta);
+            }}
           />
         </div>
       </div>

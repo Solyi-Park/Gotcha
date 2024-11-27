@@ -1,21 +1,16 @@
 "use client";
+
 import { CartItem, CartItemRowType } from "@/model/cart";
-import { FullUser } from "@/model/user";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import CartItemRow from "./CartItemRow";
-import { SimpleProduct } from "@/model/product";
-import { getDiscountedPrice } from "@/utils/calculate";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/store/cart";
 import ContinueShoppingButton from "./buttons/ContinueShoppingButton";
 import CheckOutButton from "./buttons/CheckOutButton";
 import { useRouter } from "next/navigation";
-import { useCheckoutStore } from "@/store/checkout";
-
-type Props = {
-  user: FullUser;
-  userCartData: CartItem[];
-};
+import { getDiscountedPrice } from "@/utils/calculate";
+import { useQuery } from "@tanstack/react-query";
+import { FullProduct } from "@/model/product";
+import { useSession } from "next-auth/react";
 
 async function getProductsByIds(productIds: string[]) {
   const uniqueProductIds = Array.from(new Set(productIds));
@@ -24,106 +19,97 @@ async function getProductsByIds(productIds: string[]) {
   }).then((res) => res.json());
 }
 
-export default function CartDetails({ user, userCartData }: Props) {
+export default function CartDetails() {
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const router = useRouter();
+  const { cartItems, updateQuantity, removeItem } = useCartStore();
+  const [cartWithProductData, setCartWithProductData] = useState<
+    CartItemRowType[]
+  >([]);
   const [checkedItems, setCheckedItems] = useState<CartItemRowType[]>([]);
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [totalOrderPrice, setTotalOrderPrice] = useState(0);
 
-  const { userCart, setUserCart } = useCartStore();
-  const { setCheckoutItems } = useCheckoutStore();
-  const queryClient = useQueryClient();
-  const router = useRouter();
+  const productIds = cartItems.map((item) => item.productId);
 
-  const productIds = userCartData.map((item) => item.productId);
-
-  const {
-    data: products,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["cartItems", user.id],
+  const { data: products } = useQuery({
+    queryKey: ["productsForCart"],
     queryFn: async () => await getProductsByIds(productIds),
-    staleTime: 1000 * 60 * 30, // TODO: 수정
   });
 
   useEffect(() => {
-    const cartItems: CartItemRowType[] = userCartData.map((item) => {
-      const productData: SimpleProduct = products?.find(
-        (product: SimpleProduct) => product?.id === item.productId
-      );
-      return {
-        ...item,
-        product: productData,
+    if (products) {
+      const fetchProductData = async () => {
+        const mergedData: CartItemRowType[] = cartItems.map((item) => {
+          const product = products.find(
+            (p: FullProduct) => p.id === item.productId
+          );
+          if (!product)
+            throw new Error(`Product not found for ID: ${item.productId}`);
+          return { ...item, product };
+        });
+        setCartWithProductData(mergedData);
+        setCheckedItems(mergedData);
       };
-    });
 
-    const sortedCartItems = cartItems.sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return dateB.getTime() - dateA.getTime();
-    });
-    setUserCart(sortedCartItems);
-    queryClient.invalidateQueries({ queryKey: ["cartItems", user.id] });
-  }, [userCartData, products, setUserCart]);
+      fetchProductData();
+    }
+  }, [products, cartItems]);
 
   useEffect(() => {
-    const newTotalOrderPrice = checkedItems.reduce((total, item) => {
-      const itemPrice =
-        item.product &&
+    const totalPrice = checkedItems.reduce(
+      (acc, item) =>
+        acc +
         item.quantity *
-          getDiscountedPrice(item.product.price, item.product.discountRate);
-      return total + itemPrice;
-    }, 0);
-
-    setTotalOrderPrice(newTotalOrderPrice);
+          (item.product.discountRate
+            ? getDiscountedPrice(item.product.price, item.product.discountRate)
+            : item.product.price),
+      0
+    );
+    setTotalOrderPrice(totalPrice);
   }, [checkedItems]);
 
-  const shippingFee =
-    totalOrderPrice > 0 ? (totalOrderPrice >= 70000 ? 0 : 3500) : 0;
-  const totalPaymentAmount = totalOrderPrice + shippingFee;
-
+  // 전체 선택/해제 핸들러
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setIsAllChecked(checked);
-    setCheckedItems(checked ? [...userCart] : []);
+    setCheckedItems(checked ? [...cartWithProductData] : []);
   };
 
+  // 개별 체크박스 핸들러
   const handleCheck = (
     e: React.ChangeEvent<HTMLInputElement>,
     item: CartItemRowType
   ) => {
     const checked = e.target.checked;
     setCheckedItems((prev) =>
-      checked ? [...prev, item] : prev.filter((i) => i.id !== item.id)
+      checked
+        ? [...prev, item]
+        : prev.filter((i) => i.productId !== item.productId)
     );
   };
 
-  const handleUpdateQuantity = (item: CartItemRowType, delta: number) => {
-    const newQuantity = item.quantity + delta;
-
-    if (newQuantity > 0) {
-      const updatedItem = { ...item, quantity: newQuantity };
-      setCheckedItems((prev) =>
-        prev.map((checkedItem) =>
-          checkedItem.id === item.id ? updatedItem : checkedItem
-        )
-      );
-      const updated = userCart.map((cartItem) =>
-        cartItem.id === item.id ? updatedItem : cartItem
-      );
-      setUserCart(updated);
-
-      queryClient.setQueryData(["cartItems", user.id], (old: any) =>
-        old?.map((cartItem: CartItemRowType) =>
-          cartItem.id === item.id ? updatedItem : cartItem
-        )
-      );
-    }
+  // 수량 변경 핸들러
+  const handleUpdateQuantity = (id: string, delta: number) => {
+    updateQuantity(id, delta);
+    setCheckedItems((prev) =>
+      prev.map((item) =>
+        item.productId === id
+          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          : item
+      )
+    );
   };
+
+  const shippingFee =
+    totalOrderPrice > 0 ? (totalOrderPrice > 70000 ? 0 : 3000) : 0;
+  const totalPaymentAmount = totalOrderPrice + shippingFee;
 
   return (
     <>
-      <section className="hidden sm:grid sm:grid-cols-12 w-full border-y border-t-[3px] border-black  py-3 font-semibold px-2">
+      <section className="hidden sm:grid sm:grid-cols-12 w-full border-y border-t-[3px] border-black py-3 font-semibold px-2">
         <input
           type="checkbox"
           checked={isAllChecked}
@@ -132,7 +118,7 @@ export default function CartDetails({ user, userCartData }: Props) {
         />
         <div className="col-span-5 text-center">상품정보</div>
         <div className="col-span-3 text-center">수량</div>
-        <div className="col-span-3  text-center">주문금액</div>
+        <div className="col-span-3 text-center">주문금액</div>
       </section>
       <div className="sm:hidden flex gap-2 border-b-[3px] pb-3 border-black">
         <input
@@ -144,32 +130,30 @@ export default function CartDetails({ user, userCartData }: Props) {
         <span>전체선택</span>
       </div>
       <ul className="w-full">
-        {!isLoading &&
-          products &&
-          userCart &&
-          userCart.map((item, index) => (
-            <li
-              className="flex px-2 items-center w-full border-b last:border-0"
-              key={`${item.id}-${index}`}
-            >
-              <input
-                type="checkbox"
-                checked={checkedItems.some((i) => i.id === item.id)}
-                onChange={(e) => handleCheck(e, item)}
-                className="w-5 h-5 mr-5 hidden sm:block"
-              />
-              {item.product && (
-                <CartItemRow
-                  item={item}
-                  isChecked={checkedItems.some((i) => i.id === item.id)}
-                  onCheck={(e) => handleCheck(e, item)}
-                  onUpdateQuantity={(delta) =>
-                    handleUpdateQuantity(item, delta)
-                  }
-                />
+        {cartWithProductData.map((item) => (
+          <li
+            className="flex px-2 items-center w-full border-b last:border-0"
+            key={item.productId}
+          >
+            <input
+              type="checkbox"
+              checked={checkedItems.some((i) => i.productId === item.productId)}
+              onChange={(e) => handleCheck(e, item)}
+              className="w-5 h-5 mr-5 hidden sm:block"
+            />
+            <CartItemRow
+              item={item}
+              isChecked={checkedItems.some(
+                (i) => i.productId === item.productId
               )}
-            </li>
-          ))}
+              onCheck={(e) => handleCheck(e, item)}
+              onUpdateQuantity={(delta) =>
+                handleUpdateQuantity(item.productId, delta)
+              }
+              onDelete={() => removeItem(item.productId)}
+            />
+          </li>
+        ))}
       </ul>
       <div>
         <div className="grid grid-cols-12 text-center text-sm font-bold border-y border-t-black border-t-[3px] py-4">
@@ -182,7 +166,7 @@ export default function CartDetails({ user, userCartData }: Props) {
             {totalOrderPrice.toLocaleString()}원
           </div>
           <div className="col-span-4 text-lg font-bold">
-            {shippingFee.toLocaleString()}원
+            {totalOrderPrice > 0 ? shippingFee.toLocaleString() : 0}원
           </div>
           <div className="col-span-4 text-lg font-bold">
             {totalPaymentAmount.toLocaleString()}원
@@ -193,8 +177,11 @@ export default function CartDetails({ user, userCartData }: Props) {
         <ContinueShoppingButton />
         <CheckOutButton
           onClick={() => {
+            if (!user) {
+              alert("로그인 후 이용해주세요!");
+              return;
+            }
             router.push("/checkout");
-            setCheckoutItems(checkedItems);
           }}
           disabled={checkedItems.length === 0}
         />

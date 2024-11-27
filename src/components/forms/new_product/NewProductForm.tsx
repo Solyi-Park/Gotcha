@@ -42,7 +42,7 @@ export default function NewProductForm() {
 
   //TODO: db에서 상품정보가 없어지면 storage에 저장된 이미지 어떻게 처리할지 생각해보기
   const { imageUrls, isUploading, error } = useImageUpload(productImagefiles);
-  // console.log("imageUrls", imageUrls);
+  console.log("imageUrls", imageUrls);
 
   const categoryCode = useCategoryCode(
     largeCategory,
