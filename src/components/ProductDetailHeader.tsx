@@ -107,12 +107,13 @@ export default function ProductDetailHeader({ product }: Props) {
         queryClient.invalidateQueries({ queryKey: ["userCart", user?.id] });
         alert("장바구니에 상품이 담겼습니다.");
       }
+      //TODO: 페이지 이탈시 장바구니 리셋되도록 수정(현재 전역상태사용중)
       resetOption();
     }
   };
 
   const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {
-    // console.log("서비스 준비중입니다!");
+    console.log("서비스 준비중입니다!");
   };
 
   return (
