@@ -33,9 +33,42 @@ export default function OAuthSignin({ providers, type }: Props) {
           </Link>
         </p>
       )}
-
       <ul className="flex items-center justify-center gap-6">
-        {Object.values(providers).map(({ name, id }) => (
+        <li key="google">
+          <button onClick={() => signIn("google")}>
+            <div className="relative w-10 h-10">
+              <img
+                src={getProviderIcon("Google")}
+                className="object-cover"
+                alt="Google Logo"
+              />
+            </div>
+          </button>
+        </li>
+        <li key="kakao">
+          <button onClick={() => signIn("kakao")}>
+            <div className="relative w-10 h-10">
+              <img
+                src={getProviderIcon("Kakao")}
+                className="object-cover"
+                alt="Kakao Logo"
+              />
+            </div>
+          </button>
+        </li>
+        <li key="naver">
+          <button onClick={() => signIn("naver")}>
+            <div className="relative w-10 h-10">
+              <img
+                src={getProviderIcon("Naver")}
+                className="object-cover"
+                alt="Naver Logo"
+              />
+            </div>
+          </button>
+        </li>
+
+        {/* {Object.values(providers).map(({ name, id }) => (
           <button key={name} onClick={() => signIn(id)}>
             <div className="relative w-10 h-10">
               <img
@@ -45,7 +78,7 @@ export default function OAuthSignin({ providers, type }: Props) {
               />
             </div>
           </button>
-        ))}
+        ))} */}
       </ul>
     </div>
   );
