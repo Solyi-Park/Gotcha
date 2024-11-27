@@ -19,7 +19,7 @@ export type FullProduct = {
   stockQuantity: number;
   thumbnailUrls: string[];
   updatedAt: string;
-  options: CartItemOption[];
+  options: ProductOption[];
   tags: string[];
   likeCount: number;
   likes: string[];
