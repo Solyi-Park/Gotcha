@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function ShippingInfo({ order }: Props) {
-  console.log("order>>", order);
+  // console.log("order>>", order);
   return (
     <section>
       <SectionTitle title="배송지정보" />

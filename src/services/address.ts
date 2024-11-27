@@ -35,7 +35,7 @@ export async function updateAddress(
     throw new Error(error.message);
   }
   if (data) {
-    console.log("주소 저장완료", data);
+    // console.log("주소 저장완료", data);
     return data;
   }
 

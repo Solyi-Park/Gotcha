@@ -46,7 +46,7 @@ export default function ConfirmCancelDetail({ order }: Props) {
   const router = useRouter();
   const { selectedItems, cancelReason, cancelReasonDetail, resetState } =
     useCancelStore();
-  console.log("현재 선택된 취소목록", selectedItems);
+  // console.log("현재 선택된 취소목록", selectedItems);
   const filteredItems = order.items
     .filter((item) => selectedItems[item.id] !== undefined)
     .map((item) => ({
@@ -78,7 +78,7 @@ export default function ConfirmCancelDetail({ order }: Props) {
         cancelAmount
       );
       // console.log("cancelRes", cancelRes);
-      console.log("취소요청 응답", cancelRes.message);
+      // console.log("취소요청 응답", cancelRes.message);
 
       const updateResponses = await Promise.all(
         filteredItems.map((item) =>
@@ -95,7 +95,7 @@ export default function ConfirmCancelDetail({ order }: Props) {
         throw new Error("주문 상태 업데이트 중 일부가 실패했습니다.");
       }
 
-      console.log("모든 아이템 상태 업데이트 성공:", updateResponses);
+      // console.log("모든 아이템 상태 업데이트 성공:", updateResponses);
       // TODO: /funnel-step=완료 화면으로 이동
       router.push(`/mypage/my-order/cancel/${order.id}?funnel-step=완료`);
     } catch (error: any) {

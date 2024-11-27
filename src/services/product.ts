@@ -23,7 +23,7 @@ export async function addProduct(
     return null;
   }
   if (data && data.length > 0) {
-    console.log("New product data:", data);
+    // console.log("New product data:", data);
     return data;
   }
   return null;
@@ -118,7 +118,7 @@ export async function getProductsByIds(
     console.error(error);
   }
   if (!products || products.length === 0) {
-    console.log("해당 아이디로 상품을 찾을 수 없음.");
+    // console.log("해당 아이디로 상품을 찾을 수 없음.");
     return null;
   }
   return products;
@@ -130,8 +130,8 @@ export async function getProductsByCode(
   mediumCode: string | null,
   smallCode: string | null
 ): Promise<FullProduct[]> {
-  console.log("mediumCode", mediumCode);
-  console.log("smallCode", smallCode);
+  // console.log("mediumCode", mediumCode);
+  // console.log("smallCode", smallCode);
   let query = supabase.from("products").select("*");
 
   if (smallCode) {
@@ -186,8 +186,8 @@ export async function updateLikes(
   productId: string,
   userId: string
 ): Promise<LikeData | null> {
-  console.log(`userId: ${userId}`);
-  console.log(`productId: ${productId}`);
+  // console.log(`userId: ${userId}`);
+  // console.log(`productId: ${productId}`);
 
   const { data, error: productError } = await supabase
     .from("products")
@@ -224,7 +224,7 @@ export async function updateLikes(
   }
 
   if (updateData) {
-    console.log("update했엉", updateData);
+    // console.log("update했엉", updateData);
     return updateData[0] as FullProduct;
   }
   return null;
@@ -233,7 +233,7 @@ export async function updateLikes(
 export async function getLikedProductsOfUser(
   userId: string
 ): Promise<FullProduct[] | null> {
-  console.log("현재사용자", userId);
+  // console.log("현재사용자", userId);
   const { data, error } = await supabase
     .from("products")
     .select()

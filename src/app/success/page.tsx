@@ -54,14 +54,14 @@ export default function SuccessPage() {
           throw new Error(json.message || "결제 실패");
         }
 
-        console.log("paymentResult", json);
+        // console.log("paymentResult", json);
         setPaymentResult(json);
 
         await clearCart(json.orderId);
 
         // router.push(`/confirmed/${json.orderId}`);
       } catch (error) {
-        console.error("결제 실패:", error);
+        // console.error("결제 실패:", error);
         //TODO: 결제 실패 페이지
         // router.push(`/fail?message=${error}`);
       } finally {
@@ -81,7 +81,7 @@ export default function SuccessPage() {
     queryFn: async () => fetchOrderData(paymentResult?.orderId!),
     enabled: !!paymentResult?.orderId,
   });
-  console.log("order?", order.payments);
+  // console.log("order?", order.payments);
 
   if (loading) {
     return (

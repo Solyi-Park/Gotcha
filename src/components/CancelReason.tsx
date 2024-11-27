@@ -23,8 +23,8 @@ export default function CancelReason({ orderId }: Props) {
     setCancelReasonDetail,
   } = useCancelStore();
 
-  console.log("reason", cancelReason);
-  console.log("reasonDetail", cancelReasonDetail);
+  // console.log("reason", cancelReason);
+  // console.log("reasonDetail", cancelReasonDetail);
 
   return (
     <div>

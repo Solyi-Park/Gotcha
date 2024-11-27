@@ -6,7 +6,7 @@ import PaymentSummary from "./PaymentSummary";
 export default function CheckoutSummary() {
   const { checkoutItems, getTotalPrice, getShippingCost } = useCheckout();
 
-  console.log("checkoutItems:", checkoutItems);
+  // console.log("checkoutItems:", checkoutItems);
 
   return (
     <aside className="flex flex-col w-full max-w-[640px]">

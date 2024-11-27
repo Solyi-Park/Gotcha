@@ -1,4 +1,4 @@
-export function formatOrderStatus(status: string) {
+export function formatOrderStatus(status: string | undefined) {
   console.log("status:", status);
   if (!status) return "PENDING";
   switch (status) {
@@ -35,8 +35,8 @@ export function formatOrderItemStatus(
   orderStatus: string,
   itemsStatus: string
 ) {
-  console.log("orderStatus:", orderStatus);
-  console.log("orderStitemsStatusatus:", itemsStatus);
+  // console.log("orderStatus:", orderStatus);
+  // console.log("orderStitemsStatusatus:", itemsStatus);
 
   switch (itemsStatus) {
     case "ACTIVE":

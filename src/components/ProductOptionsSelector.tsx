@@ -14,6 +14,7 @@ type Props = {
 
 export default function ProductOptionsSelector({ product }: Props) {
   const { options, price, discountRate } = product;
+  // console.log("options", options);
   const {
     productOptions: cartOptions,
     addOption,
@@ -50,7 +51,7 @@ export default function ProductOptionsSelector({ product }: Props) {
         })),
         quantity: 1,
       };
-      console.log("newOpt", newOption);
+      // console.log("newOpt", newOption);
       const existingOption = cartOptions.some((opt) => opt.id === newOption.id);
       if (existingOption) {
         alert("이미 존재하는 옵션입니다.");
@@ -71,7 +72,7 @@ export default function ProductOptionsSelector({ product }: Props) {
       name: option.name,
       value: e.target.value,
     };
-    console.log("newOption", newOption);
+    // console.log("newOption", newOption);
     const isExistingOption = selectedOptions.some(
       (opt) => opt.name === newOption.name
     );

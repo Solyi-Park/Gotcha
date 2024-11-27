@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 export default async function EditPage() {
   const session = await getServerSession(authOptions);
   const user = session?.user as AuthUser;
-  console.log("회원정보 페이지user", user);
+  // console.log("회원정보 페이지user", user);
 
   if (user) {
     const isOauthProvider = PROVIDERS_NAME.includes(

@@ -27,9 +27,9 @@ export default function Payments() {
     const shippingFee = getShippingCost();
     return totalPrice + shippingFee;
   };
-  console.log("살거", checkoutItems);
+  // console.log("살거", checkoutItems);
   const user = session?.user;
-  console.log("user 금방 업뎃", user);
+  // console.log("user 금방 업뎃", user);
 
   const [amount, setAmount] = useState<Amount>({
     currency: "KRW",
@@ -72,7 +72,7 @@ export default function Payments() {
         selector: "#payment-method",
         variantKey: "DEFAULT",
       });
-      console.log("renderPaymentMethods");
+      // console.log("renderPaymentMethods");
       await widgets.renderAgreement({
         selector: "#agreement",
         variantKey: "AGREEMENT",
@@ -110,7 +110,7 @@ export default function Payments() {
 function generateRandomString() {
   if (typeof window !== "undefined") {
     const randomString = window.btoa(Math.random().toString()).slice(0, 20);
-    console.log("randomString", randomString);
+    // console.log("randomString", randomString);
     return randomString;
   }
   return "";

@@ -98,7 +98,7 @@ export default function ProductDetailHeader({ product }: Props) {
               },
             },
           ];
-      console.log("장바구니에 넣을라고", newCartItems);
+      // console.log("장바구니에 넣을라고", newCartItems);
       const res = await addProductToCart(newCartItems);
       if (res.ok) {
         // TODO: 커스텀 모달: 장바구니 바로가기 버튼
@@ -112,7 +112,7 @@ export default function ProductDetailHeader({ product }: Props) {
   };
 
   const handleBuyNow = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log("서비스 준비중입니다!");
+    // console.log("서비스 준비중입니다!");
   };
 
   return (

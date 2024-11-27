@@ -36,7 +36,7 @@ export default function SearchResultPage() {
     staleTime: 1000 * 60 * 10,
     enabled: !!keyword,
   });
-  console.log("searchResult", searchResult);
+  // console.log("searchResult", searchResult);
 
   return (
     <div>

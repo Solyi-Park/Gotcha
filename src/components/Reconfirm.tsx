@@ -19,7 +19,7 @@ export default function Reconfirm({ user }: Props) {
   //TODO: 패스워드 체크 반복.
   const handleCheckPassword = async () => {
     const isValid = await checkPassword(email || "", password);
-    console.log("isValid", isValid);
+    // console.log("isValid", isValid);
     if (isValid) {
       router.push("/mypage/edit/info");
     }

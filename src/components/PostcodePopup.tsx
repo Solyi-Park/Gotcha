@@ -8,7 +8,7 @@ const PostcodePopup = () => {
   const { setField, resetAddress } = useShippingDetailStore();
 
   const handleComplete = (data: Address) => {
-    console.log("data", data);
+    // console.log("data", data);
     let fullAddress = data.address;
     let extraAddress = "";
     let postalCode = data.zonecode;
@@ -25,7 +25,7 @@ const PostcodePopup = () => {
     }
     setField("postCode", postalCode);
     setField("address", fullAddress);
-    console.log(fullAddress);
+    // console.log(fullAddress);
   };
 
   const handleClick = () => {
