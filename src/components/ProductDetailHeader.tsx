@@ -29,7 +29,7 @@ export default function ProductDetailHeader({ product }: Props) {
     options,
     id,
   } = product;
-  console.log("product", product);
+  // console.log("product", product);
 
   const { productOptions, resetOption } = useProductOption();
   const [quantity, setQuantity] = useState<number>(1);
