@@ -3,7 +3,7 @@ import SectionTitle from "@/components/SectionTitle";
 import VerticalProductCard from "@/components/VerticalProductCard";
 import { useLikedProductsStore } from "@/store/likedProducts";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function LikePage() {
   const router = useRouter();

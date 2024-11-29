@@ -1,13 +1,23 @@
+"use client";
 import { MYPAGE_SECTIONS } from "@/constants/mypage";
 import { isActivePath } from "@/utils/currentPath";
 import Link from "next/link";
 import SectionTitle from "./SectionTitle";
+import { useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+import LogoutIcon from "./icons/LogoutIcon";
+import AuthButton from "./buttons/AuthButton ";
 
 type Props = {
   pathname: string;
 };
 
 export default function MypageNavMenu({ pathname }: Props) {
+  const router = useRouter();
+
+  const { data: session } = useSession();
+  const user = session?.user;
+
   return (
     <div className="w-full">
       {MYPAGE_SECTIONS.map((section) => (
@@ -34,6 +44,14 @@ export default function MypageNavMenu({ pathname }: Props) {
           </ul>
         </section>
       ))}
+      {user && (
+        <div className="sm:hidden flex items-center gap-1">
+          <button className="flex items-center" onClick={() => signOut()}>
+            로그아웃
+          </button>
+          <LogoutIcon size="small" />
+        </div>
+      )}
     </div>
   );
 }
