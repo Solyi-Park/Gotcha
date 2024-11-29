@@ -20,7 +20,6 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const { email, password, name } = credentials!;
-        // console.log("크레덴셜", credentials);
 
         const user = await findUser(email);
 
