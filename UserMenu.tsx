@@ -26,8 +26,8 @@ export default function UserMenu({ user }: Props) {
     },
   ];
   return (
-    <div className="hidden sm:flex gap-5">
-      <ul className="flex gap-5">
+    <div>
+      <ul className="hidden sm:flex gap-5">
         {menuItems.map((item) => (
           <Link href={item.href} key={item.title}>
             <li className="flex items-center gap-[3px]">
@@ -36,13 +36,16 @@ export default function UserMenu({ user }: Props) {
             </li>
           </Link>
         ))}
-      </ul>
-      <div className="flex items-center">
-        {user ? <LogoutIcon size="small" /> : <LoginIcon size="small" />}
         <AuthButton
           text={user ? "LOGOUT" : "LOGIN"}
           onClick={user ? () => signOut() : () => signIn()}
         />
+      </ul>
+      <div className="sm:hidden flex gap-3">
+        <Link href="/cart" className="">
+          <ShoppingBagIcon size="medium" />
+        </Link>
+        {!user && <AuthButton text="LOGIN" onClick={() => signIn()} />}
       </div>
     </div>
   );

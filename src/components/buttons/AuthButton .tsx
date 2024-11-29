@@ -9,14 +9,14 @@ type Props = {
 export default function AuthButton({ text, onClick }: Props) {
   return (
     <button className="flex items-center justify-center" onClick={onClick}>
-      <span className="hidden sm:inline text-xs">{text}</span>
-      <span className=" sm:hidden ">
+      <span>
         {text === "LOGIN" ? (
           <LoginIcon size="small" />
         ) : (
           <LogoutIcon size="small" />
         )}
       </span>
+      <span className="hidden sm:inline text-xs">{text}</span>
     </button>
   );
 }
