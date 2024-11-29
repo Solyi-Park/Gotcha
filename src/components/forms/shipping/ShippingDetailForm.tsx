@@ -19,7 +19,7 @@ const deliveryNotes = [
 
 export default function ShippingDetailForm() {
   const { user } = useMe();
-  console.log("user", user);
+  // console.log("user", user);
   const [activeTab, setActiveTab] = useState("기존배송지");
 
   const {
